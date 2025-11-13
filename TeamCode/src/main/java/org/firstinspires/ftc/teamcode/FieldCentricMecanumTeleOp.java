@@ -56,25 +56,21 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
                 imu.resetYaw();
             }
             if (gamepad1.left_bumper) {
-                intakeMotor.setPower(0.7);
+                intakeMotor.setPower(1);
             }
             if (gamepad1.right_bumper) {
-                intakeMotor.setPower(-0.7);
+                intakeMotor.setPower(-1);
             }
-            if (gamepad1.a) {
+            if (!gamepad1.left_bumper && !gamepad1.right_bumper) {
                 intakeMotor.setPower(0);
             }
 
             if(gamepad1.x){
-                shooterR.setPower(0.2);
+                shooterR.setPower(-0.6);
+                shooterL.setPower(0.6);
             }
             else{
                 shooterR.setPower(0);
-            }
-            if(gamepad1.y){
-                shooterL.setPower(0.2);
-            }
-            else{
                 shooterL.setPower(0);
             }
 
