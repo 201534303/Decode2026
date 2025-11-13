@@ -20,6 +20,9 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
         DcMotor rightBackMotor = hardwareMap.dcMotor.get("rightBackMotor");
 
         DcMotor intakeMotor = hardwareMap.dcMotor.get("intakeMotor");
+        DcMotor shooterR = hardwareMap.dcMotor.get("shooterR");
+        DcMotor shooterL = hardwareMap.dcMotor.get("shooterL");
+
 
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
@@ -61,6 +64,20 @@ public class FieldCentricMecanumTeleOp extends LinearOpMode {
             if (gamepad1.a) {
                 intakeMotor.setPower(0);
             }
+
+            if(gamepad1.x){
+                shooterR.setPower(0.2);
+            }
+            else{
+                shooterR.setPower(0);
+            }
+            if(gamepad1.y){
+                shooterL.setPower(0.2);
+            }
+            else{
+                shooterL.setPower(0);
+            }
+
 
             double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
