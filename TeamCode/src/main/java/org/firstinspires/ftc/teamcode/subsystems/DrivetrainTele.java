@@ -24,10 +24,10 @@ public class DrivetrainTele extends Drivetrain{
         double xMove = gamepad1.left_stick_x;
         double rot = gamepad1.right_stick_x;
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotedX = xMove * Math.cos(-botHeading) - yMove * Math.sin(-botHeading);
+        double rotedX = -xMove * Math.cos(-botHeading) - yMove * Math.sin(-botHeading);
         double rotedY = xMove * Math.sin(-botHeading) + yMove * Math.cos(-botHeading);
 
         rotedX = rotedX * 1.1;  // Counteract imperfect strafing
@@ -45,5 +45,15 @@ public class DrivetrainTele extends Drivetrain{
         backLeft.setPower(backLeftPower);
         frontRight.setPower(frontRightPower);
         backRight.setPower(backRightPower);
+
+        telemetry.addData("xHeading", rotedX);
+        telemetry.addData("xHeading", rotedX);
+
+
     }
+
+    public void printData(){
+        telemetry.addData("Imu",imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+    }
+
 }

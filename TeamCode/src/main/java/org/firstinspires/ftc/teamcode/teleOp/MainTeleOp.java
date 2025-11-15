@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
-@TeleOp(name="drive and intake", group="Iterative OpMode")
+@TeleOp(name="mainTeleOp", group="Iterative OpMode")
 public class MainTeleOp extends OpMode
 {
     private ElapsedTime runtime = new ElapsedTime();
@@ -36,6 +36,8 @@ public class MainTeleOp extends OpMode
     @Override
     public void loop() {
         dt.feildCentricDrive();
+        dt.printData();
+        telemetry.update();
     }
 
     @Override
