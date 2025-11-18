@@ -20,15 +20,15 @@ public class DrivetrainTele extends Drivetrain{
     }
 
     public void feildCentricDrive(){
-        double yMove = -gamepad1.left_stick_y; //Y stick value is reversed
-        double xMove = gamepad1.left_stick_x;
-        double rot = gamepad1.right_stick_x;
+        double yMove = gamepad1.left_stick_y; //Y stick value is reversed
+        double xMove = -gamepad1.left_stick_x;
+        double rot = -gamepad1.right_stick_x;
 
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotedX = -xMove * Math.cos(-botHeading) - yMove * Math.sin(-botHeading);
-        double rotedY = xMove * Math.sin(-botHeading) + yMove * Math.cos(-botHeading);
+        double rotedX = xMove * Math.cos(botHeading) + yMove * Math.sin(botHeading);
+        double rotedY = - xMove * Math.sin(botHeading) + yMove * Math.cos(botHeading);
 
         rotedX = rotedX * 1.1;  // Counteract imperfect strafing
 
