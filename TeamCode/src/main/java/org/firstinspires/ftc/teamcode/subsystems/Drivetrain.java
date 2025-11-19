@@ -30,6 +30,7 @@ public abstract class Drivetrain {
         // Adjust the orientation parameters to match your robot
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         imu.initialize(parameters);
+        imu.resetYaw();
     }
 
     protected void driveRobot(double drive, double strafe, double turn){

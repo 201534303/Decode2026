@@ -19,7 +19,7 @@ public class ShooterTele extends Shooter{
 
     public void update(){
         if(gamepad1.a){
-            setPower(.4);
+            setPower(.55);
         }
         if(gamepad1.b){
             setPower(0);

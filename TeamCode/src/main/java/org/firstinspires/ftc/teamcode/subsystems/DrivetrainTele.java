@@ -20,26 +20,29 @@ public class DrivetrainTele extends Drivetrain{
     }
 
     public void feildCentricDrive(){
-        double yMove = gamepad1.left_stick_y; //Y stick value is reversed
-        double xMove = -gamepad1.left_stick_x;
-        double rot = -gamepad1.right_stick_x;
+        double yMove = -gamepad1.left_stick_y; //Y stick value is reversed
+        double xMove = gamepad1.left_stick_x;
+        double rot = gamepad1.right_stick_x;
 
-        double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotedX = xMove * Math.cos(botHeading) + yMove * Math.sin(botHeading);
-        double rotedY = - xMove * Math.sin(botHeading) + yMove * Math.cos(botHeading);
+        double rotedX = xMove * Math.cos(botHeading) - yMove * Math.sin(botHeading);
+        double rotedY = xMove * Math.sin(botHeading) + yMove * Math.cos(botHeading);
+
+        telemetry.addData("rotedY", rotedY);
+        telemetry.addData("rotedX", rotedX);
 
         rotedX = rotedX * 1.1;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio,
         // but only if at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(rotedY) + Math.abs(rotedX) + Math.abs(rot), 1);
-        double frontLeftPower = (rotedY + rotedX + rot) / denominator;
-        double backLeftPower = (rotedY - rotedX + rot) / denominator;
-        double frontRightPower = (rotedY - rotedX - rot) / denominator;
-        double backRightPower = (rotedY + rotedX - rot) / denominator;
+        //double denominator = Math.max(Math.abs(rotedY) + Math.abs(rotedX) + Math.abs(rot), 1);
+        double frontLeftPower = (rotedY + rotedX - rot); /// denominator;
+        double backLeftPower = (rotedY - rotedX - rot); /// denominator;
+        double frontRightPower = (rotedY - rotedX + rot); /// denominator;
+        double backRightPower = (rotedY + rotedX + rot); /// denominator;
 
         frontLeft.setPower(frontLeftPower);
         backLeft.setPower(backLeftPower);
