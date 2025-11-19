@@ -6,58 +6,48 @@ import static org.firstinspires.ftc.teamcode.subsystems.Intake.intakeState.OUT;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Intake {
-    DcMotor intake;
-    public Intake.intakeState intakeState = OFF;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-    public Intake(HardwareMap hardwareMap){
+public abstract class Intake {
+    protected DcMotor intake;
+    protected double speed = 0;
+    protected Telemetry telemetry;
+    protected Intake.intakeState intakeState = OFF;
+
+    public Intake(HardwareMap hardwareMap, Telemetry t){
         intake = hardwareMap.get(DcMotor.class, "intake");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        telemetry = t;
     }
 
-    public void intakeIn(){
-        intake.setPower(-1);
+    protected void setPower(double power){
+        speed = power;
+    }
+    protected void intakeIn(){
+        intakeState = IN;
     }
 
-    public void intakeOut(){
-        intake.setPower(1);
+    protected void intakeOut(){
+        intakeState = OUT;
     }
 
-    public void intakeOff(){
-        intake.setPower(0);
+    protected void intakeOff(){
+        intakeState = OFF;
     }
 
-    public void intakeMachine(double in, double out){
+    protected void intakeMachine(){
         switch (intakeState){
             case IN:
-                if (in > 0.9) {
-                    intakeIn();
-                } else if (out > 0.9) {
-                    intakeState = OUT;
-                } else {
-                    intakeState = OFF;
-                }
+                intake.setPower(speed);
                 break;
             case OUT:
-                if (out > 0.9) {
-                    intakeOut();
-                } else if (in > 0.9) {
-                    intakeState = IN;
-                } else {
-                    intakeState = OFF;
-                }
-                intakeOut();
+                intake.setPower(-speed);
                 break;
             case OFF:
-                if (in > 0.9) {
-                    intakeIn();
-                } else if (out > 0.9) {
-                    intakeState = OUT;
-                } else {
-                    intakeOff();
-                }
-                intakeOff();
+                intake.setPower(0);
                 break;
         }
 

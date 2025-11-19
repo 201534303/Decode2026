@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Drivetrain {
+public abstract class Drivetrain {
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
     protected IMU imu;
