@@ -19,11 +19,11 @@ public abstract class Drivetrain {
 
     public Drivetrain(HardwareMap hardwareMap, Telemetry t){
         frontLeft = hardwareMap.get(DcMotor.class, "leftFrontMotor");
-        frontRight = hardwareMap.get(DcMotor.class, "leftBackMotor");
-        backLeft = hardwareMap.get(DcMotor.class, "rightFrontMotor");
+        frontRight = hardwareMap.get(DcMotor.class, "rightFrontMotor");
+        backLeft = hardwareMap.get(DcMotor.class, "leftBackMotor");
         backRight = hardwareMap.get(DcMotor.class, "rightBackMotor");
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry = t;
 
         imu = hardwareMap.get(IMU.class, "imu");

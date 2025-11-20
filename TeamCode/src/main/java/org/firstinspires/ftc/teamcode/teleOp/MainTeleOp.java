@@ -25,7 +25,7 @@ public class MainTeleOp extends OpMode
         telemetry.addData("Status", "Initialized");
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
-        shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry);
+        shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
         telemetry.addData("Status", "Initialized");
     }
 
