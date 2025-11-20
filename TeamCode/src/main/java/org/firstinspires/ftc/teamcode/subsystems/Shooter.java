@@ -18,6 +18,7 @@ public abstract class Shooter {
     protected ElapsedTime runtime;
     protected double lastTime;
     protected double lastTicks;
+    
 
     public Shooter(HardwareMap h, Telemetry t, ElapsedTime r){
         shooterR = h.get(DcMotorEx.class, "shooterR");
