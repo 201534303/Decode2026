@@ -30,4 +30,15 @@ public class ShooterTele extends Shooter{
         telemetry.addData("We are here", "yeah");
         rotSpeed();
     }
+
+    public void updateSimple() {
+        if (gamepad1.a) {
+            setPower(0.5);
+        }
+        if (gamepad1.b) {
+            setPower(0);
+        }
+        telemetry.addData("We are here", "yeah");
+    }
 }
+
