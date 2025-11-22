@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,9 +20,9 @@ public abstract class Shooter {
     protected ElapsedTime runtime;
     protected double lastTime;
     protected double lastTicks;
-    protected PIDController PID;
-
-
+    protected PIDFController PIDF;
+    public double power = 0;
+    protected double idealSpeed;
 
     public Shooter(HardwareMap h, Telemetry t, ElapsedTime r){
         shooterR = h.get(DcMotorEx.class, "shooterR");
@@ -31,7 +32,7 @@ public abstract class Shooter {
         shooterL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry = t;
         runtime = r;
-        PID = new PIDController(0.001,0,0);
+        PIDF = new PIDFController(0.001,0,0, .55);
     }
 
     protected void setPower(double p){
@@ -40,8 +41,13 @@ public abstract class Shooter {
     }
     
     protected void setSpeed(double s){
-        double power = PID.calculate(rotSpeed - s);
+        idealSpeed = s;
+    }
+
+    protected void updateRoot(){
+        power = PIDF.calculate(rotSpeed(), idealSpeed);
         setPower(power);
+        telemetry.addData("power", power);
     }
 
     protected double rotSpeed(){
