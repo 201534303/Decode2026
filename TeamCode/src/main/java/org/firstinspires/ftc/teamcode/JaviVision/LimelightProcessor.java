@@ -16,7 +16,7 @@ public class LimelightProcessor {
         LLResult result = limelight.getLatestResult();
         double[] py = (result != null) ? result.getPythonOutput() : null;
 
-        if (py == null || py.length < 8) {
+        if (py == null || py.length < 8 || py[7] == 0) {
             pose.valid = false;
             return;
         }

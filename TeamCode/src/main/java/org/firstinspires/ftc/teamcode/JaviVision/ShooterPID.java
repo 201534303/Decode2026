@@ -51,7 +51,6 @@ public class ShooterPID extends LinearOpMode {
             double yaw   = angles.getYaw(AngleUnit.DEGREES);    // heading
             double pitch = angles.getPitch(AngleUnit.DEGREES);
             double roll  = angles.getRoll(AngleUnit.DEGREES);
-            lastHeading = yaw;
 
 
             telemetry.addData("Heading", yaw);
@@ -59,6 +58,8 @@ public class ShooterPID extends LinearOpMode {
             telemetry.addData("Roll", roll);
 
             if (ll.pose.valid) {
+                lastHeading = yaw;
+                double id = ll.pose.id;
 
                 // --- IMPORTANT: turret turning should use TX, NOT RX ---
                 // RX is roll, not horizontal aim
@@ -79,6 +80,7 @@ public class ShooterPID extends LinearOpMode {
 
                 telemetry.addData("Target X Offset", tx);
                 telemetry.addData("Turret Power", power);
+                telemetry.addData("id", id);
             }
             else {
                 if (lastHeading != 0) {
@@ -87,7 +89,8 @@ public class ShooterPID extends LinearOpMode {
                     power = Math.max(-0.5, Math.min(0.5, power));
                     servo1.setPower(power);
                     servo2.setPower(power);
-                    telemetry.addLine("whja");
+                    telemetry.addData("power",power);
+                    telemetry.addData("last", lastHeading);
                 }
             }
 
