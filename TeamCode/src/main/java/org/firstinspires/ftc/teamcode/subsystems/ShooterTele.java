@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.JaviVision.v2.LimelightProcessor_v2;
 
 public class ShooterTele extends Shooter{
     private Gamepad gamepad1, gamepad2;
+    private LimelightProcessor_v2 ll = new LimelightProcessor_v2(hardwareMap);
     private double speed = 0;
 
     public ShooterTele(HardwareMap h, Gamepad g1, Gamepad g2, Telemetry t, ElapsedTime r) {
@@ -33,6 +37,8 @@ public class ShooterTele extends Shooter{
 
     public void updateSimple() {
         if (gamepad1.a) {
+            double power = ll.pose.distance*0.008;
+            power = Math.max(-1, Math.min(1, power));
             setPower(0.5);
         }
         if (gamepad1.b) {

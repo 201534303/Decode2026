@@ -24,6 +24,7 @@ public abstract class Shooter {
     public double power = 0;
     protected double idealSpeed;
 
+
     public Shooter(HardwareMap h, Telemetry t, ElapsedTime r){
         shooterR = h.get(DcMotorEx.class, "shooterR");
         shooterL = h.get(DcMotorEx.class, "shooterL");
