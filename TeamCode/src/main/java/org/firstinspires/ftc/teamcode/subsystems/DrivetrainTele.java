@@ -24,6 +24,10 @@ public class DrivetrainTele extends Drivetrain{
         double xMove = gamepad1.right_stick_x;
         double rot = gamepad1.left_stick_x;
 
+        if (gamepad1.options){
+            imu.resetYaw();
+        }
+
         double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation

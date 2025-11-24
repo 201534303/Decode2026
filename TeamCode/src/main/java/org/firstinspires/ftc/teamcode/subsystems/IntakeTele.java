@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 public class IntakeTele extends Intake{
     protected Gamepad gamepad1, gamepad2;
@@ -15,17 +16,22 @@ public class IntakeTele extends Intake{
     }
 
     public void update(){
+        /*
         if((gamepad1.right_trigger > 0.1 && gamepad1.left_trigger > 0.1) || gamepad1.right_trigger < 0.1 || gamepad1.left_trigger < 0.1){
             intakeOff();
         }
-        if(gamepad1.right_trigger > .1){
-            setPower(gamepad1.right_trigger);
-            intakeIn();
-        }
-        if(gamepad1.left_trigger > .1){
-            setPower(gamepad1.left_trigger);
-            intakeOut();
-        }
+
+         */
+        //if(gamepad1.right_trigger > .1){
+        setIntPower(gamepad1.right_trigger);
+        intakeIn();
+        //}
+        //if(gamepad1.left_trigger > .1){
+        setTransferPower(gamepad1.left_trigger);
+        //intakeOut();
+        //}
         intakeMachine();
+        telemetry.addData("IntakeCurent", intake.getCurrent(CurrentUnit.AMPS));
+        telemetry.addData("transferCurent", transfer.getCurrent(CurrentUnit.AMPS));
     }
 }

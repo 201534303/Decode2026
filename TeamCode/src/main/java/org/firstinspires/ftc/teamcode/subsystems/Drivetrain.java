@@ -11,19 +11,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public abstract class Drivetrain {
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
+
+    protected Telemetry telemetry;
+
     protected IMU imu;
     private IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
             RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
             RevHubOrientationOnRobot.UsbFacingDirection.UP));
-    protected Telemetry telemetry;
 
     public Drivetrain(HardwareMap hardwareMap, Telemetry t){
         frontLeft = hardwareMap.get(DcMotor.class, "leftFrontMotor");
         frontRight = hardwareMap.get(DcMotor.class, "rightFrontMotor");
         backLeft = hardwareMap.get(DcMotor.class, "leftBackMotor");
         backRight = hardwareMap.get(DcMotor.class, "rightBackMotor");
+
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         telemetry = t;
 
         imu = hardwareMap.get(IMU.class, "imu");
