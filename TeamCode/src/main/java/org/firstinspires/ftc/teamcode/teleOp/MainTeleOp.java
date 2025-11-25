@@ -21,8 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 
 @TeleOp(name="mainTeleOp", group="Iterative OpMode")
 @Config
-public class MainTeleOp extends OpMode
-{
+public class MainTeleOp extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private DrivetrainTele dt;
