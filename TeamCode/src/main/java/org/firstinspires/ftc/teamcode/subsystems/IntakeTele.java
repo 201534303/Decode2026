@@ -15,6 +15,7 @@ public class IntakeTele extends Intake{
         gamepad2 = g2;
     }
 
+    
     public void update(){
         /*
         if((gamepad1.right_trigger > 0.1 && gamepad1.left_trigger > 0.1) || gamepad1.right_trigger < 0.1 || gamepad1.left_trigger < 0.1){
