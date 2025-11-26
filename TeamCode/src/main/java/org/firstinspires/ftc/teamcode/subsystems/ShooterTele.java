@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,28 +15,28 @@ public class ShooterTele extends Shooter{
         gamepad1 = g1;
         gamepad2 = g2;
     }
-    public void setPower(double p){
-        super.setPower(p);
+    public void setVel(double flywheelV){
+        super.setVel(flywheelV);
     }
-
+/*
     public void update() {
-        if (gamepad2.a) {
-            setSpeed(55);
-        }
-        if (gamepad2.b) {
-            setSpeed(0);
-        }
         updateRoot();
         telemetry.addData("We are here", "yeah");
         rotSpeed();
     }
 
+ */
+
+    public void runFlywheel(double currentV, double targetV){
+        flywheelSpin(targetV, currentV);
+    }
+
     public void updateSimple() {
         if (gamepad2.a) {
-            setPower(0.5);
+            setVel(0.5);
         }
         if (gamepad2.b) {
-            setPower(0);
+            setVel(0);
         }
         telemetry.addData("We are here", "yeah");
     }
