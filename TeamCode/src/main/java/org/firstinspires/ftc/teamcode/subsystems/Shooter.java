@@ -23,10 +23,13 @@ public abstract class Shooter {
     double last_error = 0;
     double integral = 0;
 
-    public Shooter(HardwareMap h, Telemetry t, ElapsedTime r){
-        shooterR = h.get(MotorEx.class, "shooterR");
-        shooterL = h.get(MotorEx.class, "shooterL");
+    public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
+        //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
+        //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
+        MotorEx shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
+        MotorEx shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
 
+        shooterR.setInverted(true);
 
         shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
@@ -95,7 +98,4 @@ public abstract class Shooter {
 
         return correction;
     }
-
-
-    //TODO add PID functions
 }

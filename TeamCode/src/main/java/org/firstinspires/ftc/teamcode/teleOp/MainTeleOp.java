@@ -68,12 +68,14 @@ public class MainTeleOp extends OpMode {
         intake.update();
 
         //shooter
-        shooter.updateSimple();
+        shooter.runFlywheel(shooter.getMotorVel(), 1000);
 
         //update power var
         power = shooter.power;
 
         //telemetry
+        telemetry.addData("shooter vel", shooter.getMotorVel());
+        telemetry.addData("target vel", 1000);
         telemetry.update();
     }
 
