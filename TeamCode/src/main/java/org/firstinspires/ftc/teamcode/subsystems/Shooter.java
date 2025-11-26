@@ -31,6 +31,10 @@ public abstract class Shooter {
         shooterR.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         shooterL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        shooterL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        shooterR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         telemetry = t;
         runtime = r;
         PIDF = new PIDFController(0.001,0,0, .55);

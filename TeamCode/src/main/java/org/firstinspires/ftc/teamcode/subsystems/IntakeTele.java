@@ -23,11 +23,11 @@ public class IntakeTele extends Intake{
 
          */
         //if(gamepad1.right_trigger > .1){
-        setIntPower(gamepad1.right_trigger);
+        setIntPower(-gamepad2.right_stick_y);
         intakeIn();
         //}
         //if(gamepad1.left_trigger > .1){
-        setTransferPower(gamepad1.left_trigger);
+        setTransferPower(-gamepad2.left_stick_y);
         //intakeOut();
         //}
         intakeMachine();

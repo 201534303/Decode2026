@@ -22,10 +22,10 @@ public class ShooterTele extends Shooter{
     }
 
     public void update() {
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             setSpeed(55);
         }
-        if (gamepad1.b) {
+        if (gamepad2.b) {
             setSpeed(0);
         }
         updateRoot();
@@ -34,10 +34,10 @@ public class ShooterTele extends Shooter{
     }
 
     public void updateSimple() {
-        if (gamepad1.a) {
+        if (gamepad2.a) {
             setPower(0.5);
         }
-        if (gamepad1.b) {
+        if (gamepad2.b) {
             setPower(0);
         }
         telemetry.addData("We are here", "yeah");
