@@ -2,21 +2,13 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.ftc.FTCCoordinates;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 
 @TeleOp(name="mainTeleOp", group="Iterative OpMode")
@@ -26,9 +18,10 @@ public class MainTeleOp extends OpMode {
 
     private DrivetrainTele dt;
     private IntakeTele intake;
-    private ShooterTele shooter;
+    ShooterTele shooter;
     private Telemetry dash;
     public static double power;
+    public static double targetVelo = 1300;
     public double botHeading;
 
 
@@ -68,15 +61,16 @@ public class MainTeleOp extends OpMode {
         intake.update();
 
         //shooter
-        shooter.runFlywheel(shooter.getMotorVel(), 1000);
+        shooter.runFlywheel(shooter.getMotorVel(), targetVelo, 0);
 
         //update power var
         power = shooter.power;
 
         //telemetry
-        telemetry.addData("shooter vel", shooter.getMotorVel());
-        telemetry.addData("target vel", 1000);
+        dash.addData("shooter vel", shooter.getMotorVel());
+        dash.addData("target vel", targetVelo);
         telemetry.update();
+        dash.update();
     }
 
     @Override

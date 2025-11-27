@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -11,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public abstract class Shooter {
 
     protected Telemetry telemetry;
-    protected MotorEx shooterR;
-    protected MotorEx shooterL;
+    MotorEx shooterR;
+    MotorEx shooterL;
     protected double rotSpeed;
     protected ElapsedTime runtime;
     protected double lastTime;
@@ -26,16 +27,16 @@ public abstract class Shooter {
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
         //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
-        MotorEx shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
-        MotorEx shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
+        shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
+        shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
 
-        shooterR.setInverted(true);
+        shooterL.setInverted(true);
 
         shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
-        shooterR.setRunMode(Motor.RunMode.VelocityControl);
-        shooterL.setRunMode(Motor.RunMode.VelocityControl);
+        shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
+        shooterL.setRunMode(MotorEx.RunMode.VelocityControl);
 
         telemetry = t;
         runtime = r;
@@ -43,8 +44,9 @@ public abstract class Shooter {
     }
 
     public double getMotorVel(){
-        return shooterR.getVelocity();
+        return shooterL.getVelocity();
     }
+
 
     protected void setVel(double flywheelV){
         shooterR.setVelocity(flywheelV);
@@ -74,9 +76,9 @@ public abstract class Shooter {
 
      */
 
-    public void flywheelSpin(double targetVelo, double currentVelo){
-        double speed = PIDF(targetVelo-currentVelo, targetVelo, 1,0,0,0.3);
-        shooterR.setVelocity(-speed);
+    public void flywheelSpin(double targetVelo, double currentVelo, double kf){
+        double speed = PIDF(targetVelo-currentVelo, targetVelo, 9.5,0,0.1,0.59);
+        shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
     }
 

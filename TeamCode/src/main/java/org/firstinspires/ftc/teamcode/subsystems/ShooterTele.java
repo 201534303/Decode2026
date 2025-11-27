@@ -27,12 +27,10 @@ public class ShooterTele extends Shooter{
 
  */
 
-    public void runFlywheel(double currentV, double targetV){
-        if (gamepad2.a) {
-            flywheelSpin(targetV, currentV);
-        }
+    public void runFlywheel(double currentV, double targetV, double kf){
+        flywheelSpin(targetV, currentV, kf);
         if (gamepad2.b) {
-            flywheelSpin(0, currentV);
+            flywheelSpin(0, currentV, kf);
         }
 
     }
