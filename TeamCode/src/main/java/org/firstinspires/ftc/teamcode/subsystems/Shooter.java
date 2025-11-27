@@ -44,13 +44,31 @@ public abstract class Shooter {
     }
 
     public double getMotorVel(){
+        //in ticks/sec - gobilda bare is 28 tps
         return shooterL.getVelocity();
     }
 
+    public double getMotorRPM(){
+        //gets rotations per sec then converts it to rpm
+        return (shooterL.getVelocity()/28)*60;
+    }
+
+    public double velToRPM(double vel){
+        return (vel/28)*60;
+    }
+
+    public double RPMToVel(double RPM){
+        return (RPM/60)*28;
+    }
 
     protected void setVel(double flywheelV){
         shooterR.setVelocity(flywheelV);
         shooterL.setVelocity(flywheelV);
+    }
+
+    protected void setRPM(double flywheelRPM){
+        shooterR.setVelocity(RPMToVel(flywheelRPM));
+        shooterL.setVelocity(RPMToVel(flywheelRPM));
     }
     
     protected void setSpeed(double s){
@@ -76,7 +94,7 @@ public abstract class Shooter {
 
      */
 
-    public void flywheelSpin(double targetVelo, double currentVelo, double kf){
+    public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
         double speed = PIDF(targetVelo-currentVelo, targetVelo, 9.5,0,0.1,0.59);
         shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
@@ -91,7 +109,7 @@ public abstract class Shooter {
         double integralTerm = integral * ki;
         double derivativeTerm = derivative * kd;
 
-        // Feedforward = kF * setpoint
+        // Feedforward = kF * setpoint; important for scaling feedforward
         double feedforward = kF * setpoint;
 
         double correction = proportional + integralTerm + derivativeTerm + feedforward;
