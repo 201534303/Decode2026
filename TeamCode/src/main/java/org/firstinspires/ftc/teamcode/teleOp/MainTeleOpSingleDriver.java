@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,15 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 
-@TeleOp(name="mainTeleOp", group="Iterative OpMode")
+@TeleOp(name="Single Driver Tele", group="Iterative OpMode")
 @Config
-public class MainTeleOp extends OpMode {
+public class MainTeleOpSingleDriver extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private DrivetrainTele dt;
@@ -37,7 +33,7 @@ public class MainTeleOp extends OpMode {
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
-
+        telemetry.addData("Status", "Initialized");
 
 
 
@@ -62,10 +58,10 @@ public class MainTeleOp extends OpMode {
         dt.printData();
 
         //intake
-        intake.update();
+        intake.updateSingle();
 
         //shooter
-        shooter.shooterMachine();
+        shooter.shooterMachineSingle();
 
         //update power var
         power = shooter.power;

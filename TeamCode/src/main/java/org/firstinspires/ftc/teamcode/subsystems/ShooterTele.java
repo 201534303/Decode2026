@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.CLOSE;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.OFF;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -9,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterTele extends Shooter{
     private Gamepad gamepad1, gamepad2;
     private double speed = 0;
+    ShooterTele.shooterState shooterState = OFF;
 
     public ShooterTele(HardwareMap h, Gamepad g1, Gamepad g2, Telemetry t, ElapsedTime r) {
         super(h, t, r);
@@ -33,6 +38,76 @@ public class ShooterTele extends Shooter{
             flywheelSpin(0, currentV, kf);
         }
 
+    }
+
+    public void shooterMachine(){
+        switch (shooterState){
+            case CLOSE:
+                runFlywheel(getMotorVel(), 1250, 0);
+                if (gamepad2.x) {
+                    shooterState = FAR;
+                }
+                if (gamepad2.b) {
+                    shooterState = OFF;
+                }
+                break;
+            case FAR:
+                if (gamepad2.a) {
+                    shooterState = CLOSE;
+                }
+                if (gamepad2.b) {
+                    shooterState = OFF;
+                }
+                runFlywheel(getMotorVel(), 1600, 0);
+                break;
+            case OFF:
+                if (gamepad2.a) {
+                    shooterState = CLOSE;
+                }
+                if (gamepad2.x) {
+                    shooterState = FAR;
+                }
+                runFlywheel(getMotorVel(), 0, 0);
+                break;
+        }
+
+    }
+
+    public void shooterMachineSingle(){
+        switch (shooterState){
+            case CLOSE:
+                runFlywheel(getMotorVel(), 1250, 0);
+                if (gamepad1.x) {
+                    shooterState = FAR;
+                }
+                if (gamepad1.b) {
+                    shooterState = OFF;
+                }
+                break;
+            case FAR:
+                if (gamepad1.a) {
+                    shooterState = CLOSE;
+                }
+                if (gamepad1.b) {
+                    shooterState = OFF;
+                }
+                runFlywheel(getMotorVel(), 1600, 0);
+                break;
+            case OFF:
+                if (gamepad1.a) {
+                    shooterState = CLOSE;
+                }
+                if (gamepad1.x) {
+                    shooterState = FAR;
+                }
+                runFlywheel(getMotorVel(), 0, 0);
+                break;
+        }
+
+    }
+
+    public enum shooterState{
+        CLOSE,FAR,OFF
     }
 
     public void updateSimple() {

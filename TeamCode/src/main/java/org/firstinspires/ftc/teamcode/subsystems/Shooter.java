@@ -30,7 +30,7 @@ public abstract class Shooter {
         shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
 
-        shooterL.setInverted(true);
+        shooterR.setInverted(true);
 
         shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
@@ -95,7 +95,7 @@ public abstract class Shooter {
      */
 
     public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
-        double speed = PIDF(targetVelo-currentVelo, targetVelo, 9.5,0,0.1,0.59);
+        double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
         shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
     }
