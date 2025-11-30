@@ -54,6 +54,7 @@ public class MainTeleOpSingleDriver extends OpMode {
     public void loop() {
         //driving
         dt.feildCentricDrive();
+        dt.updateOdo();
 
 
         //intake

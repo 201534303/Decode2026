@@ -70,10 +70,7 @@ public class MainTeleOp extends OpMode {
         power = shooter.power;
 
         //telemetry
-        telemetry.addData("pinpoint heading", dt.botHeadingPIN());
-        dash.addData("pinpoint heading", dt.botHeadingPIN());
-        telemetry.addData("Imu",dt.botHeadingIMU());
-        dash.addData("Imu",dt.botHeadingIMU());
+
 
 
         dash.addData("shooter vel", shooter.getMotorVel());

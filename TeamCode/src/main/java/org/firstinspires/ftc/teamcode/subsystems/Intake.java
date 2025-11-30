@@ -41,7 +41,7 @@ public abstract class Intake {
         flipper.setPosition(0.35);
     }
     public void flipperIn(){
-        flipper.setPosition(0.54);
+        flipper.setPosition(0.5);
     }
 
     protected void intakeOut(){
