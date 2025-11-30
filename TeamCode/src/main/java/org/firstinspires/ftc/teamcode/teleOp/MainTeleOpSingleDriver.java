@@ -55,7 +55,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         //driving
         dt.feildCentricDrive();
 
-        dt.printData();
 
         //intake
         intake.updateSingle();

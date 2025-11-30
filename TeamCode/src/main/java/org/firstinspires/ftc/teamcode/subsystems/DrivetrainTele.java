@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 
 public class DrivetrainTele extends Drivetrain{
 
@@ -34,9 +35,10 @@ public class DrivetrainTele extends Drivetrain{
 
         if (gamepad1.options){
             imu.resetYaw();
+            resetHeading();
         }
 
-        double botHeading = -imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading = -Math.toRadians(botHeadingPIN());
 
         // Rotate the movement direction counter to the bot's rotation
         double rotedX = xMove * Math.cos(botHeading) - yMove * Math.sin(botHeading);
@@ -75,8 +77,20 @@ public class DrivetrainTele extends Drivetrain{
         telemetry.addData("xHeading", rotedX);
     }
 
-    public void printData(){
-        telemetry.addData("Imu",imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+    public double botHeadingIMU(){
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    public double botHeadingPIN(){
+        return odo.getPosition().getHeading(AngleUnit.DEGREES);
+    }
+
+    public void resetHeading(){
+        odo.setHeading(0, AngleUnit.DEGREES);
+    }
+
+    public void updateOdo(){
+        odo.update();
     }
 
 }

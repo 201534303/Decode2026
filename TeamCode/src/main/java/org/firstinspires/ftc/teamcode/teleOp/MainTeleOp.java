@@ -26,7 +26,6 @@ public class MainTeleOp extends OpMode {
     private Telemetry dash;
     public static double power;
     public static double targetVelo = 1300;
-    public double botHeading;
 
 
 
@@ -47,23 +46,23 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init_loop() {
+
     }
 
     @Override
     public void start() {
         runtime.reset();
+        dt.resetHeading();
     }
 
     @Override
     public void loop() {
         //driving
         dt.feildCentricDrive();
-
-        dt.printData();
+        dt.updateOdo();
 
         //intake
         intake.update();
-
         //shooter
         shooter.shooterMachine();
 
@@ -71,6 +70,12 @@ public class MainTeleOp extends OpMode {
         power = shooter.power;
 
         //telemetry
+        telemetry.addData("pinpoint heading", dt.botHeadingPIN());
+        dash.addData("pinpoint heading", dt.botHeadingPIN());
+        telemetry.addData("Imu",dt.botHeadingIMU());
+        dash.addData("Imu",dt.botHeadingIMU());
+
+
         dash.addData("shooter vel", shooter.getMotorVel());
         dash.addData("target vel", targetVelo);
         dash.addData("flywheel rpm", shooter.getMotorRPM());

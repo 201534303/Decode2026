@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 
 public abstract class Drivetrain {
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
+    GoBildaPinpointDriver odo;
+
 
     protected Telemetry telemetry;
 
@@ -24,6 +27,8 @@ public abstract class Drivetrain {
         frontRight = hardwareMap.get(DcMotor.class, "rightFrontMotor");
         backLeft = hardwareMap.get(DcMotor.class, "leftBackMotor");
         backRight = hardwareMap.get(DcMotor.class, "rightBackMotor");
+
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);

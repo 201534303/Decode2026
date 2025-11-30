@@ -9,11 +9,13 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class Intake {
     protected DcMotorEx intake, transfer;
+    protected Servo flipper;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
     protected Telemetry telemetry;
@@ -22,6 +24,8 @@ public abstract class Intake {
     public Intake(HardwareMap hardwareMap, Telemetry t){
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         transfer = hardwareMap.get(DcMotorEx.class, "transfer");
+        flipper = hardwareMap.get(Servo.class, "flipper");
+
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry = t;
     }
@@ -31,6 +35,13 @@ public abstract class Intake {
     }
     protected void intakeIn(){
         intakeState = IN;
+    }
+
+    public void flipperOut(){
+        flipper.setPosition(0.35);
+    }
+    public void flipperIn(){
+        flipper.setPosition(0.54);
     }
 
     protected void intakeOut(){
