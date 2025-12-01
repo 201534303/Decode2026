@@ -26,12 +26,13 @@ public class IntakeTele extends Intake{
         //if(gamepad1.right_trigger > .1){
         setIntPower(-gamepad2.right_stick_y);
         intakeIn();
-        if (gamepad2.dpad_up){
-            flipperIn();
+        if(gamepad2.right_trigger > 0.1){
+            setBackPower(gamepad2.right_trigger);
         }
-        if (gamepad2.dpad_down){
-            flipperOut();
+        else{
+            setBackPower(gamepad2.left_trigger);
         }
+
         //}
         //if(gamepad1.left_trigger > .1){
         setTransferPower(-gamepad2.left_stick_y*0.8);
@@ -50,12 +51,7 @@ public class IntakeTele extends Intake{
 
 
          */
-        if (gamepad1.dpad_up){
-            flipperIn();
-        }
-        if (gamepad1.dpad_down){
-            flipperOut();
-        }
+
         //if(gamepad1.right_trigger > .1){
         setIntPower(gamepad1.right_trigger);
         intakeIn();

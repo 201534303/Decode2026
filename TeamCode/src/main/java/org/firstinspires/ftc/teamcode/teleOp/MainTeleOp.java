@@ -58,8 +58,8 @@ public class MainTeleOp extends OpMode {
     @Override
     public void loop() {
         //driving
-        dt.feildCentricDrive();
-        dt.updateOdo();
+        //dt.feildCentricDrive();
+        //dt.updateOdo();
 
         //intake
         intake.update();
