@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -47,6 +48,7 @@ public class Constants {
             //PIDF
             .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0, 0))
             .headingPIDFCoefficients(new PIDFCoefficients(0.95, 0, 0, 0.001))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.019,0.0,0.00001,0.6,0.01))
 
             //for dual PIDF:
             .useSecondaryTranslationalPIDF(false)//set to true for dual
@@ -54,6 +56,7 @@ public class Constants {
             .useSecondaryDrivePIDF(false)//set to true for dual
             //.secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.1,0,0.01,0))
             //.secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.1,0,0.01,0))
+            //.secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0,0.01,0.6,0.01))
 
             //need to change
             .mass(13.608);//need to actually weigh robot
