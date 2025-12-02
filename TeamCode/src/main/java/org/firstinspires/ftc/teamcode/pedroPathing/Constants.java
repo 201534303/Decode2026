@@ -49,6 +49,7 @@ public class Constants {
             .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0, 0))
             .headingPIDFCoefficients(new PIDFCoefficients(0.95, 0, 0, 0.001))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.019,0.0,0.00001,0.6,0.01))
+            .centripetalScaling(0.0020)
 
             //for dual PIDF:
             .useSecondaryTranslationalPIDF(false)//set to true for dual
@@ -63,7 +64,11 @@ public class Constants {
 
 
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1)
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.99,
+            100,
+            1.25,
+            1)
             //.setBrakingStart(double set)
             //.setBrakingStrength(double set);
             ;
