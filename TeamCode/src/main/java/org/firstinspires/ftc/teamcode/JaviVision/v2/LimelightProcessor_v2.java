@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.JaviVision.v2;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.JaviVision.LimelightPose;
+import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
 
 import java.util.List;
 
@@ -36,27 +34,31 @@ public class LimelightProcessor_v2 {
         if (result != null) {
             List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
 
-            if (tags != null && tags.size() > 0) {
+            if (tags != null && !tags.isEmpty()) {
+                    LLResultTypes.FiducialResult tag = tags.get(0); // take the first detected tag
 
-                LLResultTypes.FiducialResult tag = tags.get(0); // take the first detected tag
+                    id = tag.getFiducialId();
 
-                id = tag.getFiducialId();
+                    tx = tag.getTargetXDegrees();       // horizontal deg
+                    ty = tag.getTargetYDegrees();       // vertical deg
+                    ta = tag.getTargetArea();       // area
+                if (id != 0) {
+                    // ---- DISTANCE CALC ----
+                    double angleToTag = CAMERA_ANGLE + ty;
+                    double angleRad = Math.toRadians(angleToTag);
 
-                tx = tag.getTargetXDegrees();       // horizontal deg
-                ty = tag.getTargetYDegrees();       // vertical deg
-                ta = tag.getTargetArea();       // area
+                    double heightDiff = TARGET_HEIGHT - CAMERA_HEIGHT;
+                    distance = heightDiff / Math.tan(angleRad);
 
-                // ---- DISTANCE CALC ----
-                double angleToTag = CAMERA_ANGLE + ty;
-                double angleRad = Math.toRadians(angleToTag);
-
-                double heightDiff = TARGET_HEIGHT - CAMERA_HEIGHT;
-                distance = heightDiff / Math.tan(angleRad);
-
-                double error = 0.281091*distance - 10.70099;
-                distance += error;
-
-            } else {
+                    double error = 0.281091 * distance - 10.70099;
+                    distance += error;
+                    pose.valid = true;
+                }
+                else {
+                    pose.valid = false;
+                }
+            }
+            else {
                 pose.valid = false;
             }
 
@@ -77,6 +79,5 @@ public class LimelightProcessor_v2 {
         pose.distance += error;
 
         pose.id = id;
-        pose.valid = true;
     }
 }

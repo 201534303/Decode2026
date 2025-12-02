@@ -9,8 +9,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.JaviVision.v2.LimelightProcessor_v2;
+import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 
 @Autonomous()
 public class ShooterPID_v2 extends LinearOpMode {
@@ -18,8 +21,8 @@ public class ShooterPID_v2 extends LinearOpMode {
     public CRServo servo1;
     public CRServo servo2;
     double power;
-    double lastHeading = 0;
-
+    double lastHeading = -10000;
+    public GoBildaPinpointDriver odo;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -35,29 +38,23 @@ public class ShooterPID_v2 extends LinearOpMode {
         servo1 = hardwareMap.get(CRServo.class, "turret_servo1");
         servo2 = hardwareMap.get(CRServo.class, "turret_servo2");
 
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+
+        odo.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+
+        odo.resetPosAndIMU();
 
         waitForStart();
 
         while (opModeIsActive()) {
 
             ll.update();   // <-- This refreshes pose
-            YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-
-            double yaw   = angles.getYaw(AngleUnit.DEGREES);    // heading
-            double pitch = angles.getPitch(AngleUnit.DEGREES);
-            double roll  = angles.getRoll(AngleUnit.DEGREES);
-
-
-            telemetry.addData("Heading", yaw);
-            telemetry.addData("Pitch", pitch);
-            telemetry.addData("Roll", roll);
+            Pose2D pos = odo.getPosition();
+            double yaw = pos.getHeading(AngleUnit.DEGREES);
 
             if (ll.pose.valid) {
                 lastHeading = yaw;
@@ -69,10 +66,10 @@ public class ShooterPID_v2 extends LinearOpMode {
                 double tx = ll.pose.tx;   // left/right offset in inches
 
                 // Basic proportional control
-                power = tx * 0.007;  // 0.01–0.02 is typical for CR servos
+                power = tx * 0.01;  // 0.01–0.02 is typical for CR servos
 
                 // Clamp power so servo does not go crazy
-                power = Math.max(-0.5, Math.min(0.5, power));
+                power = Math.max(-1, Math.min(1, power));
 
                 servo1.setPower(power);
                 servo2.setPower(power);
@@ -85,14 +82,16 @@ public class ShooterPID_v2 extends LinearOpMode {
                 telemetry.addData("id", id);
             }
             else {
-                if (lastHeading != 0) {
+                if (lastHeading != -10000) {
                     double diff = yaw - lastHeading;
-                    power = diff * 0.007;
-                    power = Math.max(-0.5, Math.min(0.5, power));
+                    power = diff * 0.08;
+                    power = Math.max(-1, Math.min(1, power));
                     servo1.setPower(power);
                     servo2.setPower(power);
                     telemetry.addData("power",power);
-                    telemetry.addData("last", lastHeading);
+                    telemetry.addData("current yaw", yaw);
+                    telemetry.addData("last headong", lastHeading);
+                    telemetry.addData("diff", diff);
                 }
             }
 
