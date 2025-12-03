@@ -15,11 +15,11 @@ public class TestAuto extends OpMode {
     private Timer pathTimer, actionTimer, opmodeTimer;
     private int pathState;
 
-    private final Pose startPose = new Pose(84, 0, Math.toRadians(90)); // Start Pose of our robot.
+    private final Pose startPose = new Pose(84, 2, Math.toRadians(90)); // Start Pose of our robot.
     private final Pose setPickPose = new Pose(100, 82, Math.toRadians(0)); // Scoring Pose of our robot. It is facing the goal at a 135 degree angle.
     private final Pose pickupPose = new Pose(127, 82, Math.toRadians(0)); // Highest (First Set) of Artifacts from the Spike Mark.
     private final Pose shootPose = new Pose(80, 102, Math.toRadians(47)); // Middle (Second Set) of Artifacts from the Spike Mark.
-    private final Pose endPose = new Pose(59, 432, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
+    private final Pose endPose = new Pose(59, 43.2, Math.toRadians(0)); // Lowest (Third Set) of Artifacts from the Spike Mark.
 
     //private Path scorePreload;
     private PathChain startSet, setPick, pickShoot, shootEnd;
@@ -51,25 +51,19 @@ public class TestAuto extends OpMode {
                 setPathState(1);
                 break;
             case 1:
-                if(!follower.isBusy()) {
-                    /* Score Preload */
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     follower.followPath(setPick,true);
                     setPathState(2);
                 }
                 break;
             case 2:
-                if(!follower.isBusy()) {
-                    /* Score Preload */
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 5) {
                     follower.followPath(pickShoot,true);
                     setPathState(3);
                 }
                 break;
             case 3:
-                if(!follower.isBusy()) {
-                    /* Score Preload */
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                if(!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 10) {
                     follower.followPath(shootEnd,true);
                     setPathState(-1);
                 }
