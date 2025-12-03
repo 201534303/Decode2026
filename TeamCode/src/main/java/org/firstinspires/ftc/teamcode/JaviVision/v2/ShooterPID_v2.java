@@ -22,6 +22,17 @@ public class ShooterPID_v2 extends LinearOpMode {
     public CRServo servo2;
     double power;
     double lastHeading = -10000;
+    double oldTime;
+    double kpTX = 0.005;
+    double kiTX = 0.005;
+    double kdTX = 0.005;
+    double kpSearching = 0.04;
+    double kiSearching = 0.04;
+    double kdSearching = 0.04;
+    double lastTX;
+    double integralSumTX = 0;
+    double lastDiff;
+    double integralSumSearching;
     public GoBildaPinpointDriver odo;
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,6 +63,10 @@ public class ShooterPID_v2 extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            double newTime = getRuntime();
+            double loopTime = newTime-oldTime;
+            oldTime = newTime;
+
             ll.update();   // <-- This refreshes pose
             Pose2D pos = odo.getPosition();
             double yaw = pos.getHeading(AngleUnit.DEGREES);
@@ -60,13 +75,18 @@ public class ShooterPID_v2 extends LinearOpMode {
                 lastHeading = yaw;
                 double id = ll.pose.id;
 
-                // --- IMPORTANT: turret turning should use TX, NOT RX ---
-                // RX is roll, not horizontal aim
+                double tx = ll.pose.tx;
 
-                double tx = ll.pose.tx;   // left/right offset in inches
+                // rate of change of the error
+                double derivative = (tx - lastTX) / loopTime;
 
+                // sum of all error over time
+                integralSumTX += (tx * loopTime);
+
+                power = (kpTX * tx) + (kiTX * integralSumTX) + (kdTX * derivative);
+
+                lastTX = tx;
                 // Basic proportional control
-                power = tx * 0.01;  // 0.01–0.02 is typical for CR servos
 
                 // Clamp power so servo does not go crazy
                 power = Math.max(-1, Math.min(1, power));
@@ -84,7 +104,14 @@ public class ShooterPID_v2 extends LinearOpMode {
             else {
                 if (lastHeading != -10000) {
                     double diff = yaw - lastHeading;
-                    power = diff * 0.08;
+                    double derivative = (diff - lastDiff) / loopTime;
+
+                    integralSumSearching += (diff * loopTime);
+
+                    power = (kpSearching*diff) + (kiSearching * integralSumSearching) + (kdSearching * integralSumSearching);
+
+                    lastDiff = diff;
+
                     power = Math.max(-1, Math.min(1, power));
                     servo1.setPower(power);
                     servo2.setPower(power);
