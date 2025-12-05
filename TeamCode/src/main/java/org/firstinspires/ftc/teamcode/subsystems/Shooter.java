@@ -23,6 +23,8 @@ public abstract class Shooter {
     protected double idealSpeed;
     double last_error = 0;
     double integral = 0;
+    final double YOFFSET = 1.0;
+    final double XOFFSET = 1.0;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
@@ -98,6 +100,23 @@ public abstract class Shooter {
         double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
         shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
+    }
+
+    public void rotateTurret(double x, double y, double heading){
+        double yDist = YOFFSET - y;
+        double xDist = XOFFSET - x;
+        double angleToGoal = Math.atan(yDist/xDist);
+        double turretIdealAngle = angleToGoal - heading;
+        if(turretIdealAngle > Math.PI*2/3){
+            telemetry.addData("Turret", turretIdealAngle);
+        }
+        else if (turretIdealAngle > Math.PI*2/3) {
+            telemetry.addData("Turret", turretIdealAngle);
+        }
+        else{
+            //TODO setServos
+            //TODO add something to make sure servos dont go in wrong direction
+        }
     }
 
     public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
