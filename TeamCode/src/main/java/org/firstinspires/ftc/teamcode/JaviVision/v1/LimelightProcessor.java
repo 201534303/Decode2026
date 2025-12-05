@@ -34,7 +34,8 @@ public class LimelightProcessor {
         pose.distance = Math.sqrt(pose.tx * pose.tx + pose.tz * pose.tz);
 
         // Correction
-        double error = -0.0569126 * pose.distance + 3.85921;
+        //double error = -0.0569126 * pose.distance + 3.85921;
+        double error = 0;
         pose.distance += error;
 
         pose.id = py[7];

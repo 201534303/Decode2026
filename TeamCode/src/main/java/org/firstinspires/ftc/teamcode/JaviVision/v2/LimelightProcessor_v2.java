@@ -76,7 +76,7 @@ public class LimelightProcessor_v2 {
 
         // Correction
         double error = -0.0569126 * pose.distance + 3.85921;
-        pose.distance += error;
+        pose.distance += 2*error;
 
         pose.id = id;
     }
