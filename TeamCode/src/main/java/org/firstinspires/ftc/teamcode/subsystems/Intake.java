@@ -33,7 +33,7 @@ public abstract class Intake {
     protected void setIntPower(double power){
         iSpeed = power;
     }
-    protected void intakeIn(){
+    public void intakeIn(){
         intakeState = IN;
     }
 
