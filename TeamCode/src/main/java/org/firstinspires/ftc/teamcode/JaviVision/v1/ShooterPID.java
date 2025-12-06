@@ -49,23 +49,16 @@ public class ShooterPID extends LinearOpMode {
             ll.update();   // <-- This refreshes pose
             YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
 
-            double yaw   = angles.getYaw(AngleUnit.DEGREES);    // heading
-            double pitch = angles.getPitch(AngleUnit.DEGREES);
-            double roll  = angles.getRoll(AngleUnit.DEGREES);
-
-
-            telemetry.addData("Heading", yaw);
-            telemetry.addData("Pitch", pitch);
-            telemetry.addData("Roll", roll);
-
             if (ll.pose.valid) {
-                lastHeading = yaw;
                 double id = ll.pose.id;
 
                 // --- IMPORTANT: turret turning should use TX, NOT RX ---
                 // RX is roll, not horizontal aim
 
                 double tx = ll.pose.tx;   // left/right offset in inches
+                double rx = ll.pose.rx;
+                double ry = ll.pose.ry;
+                double rz = ll.pose.rz;
 
                 // Basic proportional control
                 power = tx * 0.007;  // 0.01–0.02 is typical for CR servos
@@ -73,16 +66,19 @@ public class ShooterPID extends LinearOpMode {
                 // Clamp power so servo does not go crazy
                 power = Math.max(-0.5, Math.min(0.5, power));
 
+                power = 0;
+                
                 servo1.setPower(power);
                 servo2.setPower(power);
 
                 // Read IMU orientatio
 
-
-                telemetry.addData("Target X Offset", tx);
-                telemetry.addData("Turret Power", power);
                 telemetry.addData("id", id);
-            }
+                telemetry.addData("Distance", ll.pose.distance);
+                telemetry.addData("rx", rx);
+                telemetry.addData("ry", ry);
+                telemetry.addData("rz", rz);
+            }/*
             else {
                 if (lastHeading != 0) {
                     double diff = yaw - lastHeading;
@@ -94,8 +90,7 @@ public class ShooterPID extends LinearOpMode {
                     telemetry.addData("last", lastHeading);
                 }
             }
-
-            telemetry.addData("Distance", ll.pose.distance);
+            */
             telemetry.update();
         }
     }

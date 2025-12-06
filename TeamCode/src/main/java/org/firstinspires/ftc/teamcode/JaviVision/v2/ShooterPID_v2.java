@@ -119,6 +119,7 @@ public class ShooterPID_v2 extends OpMode {
             telemetry.addData("Target X Offset", tx);
             telemetry.addData("Turret Power", power);
             telemetry.addData("id", id);
+            dash.addData("distance", ll.pose.distance);
             dash.addData("kp", kpTX*tx);
             dash.addData("ki", kiTX*integralSumSearching);
             dash.addData("kd", kdTX*derivative);
