@@ -92,7 +92,7 @@ public class ShooterPID_v2 extends OpMode {
             lastHeading = yaw;
             double id = ll.pose.id;
 
-            double raw_tx = ll.pose.tx;
+            double raw_tx = ll.pose.x;
             
             double tx = alpha*lastTX + (1-alpha)*raw_tx;
 

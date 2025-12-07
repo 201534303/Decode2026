@@ -64,13 +64,13 @@ public class LimelightProcessor_v2 {
 
         }
 
-        pose.tx = tx;
-        pose.ty = ty;
-        pose.tz = 0;
+        pose.x = tx;
+        pose.y = ty;
+        pose.z = 0;
 
-        pose.rx = 0;
-        pose.ry = 0;
-        pose.rz = 0;
+        pose.yaw = 0;
+        pose.pitch = 0;
+        pose.roll = 0;
 
         pose.distance = distance;
 

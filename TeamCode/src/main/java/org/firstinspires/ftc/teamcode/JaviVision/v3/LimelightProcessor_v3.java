@@ -8,94 +8,79 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.List;
 
-@TeleOp
-public class LimelightProcessor_v3 extends LinearOpMode {
+public class LimelightProcessor_v3 {
 
-    Limelight3A limelight;
+    public final LimelightPose pose = new LimelightPose();
+    private Limelight3A limelight;
 
-    double ROBOT_X = 0;
-    double ROBOT_Y = 0;
-    double RED_APRIL_TAG_X = 0.36863; // meters
-    double APRIL_TAG_Y = 3.343275;
-    double ANGLE = 37;
-    // angles are wrong
-    double BLUE_APRIL_TAG_X = 3.2893;
-    //double BLUE_APRIL_TAG_ANGLE = -124
-
-    @Override
-    public void runOpMode() throws InterruptedException {
+    public LimelightProcessor_v3(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-        // Ensure we’re using your AprilTag pipeline
         limelight.pipelineSwitch(5);
         limelight.start();
+    }
 
-        telemetry.addLine("Limelight initialized — waiting for start...");
-        telemetry.update();
-        waitForStart();
+    public void update() {
+        LLResult result = limelight.getLatestResult();
 
-        while (opModeIsActive()) {
-            LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
 
-            if (result != null && result.isValid()) {
-                List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+            if (fiducials != null && fiducials.size() > 0) {
+                LLResultTypes.FiducialResult fiducial = fiducials.get(0);
+                int id = fiducial.getFiducialId();
 
-                if (fiducials != null && fiducials.size() > 0) {
-                    LLResultTypes.FiducialResult fiducial = fiducials.get(0);
-                    int id = fiducial.getFiducialId();
+                Pose3D camPose = fiducial.getCameraPoseTargetSpace();
+                Position position = camPose.getPosition();
+                YawPitchRollAngles rotation = camPose.getOrientation();
 
-                    Pose3D camPose = fiducial.getCameraPoseTargetSpace();
-                    Position position = camPose.getPosition();
-                    YawPitchRollAngles rotation = camPose.getOrientation();
-
-                    // In the current FTC Limelight SDK, you access fields directly:
-                    double camX = position.x;
-                    double camY = position.y;
-                    double camZ = position.z;
-                    double camRoll = rotation.getRoll();
-                    double camPitch = rotation.getPitch();
-                    double camYaw = rotation.getYaw();
-
-                    double distance = Math.sqrt(camX*camX+camZ*camZ);
-                    /*double down_theta = Math.toRadians(camYaw + ANGLE - 90);
-                    double down = Math.sin(down_theta)*distance;
-                    double right_theta = Math.toRadians(180-camYaw-37);
-                    double right = Math.sin(right_theta)*distance;
-
-                    ROBOT_Y = APRIL_TAG_Y - position.y;
-
-                    if (id == 24) {
-                        ROBOT_X = RED_APRIL_TAG_X + position.x;
-                    }
-                    else if (id == 20) {
-                        ROBOT_X = BLUE_APRIL_TAG_X - position.x;
-                    }
-                    */
-
-                    telemetry.addData("roll", camRoll);
-                    telemetry.addData("pitch", camPitch);
-                    telemetry.addData("yaw", camYaw);
-                    telemetry.addData("Tag ID", id);
-                    telemetry.addData("Cam X (m)", "%.3f", camX);
-                    telemetry.addData("Cam Y (m)", "%.3f", camY);
-                    telemetry.addData("Cam Z (m)", "%.3f", camZ);
-                    //telemetry.addData("Pipeline", limelight.getActivePipelineIndex());
-                } else {
-                    telemetry.addLine("No fiducials detected.");
-                }
-            } else {
-                telemetry.addLine("No valid Limelight result yet.");
+                // In the current FTC Limelight SDK, you access fields directly:
+                double camX = 39.37*position.x;
+                double camY = 39.37*position.y;
+                double camZ = 39.37*position.z;
+                double camRoll = rotation.getRoll();
+                double camPitch = rotation.getPitch();
+                double camYaw = rotation.getYaw();
+                double distance = Math.sqrt(camX*camX+camZ*camZ);
+                pose.x = camX;
+                pose.y = camY;
+                pose.z = camZ;
+                pose.yaw = camYaw;
+                pose.pitch = camPitch;
+                pose.roll = camRoll;
+                pose.distance = distance;
             }
-
-            telemetry.update();
-            sleep(20);
+            else {
+                pose.valid = false;
+            }
         }
+        else {
+            pose.valid = false;
+        }
+    }
+
+    public void getRobotPose() {
+        double posX = 0;
+        double posY = 0;
+
+        // IF STATEMENT FOR BLUE
+        if (pose.id == 20) {
+            posX = 0;
+            posY = 0;
+        }
+        // IF STATEMENT FOR RED
+        else if (pose.id == 24) {
+            posX = 0;
+            posY = 0;
+        }
+        return 0;
     }
 }

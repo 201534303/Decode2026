@@ -23,15 +23,15 @@ public class LimelightProcessor {
             return;
         }
 
-        pose.tx = py[0] * 39.37;
-        pose.ty = py[1] * 39.37;
-        pose.tz = py[2] * 39.37;
+        pose.x = py[0] * 39.37;
+        pose.y = py[1] * 39.37;
+        pose.z = py[2] * 39.37;
 
-        pose.rx = py[3] * 180 / Math.PI;
-        pose.ry = py[4] * 180 / Math.PI;
-        pose.rz = py[5] * 180 / Math.PI;
+        pose.yaw = py[3] * 180 / Math.PI;
+        pose.pitch = py[4] * 180 / Math.PI;
+        pose.roll = py[5] * 180 / Math.PI;
 
-        pose.distance = Math.sqrt(pose.tx * pose.tx + pose.tz * pose.tz);
+        pose.distance = Math.sqrt(pose.x * pose.x + pose.z * pose.z);
 
         // Correction
         //double error = -0.0569126 * pose.distance + 3.85921;

@@ -55,10 +55,10 @@ public class ShooterPID extends LinearOpMode {
                 // --- IMPORTANT: turret turning should use TX, NOT RX ---
                 // RX is roll, not horizontal aim
 
-                double tx = ll.pose.tx;   // left/right offset in inches
-                double rx = ll.pose.rx;
-                double ry = ll.pose.ry;
-                double rz = ll.pose.rz;
+                double tx = ll.pose.x;   // left/right offset in inches
+                double rx = ll.pose.yaw;
+                double ry = ll.pose.pitch;
+                double rz = ll.pose.roll;
 
                 // Basic proportional control
                 power = tx * 0.007;  // 0.01–0.02 is typical for CR servos
