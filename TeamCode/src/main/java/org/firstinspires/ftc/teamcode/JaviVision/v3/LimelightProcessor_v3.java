@@ -21,6 +21,17 @@ public class LimelightProcessor_v3 {
 
     public final LimelightPose pose = new LimelightPose();
     private Limelight3A limelight;
+    private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
+
+    private final double REDX = center - 0.381;
+    private final double REDY = center - 0.314325;
+    private final double BLUEX = 0.381 - center;
+    private final double BLUEY = center - 0.314325;
+
+    private final double DIAG = 0.371475;
+    private final double DIAG2 = 0.3302;
+    // field length = 3.6195
+
 
     public LimelightProcessor_v3(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -50,13 +61,21 @@ public class LimelightProcessor_v3 {
                 double camPitch = rotation.getPitch();
                 double camYaw = rotation.getYaw();
                 double distance = Math.sqrt(camX*camX+camZ*camZ);
-                pose.x = camX;
-                pose.y = camY;
+                if (camY < 0) {
+                    pose.x = -camX;
+                    pose.y = -camY;
+                }
+                else {
+                    pose.x = camX;
+                    pose.y = camY;
+                }
                 pose.z = camZ;
                 pose.yaw = camYaw;
                 pose.pitch = camPitch;
                 pose.roll = camRoll;
                 pose.distance = distance;
+                pose.id = id;
+                pose.valid = true;
             }
             else {
                 pose.valid = false;
@@ -68,19 +87,25 @@ public class LimelightProcessor_v3 {
     }
 
     public void getRobotPose() {
-        double posX = 0;
-        double posY = 0;
+        double posX;
+        double posY;
 
-        // IF STATEMENT FOR BLUE
-        if (pose.id == 20) {
-            posX = 0;
-            posY = 0;
-        }
         // IF STATEMENT FOR RED
-        else if (pose.id == 24) {
+        if (pose.id == 24) {
+            double redX = (DIAG2 - pose.x)*0.71933980033;
+            double redY = (DIAG + (-pose.z))*0.80901699437 + pose.x*0.71933980033;
+            posX = 3.6195 - redX;
+            posY = 3.6195 - redY;
+            pose.posX = posX;
+            pose.posY = posY;
+            pose.x = 0;
+            pose.y = 0;
+            pose.z = 0;
+        }
+        // IF STATEMENT FOR BL
+        else if (pose.id == 20) {
             posX = 0;
             posY = 0;
         }
-        return 0;
     }
 }
