@@ -41,6 +41,7 @@ public class ShooterTele extends Shooter{
     }
 
     public void shooterMachine(){
+        rotateTurret(gamepad2.right_stick_x);
         switch (shooterState){
             case CLOSE:
                 runFlywheel(getMotorVel(), 1250, 0);

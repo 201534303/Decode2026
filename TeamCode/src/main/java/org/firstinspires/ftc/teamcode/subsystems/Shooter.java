@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -25,12 +27,15 @@ public abstract class Shooter {
     double integral = 0;
     final double YOFFSET = 1.0;
     final double XOFFSET = 1.0;
+    protected Servo right, left;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
         //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
         shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
+        right = hardwareMap.get(Servo.class, "turret_right");
+        left = hardwareMap.get(Servo.class, "turret_left");
 
         shooterR.setInverted(true);
 
@@ -102,21 +107,10 @@ public abstract class Shooter {
         shooterL.setVelocity(speed);
     }
 
-    public void rotateTurret(double x, double y, double heading){
-        double yDist = YOFFSET - y;
-        double xDist = XOFFSET - x;
-        double angleToGoal = Math.atan(yDist/xDist);
-        double turretIdealAngle = angleToGoal - heading;
-        if(turretIdealAngle > Math.PI*2/3){
-            telemetry.addData("Turret", turretIdealAngle);
-        }
-        else if (turretIdealAngle > Math.PI*2/3) {
-            telemetry.addData("Turret", turretIdealAngle);
-        }
-        else{
-            //TODO setServos
-            //TODO add something to make sure servos dont go in wrong direction
-        }
+    public void rotateTurret(double theta){
+        theta = theta*1.0;
+        right.setPosition(theta+0.5);
+        right.setPosition(theta+0.5);
     }
 
     public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
