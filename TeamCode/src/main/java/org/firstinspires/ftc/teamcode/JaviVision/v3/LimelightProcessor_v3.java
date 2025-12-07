@@ -81,6 +81,5 @@ public class LimelightProcessor_v3 {
             posX = 0;
             posY = 0;
         }
-        return 0;
     }
 }
