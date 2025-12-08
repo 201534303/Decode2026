@@ -11,16 +11,20 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 @Autonomous
-public class FarAuto extends OpMode {
+public class CloseAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private int pathState;
     private IntakeAuto intake;
+    private DrivetrainAuto drivetrain;
+
     private ShooterAuto shooter;
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -74,10 +78,16 @@ public class FarAuto extends OpMode {
             case 0:
                 shooter.close();
                 follower.followPath(startShoot);
-                if(actionTimer.getElapsedTimeSeconds() > 2) {
+
+                //getPosX(), getPosY()
+
+                if(inBetwen(getPosX(), 80, 96) && inBetwen(getPosY(), 74, 90)) {
+                    telemetry.addData("IT IS: ", "BETWEEN");
                     intake.allTheWay();
                 }
-                if(actionTimer.getElapsedTimeSeconds() > 2.5) {
+
+                //add the shoot motor current
+                if(actionTimer.getElapsedTimeSeconds() > 6) {
                     intake.transferOff();
                     setPathState(1);
                 }
@@ -132,6 +142,7 @@ public class FarAuto extends OpMode {
         follower.setStartingPose(startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
+        drivetrain = new DrivetrainAuto(hardwareMap, telemetry);
     }
 
     public void loop() {
@@ -142,6 +153,7 @@ public class FarAuto extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
     }
 
@@ -150,5 +162,11 @@ public class FarAuto extends OpMode {
         pathTimer.resetTimer();
         setPathState(0);
     }
+
+    public double getPosX(){ return follower.getPose().getX();}
+
+    public boolean inBetwen(double pos, double lower, double higher){ return lower <= pos && pos <= higher; }
+
+    public double getPosY(){ return follower.getPose().getY(); }
 
 }

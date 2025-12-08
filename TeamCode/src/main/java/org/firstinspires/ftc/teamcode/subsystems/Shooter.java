@@ -27,7 +27,7 @@ public abstract class Shooter {
     double integral = 0;
     final double YOFFSET = 1.0;
     final double XOFFSET = 1.0;
-    protected Servo right, left;
+    protected Servo right, left, hood;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
@@ -36,6 +36,7 @@ public abstract class Shooter {
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
         right = hardwareMap.get(Servo.class, "turret_right");
         left = hardwareMap.get(Servo.class, "turret_left");
+        hood = hardwareMap.get(Servo.class, "hood");
 
         shooterR.setInverted(true);
 
@@ -108,12 +109,28 @@ public abstract class Shooter {
     }
 
     public void rotateTurret(double theta){
-        theta = theta*1.0;
-        right.setPosition(theta+0.5);
-        right.setPosition(theta+0.5);
+        //right = -0.4695
+        //left = 0.4861
+        theta = theta/360 * 2;
+        if(theta < -0.4845){
+            theta = -0.4845;
+        }
+        if(theta > 0.4811){
+            theta = 0.4811;
+        }
+        theta = theta + 0.5 + + 0.0072;
+
+        theta = 1-theta;
+        right.setPosition(theta);
+        right.setPosition(theta);
     }
 
-    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
+    public void hoodPitch(double theta) {
+        theta = 1-theta;
+        hood.setPosition(theta);
+    }
+
+        public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
 
         integral += error;
         double derivative = error - last_error;

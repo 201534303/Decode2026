@@ -12,6 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class ShooterTele extends Shooter{
     private Gamepad gamepad1, gamepad2;
+    double turret = 0;
+
     private double speed = 0;
     ShooterTele.shooterState shooterState = OFF;
 
@@ -41,10 +43,37 @@ public class ShooterTele extends Shooter{
     }
 
     public void shooterMachine(){
-        rotateTurret(gamepad2.right_stick_x);
+        if(gamepad2.dpad_left){
+            turret = 0;
+        }
+        else if (gamepad2.right_bumper){
+            if(turret < 80){
+                turret += 1;
+            }
+        }
+        else if (gamepad2.left_bumper){
+            if(turret > -80){
+                turret -= 1;
+            }
+        }
+
+        telemetry.addData("turret", turret);
+        rotateTurret(turret);
+
+        if(gamepad2.dpad_up){
+            hoodPitch(1);
+        }
+        if(gamepad2.dpad_down){
+            hoodPitch(0);
+        }
+        if(gamepad2.dpad_right){
+            hoodPitch(0.5);
+        }
+
         switch (shooterState){
             case CLOSE:
                 runFlywheel(getMotorVel(), 1250, 0);
+
                 if (gamepad2.x) {
                     shooterState = FAR;
                 }

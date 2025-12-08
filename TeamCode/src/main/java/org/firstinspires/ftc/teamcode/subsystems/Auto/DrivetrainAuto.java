@@ -13,4 +13,6 @@ public class DrivetrainAuto extends Drivetrain {
     public void stopRobot(){
         driveRobot(0,0,0);
     }
+
+
 }
