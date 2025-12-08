@@ -54,9 +54,9 @@ public class LimelightProcessor_v3 {
                 YawPitchRollAngles rotation = camPose.getOrientation();
 
                 // In the current FTC Limelight SDK, you access fields directly:
-                double camX = 39.37*position.x;
-                double camY = 39.37*position.y;
-                double camZ = 39.37*position.z;
+                double camX = position.x;
+                double camY = position.y;
+                double camZ = position.z;
                 double camRoll = rotation.getRoll();
                 double camPitch = rotation.getPitch();
                 double camYaw = rotation.getYaw();
