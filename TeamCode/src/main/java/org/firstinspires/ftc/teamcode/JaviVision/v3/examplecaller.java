@@ -44,11 +44,15 @@ public class examplecaller extends OpMode {
             ll.getRobotPose();
             double posX = ll.pose.posX;
             double posY = ll.pose.posY;
-            telemetry.addData("posX", posX);
-            telemetry.addData("posY", posY);
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
-            telemetry.addData("z",z);
+            telemetry.addData("distance",39.3701*distance);
+            telemetry.addData("yaw", yaw);
+            telemetry.addData("pitch", pitch);
+            telemetry.addData("roll", roll);
+            telemetry.addData("posX", 39.3701*posX);
+            telemetry.addData("posY", 39.3701*posY);
+            telemetry.addData("x", 39.3701*x);
+            telemetry.addData("y", 39.3701*y);
+            telemetry.addData("z",39.3701*z);
             telemetry.addData("id",id);
         }
         else{
