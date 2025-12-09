@@ -5,18 +5,16 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-public class FarPaths {
-    private Follower follower;
-
+public class FarPaths extends Paths{
     //Paths
 //    public Pose start = new Pose(0, 0, Math.toRadians(0));
 //    public Pose shootPose = new Pose(0, 0, Math.toRadians(0));
 
-    private final Pose start= new Pose(125, 128, Math.toRadians(-52)); // Start Pose of our robot.
-    private final Pose shootPose = new Pose(88, 82, Math.toRadians(0));
-    private final Pose ballCollect1 = new Pose(125, 82, Math.toRadians(0));
-    private final Pose ballCollect2 = new Pose(125, 82, Math.toRadians(0));
-    private final Pose ballCollect3 = new Pose(120, 82, Math.toRadians(0));
+    private final Pose start= new Pose(0, 0, Math.toRadians(0)); // Start Pose of our robot.
+    private final Pose shootPose = new Pose(0, 0, Math.toRadians(0));
+    private final Pose ballCollect1 = new Pose(0, 0, Math.toRadians(0));
+    private final Pose ballCollect2 = new Pose(0, 0, Math.toRadians(0));
+    private final Pose ballCollect3 = new Pose(0, 0, Math.toRadians(0));
     //private final Pose ballCollect3 = new Pose();
 
 
