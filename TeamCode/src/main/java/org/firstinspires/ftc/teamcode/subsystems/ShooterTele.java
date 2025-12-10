@@ -60,19 +60,11 @@ public class ShooterTele extends Shooter{
         telemetry.addData("turret", turret);
         rotateTurret(turret);
 
-        if(gamepad2.dpad_up){
-            hoodPitch(1);
-        }
-        if(gamepad2.dpad_down){
-            hoodPitch(0);
-        }
-        if(gamepad2.dpad_right){
-            hoodPitch(0.5);
-        }
 
         switch (shooterState){
             case CLOSE:
-                runFlywheel(getMotorVel(), 1250, 0);
+                runFlywheel(getMotorVel(), 1300, 0);
+                hoodPitch(0.5);
 
                 if (gamepad2.x) {
                     shooterState = FAR;
@@ -88,7 +80,8 @@ public class ShooterTele extends Shooter{
                 if (gamepad2.b) {
                     shooterState = OFF;
                 }
-                runFlywheel(getMotorVel(), 1600, 0);
+                runFlywheel(getMotorVel(), 1610, 0);
+                hoodPitch(1);
                 break;
             case OFF:
                 if (gamepad2.a) {
@@ -98,6 +91,7 @@ public class ShooterTele extends Shooter{
                     shooterState = FAR;
                 }
                 runFlywheel(getMotorVel(), 0, 0);
+                hoodPitch(0);
                 break;
         }
 
@@ -106,7 +100,9 @@ public class ShooterTele extends Shooter{
     public void shooterMachineSingle(){
         switch (shooterState){
             case CLOSE:
-                runFlywheel(getMotorVel(), 1250, 0);
+                runFlywheel(getMotorVel(), 1300, 0);
+                hoodPitch(0.5);
+
                 if (gamepad1.x) {
                     shooterState = FAR;
                 }
@@ -121,7 +117,8 @@ public class ShooterTele extends Shooter{
                 if (gamepad1.b) {
                     shooterState = OFF;
                 }
-                runFlywheel(getMotorVel(), 1600, 0);
+                runFlywheel(getMotorVel(), 1610, 0);
+                hoodPitch(1);
                 break;
             case OFF:
                 if (gamepad1.a) {
@@ -131,6 +128,7 @@ public class ShooterTele extends Shooter{
                     shooterState = FAR;
                 }
                 runFlywheel(getMotorVel(), 0, 0);
+                hoodPitch(0);
                 break;
         }
 
