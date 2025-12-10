@@ -78,8 +78,6 @@ public class CloseAuto extends OpMode {
                 shooter.close();
                 follower.followPath(startShoot);
 
-                //getPosX(), getPosY()
-
                 if(inBetwen(getPosX(), 80, 96) && inBetwen(getPosY(), 74, 90)) {
                     telemetry.addData("IT IS: ", "BETWEEN");
                     intake.allTheWay();

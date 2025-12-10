@@ -36,6 +36,7 @@ abstract class Paths {
 
     //no way this works
     public boolean inBetween(double lowX, double hiX, double lowY, double hiY){
-        return lowX <= getPosX() && getPosX() <= hiX && lowY <= getPosY() && getPosY() <= hiY;
+        //return 80 <= 87 && 96 >= 87 && 74 <= 81, 90 >= 81
+        return lowX <= getPosX() && hiX >= getPosX() && lowY <= getPosY() && hiY >= getPosY() ;
     }
 }
