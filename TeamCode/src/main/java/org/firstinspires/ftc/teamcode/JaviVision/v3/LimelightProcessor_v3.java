@@ -3,167 +3,123 @@ package org.firstinspires.ftc.teamcode.JaviVision.v3;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
+import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
+
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import java.util.List;
-import java.util.Map;
+
 
 public class LimelightProcessor_v3 {
 
-    // ===== PUBLIC STATE =====
     public final LimelightPose pose = new LimelightPose();
+    public GoBildaPinpointDriver odo;
     private Limelight3A limelight;
+    private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
 
-    // ===== TAG FIELD LOCATIONS (METERS) =====
-    private static class TagPose {
-        double x, y, yaw;
-        TagPose(double x, double y, double yaw) {
-            this.x = x;
-            this.y = y;
-            this.yaw = yaw;
-        }
-    }
+    private final double REDX = 0.381;
+    private final double REDY = 0.314325;
+    private final double BLUEX = 0.381 - center;
+    private final double BLUEY = center - 0.314325;
 
-    private final Map<Integer, TagPose> tagMap = Map.of(
-            24, new TagPose(3.2385, 3.305, Math.toRadians(180)),
-            20, new TagPose(0.381, 3.305, Math.toRadians(0))
-    );
+    private final double DIAG = 0.371475;
+    private final double DIAG2 = 0.3302;
 
-    // ===== INIT =====
-    public LimelightProcessor_v3(HardwareMap hardwareMap) {
+    private double stored_angle;
+    // field length = 3.6195
+
+
+    public LimelightProcessor_v3(HardwareMap hardwareMap, GoBildaPinpointDriver odo) {
+        this.odo = odo;
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(5);
         limelight.start();
     }
 
-    // ===== UPDATE VISION DATA =====
     public void update() {
+        odo.update();
+        Pose2D pos = odo.getPosition();
+        double yaw = pos.getHeading(AngleUnit.DEGREES);
+
+        stored_angle = yaw;
 
         LLResult result = limelight.getLatestResult();
 
-        if (result == null || !result.isValid()) {
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+
+            if (fiducials != null && fiducials.size() > 0) {
+                LLResultTypes.FiducialResult fiducial = fiducials.get(0);
+                int id = fiducial.getFiducialId();
+
+                Pose3D camPose = fiducial.getCameraPoseTargetSpace();
+                Position position = camPose.getPosition();
+                YawPitchRollAngles rotation = camPose.getOrientation();
+
+                // In the current FTC Limelight SDK, you access fields directly:
+                double camX = position.x;
+                double camY = position.y;
+                double camZ = position.z;
+                double camRoll = rotation.getRoll();
+                double camPitch = rotation.getPitch();
+                double camYaw = yaw;
+                double distance = Math.sqrt(camX*camX+camZ*camZ);
+                if (camY < 0) {
+                    pose.x = -camX;
+                    pose.y = -camY;
+                }
+                else {
+                    pose.x = camX;
+                    pose.y = camY;
+                }
+                pose.z = camZ;
+                pose.yaw = camYaw;
+                pose.pitch = camPitch;
+                pose.roll = camRoll;
+                pose.distance = distance;
+                pose.id = id;
+                pose.valid = true;
+            }
+            else {
+                pose.valid = false;
+            }
+        }
+        else {
             pose.valid = false;
-            return;
         }
-
-        List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
-        if (fiducials == null || fiducials.isEmpty()) {
-            pose.valid = false;
-            return;
-        }
-
-        LLResultTypes.FiducialResult fiducial = fiducials.get(0);
-        Pose3D camPose = fiducial.getCameraPoseTargetSpace();
-
-        Position position = camPose.getPosition();
-        YawPitchRollAngles rotation = camPose.getOrientation();
-
-        double camX = position.x;
-        double camY = position.y;
-        double camZ = position.z;
-
-        double camYaw = rotation.getYaw();
-        double camPitch = rotation.getPitch();
-        double camRoll = rotation.getRoll();
-
-        if (Math.abs(camYaw) > Math.toRadians(90)) {
-            camX = -camX;
-            camY = -camY;
-            camYaw -= Math.copySign(Math.PI, camYaw);
-        }
-
-        pose.x = camX;
-        pose.y = camY;
-        pose.z = camZ;
-
-        pose.yaw = camYaw;
-        pose.pitch = camPitch;
-        pose.roll = camRoll;
-
-        pose.distance = Math.sqrt(camX*camX + camZ * camZ);
-
-        pose.id = fiducial.getFiducialId();
-        pose.valid = true;
     }
 
-    // ===== FIELD POSITION SOLVER =====
     public void getRobotPose() {
+        double posX = 0;
+        double posY = 0;
+        double theta = 180 - Math.abs(stored_angle);
 
-        if (!pose.valid) return;
+        // IF STATEMENT FOR RED
+        if (pose.id == 24) {
+            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
+            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
 
-        TagPose tag = tagMap.get(pose.id);
-        if (tag == null) return;
-
-        // Camera → Tag
-        double[][] T_cam_tag = buildTransform(
-                pose.x, 0, pose.z,
-                0, pose.yaw, 0
-        );
-
-        // Tag → Camera
-        double[][] T_tag_cam = invert(T_cam_tag);
-
-        // Field → Tag
-        double[][] T_field_tag = buildTransform(
-                tag.x, 0, tag.y,
-                0, tag.yaw, 0
-        );
-
-        // Field → Camera
-        double[][] T_field_cam = multiply(T_field_tag, T_tag_cam);
-
-        // Save final field position
-        pose.posX = T_field_cam[0][3];
-        pose.posY = T_field_cam[2][3];
-    }
-
-    // ===== TRANSFORM MATH =====
-
-    static double[][] buildTransform(double x, double y, double z,
-                                     double roll, double yaw, double pitch)
-    {
-        double cy = Math.cos(yaw), sy = Math.sin(yaw);
-
-        return new double[][]{
-                { cy, 0, sy, x },
-                {  0, 1,  0, y },
-                { -sy, 0, cy, z },
-                {  0, 0,  0, 1 }
-        };
-    }
-
-    static double[][] invert(double[][] T) {
-
-        double[][] inv = new double[4][4];
-
-        for (int i = 0; i < 3; i++)
-            for (int j = 0; j < 3; j++)
-                inv[i][j] = T[j][i];
-
-        for (int i = 0; i < 3; i++)
-            inv[i][3] =
-                    -(inv[i][0]*T[0][3] +
-                            inv[i][1]*T[1][3] +
-                            inv[i][2]*T[2][3]);
-
-        inv[3][3] = 1;
-        return inv;
-    }
-
-    static double[][] multiply(double[][] A, double[][] B) {
-
-        double[][] R = new double[4][4];
-
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < 4; j++)
-                for (int k = 0; k < 4; k++)
-                    R[i][j] += A[i][k] * B[k][j];
-
-        return R;
+            posX = a;
+            posY = b;
+        }
+        // IF STATEMENT FOR BL
+        else if (pose.id == 20) {
+            posX = 0;
+            posY = 0;
+        }
+        pose.posX = posX;
+        pose.posY = posY;
     }
 }

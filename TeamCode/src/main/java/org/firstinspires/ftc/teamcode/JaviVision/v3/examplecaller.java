@@ -28,7 +28,12 @@ public class examplecaller extends OpMode {
     @Override
     public void init()
     {
-        ll = new LimelightProcessor_v3(hardwareMap);
+        GoBildaPinpointDriver odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        odo.setOffsets(-84.0, -168.0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.resetPosAndIMU();
+        ll = new LimelightProcessor_v3(hardwareMap, odo);
     }
     public void loop() {
         ll.update();   // <-- This refreshes pose
