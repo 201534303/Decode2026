@@ -104,7 +104,10 @@ public class LimelightProcessor_v3 {
     public void getRobotPose() {
         double posX = 0;
         double posY = 0;
-        double theta = 180 - Math.abs(stored_angle);
+        double extra_theta = Math.asin(Math.abs(pose.x)/pose.distance);
+        double theta = 180 - Math.abs(stored_angle) - extra_theta;
+        pose.yaw = theta;
+
 
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
