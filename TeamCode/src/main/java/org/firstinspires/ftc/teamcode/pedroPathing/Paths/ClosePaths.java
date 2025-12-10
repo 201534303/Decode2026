@@ -11,8 +11,11 @@ public class ClosePaths extends Paths{
         this.follower = follower;
     }
     //Paths
-    private final Pose startPose = makePos(125, 128, -52);// Start Pose of our robot.
-    private final Pose shootPose = makePos(88, 82);
+    //private final Pose startPose = makePos(125, 128, -52);// Start Pose of our robot.
+    //private final Pose shootPose = makePos(88, 82);
+
+    public final Pose startPose = new Pose(125, 128, Math.toRadians(-52)); // Start Pose of our robot.
+    private final Pose shootPose = new Pose(88, 82, Math.toRadians(0));
     private final Pose ballCollect1 = makePos(125, 88);
     private final Pose ballCollect2 = makePos(125, 82);
     private final Pose ballCollect3 = makePos(120, 82);

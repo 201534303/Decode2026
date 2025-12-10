@@ -30,62 +30,68 @@ public class NewCloseAuto extends OpMode {
     private DrivetrainAuto drivetrain;
     private ShooterAuto shooter;
     private ElapsedTime runtime = new ElapsedTime();
-
-    private PathChain startShoot, shootGrab1, grabShoot1, shootGrab2, grabShoot2;
-
+    private int counter;
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
                 shooter.close();
                 follower.followPath(paths.startToShoot());
 
-                //getPosX(), getPosY()
+                setPathState(1);
+                break;
 
-                if(paths.inBetween(80, 96,74, 90)) {
+            case 1:
+                if (!follower.isBusy() && paths.inBetween(80, 96, 74, 90)) {
                     telemetry.addData("IT IS: ", "BETWEEN");
                     intake.allTheWay();
+                    setPathState(2);
                 }
 
-                //add the shoot motor current
-                if(actionTimer.getElapsedTimeSeconds() > 6) {
-                    intake.transferOff();
-                    setPathState(1);
-                }
                 break;
-            case 1:
-                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 3) {
-                    intake.intakeIn();
-                    follower.followPath(shootGrab1,0.4, true);
-                    if(actionTimer.getElapsedTimeSeconds() > 2) {
-                        intake.allTheWay();
-                    }
-                    if(actionTimer.getElapsedTimeSeconds() > 2.5) {
-                        intake.transferOff();
-                        setPathState(2);
-                    }
-                }
-                else{
-                    intake.intakeOff();
-                }
-                break;
-            case 2:
-                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-                    follower.followPath(grabShoot1,0.8, true);
-                    setPathState(3);
-                }
-                break;
-            case 3:
-                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-                    follower.followPath(shootGrab2,0.4, true);
-                    setPathState(4);
-                }
-                break;
-            case 4:
-                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-                    follower.followPath(grabShoot2,0.8, true);
-                    setPathState(-1);
-                }
-                break;
+
+//            case 2:
+//                //shooter check
+//                if (paths.inBetween(80, 96, 74, 90)) {
+//                    telemetry.addData("IT IS: ", "BETWEEN");
+//                    intake.allTheWay();
+//                }
+//
+//                break;
+
+//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 3) {
+//                    intake.intakeIn();
+//                    follower.followPath(paths.shootTo1());
+//
+//                    if(actionTimer.getElapsedTimeSeconds() > 2) {
+//                        intake.allTheWay();
+//                    }
+//                    if(actionTimer.getElapsedTimeSeconds() > 2.5) {
+//                        intake.transferOff();
+//                        setPathState(2);
+//                    }
+//                }
+//                else{
+//                    intake.intakeOff();
+//                }
+//                break;
+//            case 2:
+//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
+//                    follower.followPath(paths.collectToShoot());
+//                    setPathState(3);
+//                }
+//                break;
+//            case 3:
+//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
+//                    follower.followPath(shootGrab2,0.4, true);
+//                    setPathState(4);
+//                }
+//                break;
+//            case 4:
+//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
+//                    follower.followPath(grabShoot2,0.8, true);
+//                    setPathState(-1);
+//                }
+//                break;
         }
     }
 
@@ -93,7 +99,7 @@ public class NewCloseAuto extends OpMode {
         pathState = pState;
         actionTimer.resetTimer();
     }
-    public int nextPaht(int pState) {
+    public int nextPath(int pState) {
         actionTimer.resetTimer();
         return pState+1;
     }
@@ -103,6 +109,7 @@ public class NewCloseAuto extends OpMode {
         actionTimer = new Timer();
         follower = Constants.createFollower(hardwareMap);
         paths = new ClosePaths(follower);
+        follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
         drivetrain = new DrivetrainAuto(hardwareMap, telemetry);
