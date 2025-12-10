@@ -29,16 +29,14 @@ public class LimelightProcessor_v3 {
     private Limelight3A limelight;
     private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
 
-    private final double REDX = 0.381;
-    private final double REDY = 0.314325;
-    private final double BLUEX = 0.381 - center;
-    private final double BLUEY = center - 0.314325;
+    private final double CONSTX = 0.381;
+    private final double CONSTY = 0.314325;
 
     private final double DIAG = 0.371475;
     private final double DIAG2 = 0.3302;
 
     private double stored_angle;
-    // field length = 3.6195
+    private final double field = 3.6195;
 
 
     public LimelightProcessor_v3(HardwareMap hardwareMap, GoBildaPinpointDriver odo) {
@@ -106,23 +104,23 @@ public class LimelightProcessor_v3 {
         double posY = 0;
         double extra_theta = Math.asin(Math.abs(pose.x)/pose.distance);
         double theta = 180 - Math.abs(stored_angle) - extra_theta;
+        double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
+        double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
         pose.yaw = theta;
-
+        posX = CONSTX + a;
+        posY = CONSTY + b;
 
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
-
-            posX = a;
-            posY = b;
+            posX = field - posX;
+            posY = field - posY;
+            pose.posX = posX;
+            pose.posY = posY;
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
-            posX = 0;
-            posY = 0;
+            pose.posX = posX;
+            pose.posY = posY;
         }
-        pose.posX = posX;
-        pose.posY = posY;
     }
 }
