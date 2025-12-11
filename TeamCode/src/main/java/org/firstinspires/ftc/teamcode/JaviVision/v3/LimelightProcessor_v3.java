@@ -120,7 +120,7 @@ public class LimelightProcessor_v3 {
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
             pose.posX = posX;
-            pose.posY = posY;
+            pose.posY = field - posY;
         }
     }
 }
