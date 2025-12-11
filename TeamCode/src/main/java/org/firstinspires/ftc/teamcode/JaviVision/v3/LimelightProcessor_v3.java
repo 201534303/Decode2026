@@ -36,6 +36,7 @@ public class LimelightProcessor_v3 {
     private final double DIAG2 = 0.3302;
 
     private double stored_angle;
+    private double stored_tx;
     private final double field = 3.6195;
 
 
@@ -61,6 +62,8 @@ public class LimelightProcessor_v3 {
             if (fiducials != null && fiducials.size() > 0) {
                 LLResultTypes.FiducialResult fiducial = fiducials.get(0);
                 int id = fiducial.getFiducialId();
+
+                stored_tx = fiducial.getTargetXDegrees();
 
                 Pose3D camPose = fiducial.getCameraPoseTargetSpace();
                 Position position = camPose.getPosition();
@@ -102,25 +105,38 @@ public class LimelightProcessor_v3 {
     public void getRobotPose() {
         double posX = 0;
         double posY = 0;
-        double extra_theta = Math.asin(Math.abs(pose.x)/pose.distance);
-        double theta = 180 - Math.abs(stored_angle) - extra_theta;
-        double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-        double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
-        pose.yaw = theta;
-        posX = CONSTX + a;
-        posY = CONSTY + b;
 
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            posX = field - posX;
-            posY = field - posY;
-            pose.posX = posX;
-            pose.posY = posY;
+            double theta = 180 - Math.abs(stored_angle) - stored_tx;
+            pose.heading = stored_angle;
+            pose.tx = stored_tx;
+            pose.theta = theta;
+            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
+            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            posX = field - (CONSTX + a);
+            posY = field - (CONSTY + b);
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
-            pose.posX = posX;
-            pose.posY = field - posY;
+            double theta = Math.abs(stored_angle) + stored_tx;
+            pose.heading = stored_angle;
+            pose.tx = stored_tx;
+            pose.theta = theta;
+            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
+            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            posX = CONSTX + a;
+            posY = field - (CONSTY + b);
         }
+        pose.posX = posX - 0.1777999;
+        pose.posY = posY - 0.20319989;
+        double dx = Math.cos(Math.toRadians(stored_angle))*(-7) - Math.sin(Math.toRadians(stored_angle))*(-8);
+        double dy = Math.cos(Math.toRadians(stored_angle))*(-7) + Math.sin(Math.toRadians(stored_angle))*(-8);
+
+        double cornerX = posX + dx;
+        double cornerY = posY + dx;
+
+        pose.cornerX = cornerX;
+        pose.cornerX = cornerY;
     }
 }

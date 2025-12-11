@@ -10,8 +10,15 @@ public class LimelightPose {
     public double distance = 0;
     public double id = -1;
 
+    public double theta = 0;
+    public double tx = 0;
+    public double heading = 0;
+
     public double posX;
     public double posY;
+
+    public double cornerX;
+    public double cornerY;
 
     public boolean valid = false; // set true when new data arrives
 
