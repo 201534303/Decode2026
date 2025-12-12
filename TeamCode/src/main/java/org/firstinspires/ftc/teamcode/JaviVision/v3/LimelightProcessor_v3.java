@@ -128,10 +128,10 @@ public class LimelightProcessor_v3 {
             posX = CONSTX + a;
             posY = field - (CONSTY + b);
         }
-        pose.posX = posX - 0.1777999;
-        pose.posY = posY - 0.20319989;
-        double dx = Math.cos(Math.toRadians(stored_angle))*(-7) - Math.sin(Math.toRadians(stored_angle))*(-8);
-        double dy = Math.cos(Math.toRadians(stored_angle))*(-7) + Math.sin(Math.toRadians(stored_angle))*(-8);
+        pose.posX = posX;
+        pose.posY = posY;
+        double dx = Math.cos(Math.toRadians(stored_angle))*(-0.1777999) - Math.sin(Math.toRadians(stored_angle))*(-0.20319989);
+        double dy = Math.cos(Math.toRadians(stored_angle))*(-0.1777999) + Math.sin(Math.toRadians(stored_angle))*(-0.20319989);
 
         double cornerX = posX + dx;
         double cornerY = posY + dx;
