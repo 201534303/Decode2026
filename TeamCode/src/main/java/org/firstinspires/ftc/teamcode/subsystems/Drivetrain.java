@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 public abstract class Drivetrain {
 
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
-    GoBildaPinpointDriver odo;
+    //GoBildaPinpointDriver odo;
 
 
     protected Telemetry telemetry;
@@ -28,7 +28,7 @@ public abstract class Drivetrain {
         backLeft = hardwareMap.get(DcMotor.class, "leftBackMotor");
         backRight = hardwareMap.get(DcMotor.class, "rightBackMotor");
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        //odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -41,11 +41,11 @@ public abstract class Drivetrain {
 
         telemetry = t;
 
-        imu = hardwareMap.get(IMU.class, "imu");
+        //imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
-        imu.resetYaw();
+        //imu.initialize(parameters);
+        //imu.resetYaw();
     }
 
     protected void driveRobot(double drive, double strafe, double turn){

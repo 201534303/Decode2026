@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
 import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
@@ -22,30 +25,31 @@ public class MainTeleOpSingleDriver extends OpMode {
 
     private DrivetrainTele dt;
     private IntakeTele intake;
+    private Follower follower;
+
     ShooterTele shooter;
     private Telemetry dash;
     public static double power;
     public static double targetVelo = 1300;
-    public double botHeading;
     public double cameraLoopCounter = 0;
-    double lastTX;
 
-    public GoBildaPinpointDriver odo;
-    LimelightProcessor_v3 ll;
-    public static double alpha = 0.8;
+    //LimelightProcessor_v3 ll;
 
+    public final Pose homing = new Pose(72, 0, -Math.toRadians(90));
+    public Pose reset = new Pose(0, 0, 0);
 
 
 
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
+        follower = Constants.createFollower(hardwareMap);
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
         telemetry.addData("Status", "Initialized");
-        GoBildaPinpointDriver odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
-        ll = new LimelightProcessor_v3(hardwareMap, odo);
+        //ll = new LimelightProcessor_v3(hardwareMap, odo);
+
 
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -64,17 +68,18 @@ public class MainTeleOpSingleDriver extends OpMode {
     @Override
     public void loop() {
         //driving
-        if (cameraLoopCounter == 20){
-            ll.update();
-            cameraLoopCounter = 0;
+        if (gamepad1.share){
+            follower.setPose(homing);
         }
-        double raw_tx = ll.pose.x;
+        reset = new Pose (follower.getPose().getX(), follower.getPose().getY(), 0);
+        if (gamepad1.options){
+            follower.setPose(reset);
+        }
+        follower.update();
 
-        double tx = alpha*lastTX + (1-alpha)*raw_tx;
-        lastTX = tx;
 
-        dt.feildCentricDrive();
-        dt.updateOdo();
+        dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
+        //dt.updateOdo();
 
 
         //intake
@@ -82,21 +87,13 @@ public class MainTeleOpSingleDriver extends OpMode {
 
         //shooter
         shooter.shooterMachineSingle();
+        shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
 
-        //update power var
-        power = shooter.power;
-
-        //telemetry
-        /*
-        telemetry.addData("llx", ll.pose.x*39.3701);
-        telemetry.addData("tx", tx);
-
-        telemetry.addData("llpx", ll.pose.posX*39.3701);
-        telemetry.addData("loop counter", cameraLoopCounter);
-
-         */
-
-        telemetry.addData("rot", dt.botHeadingPIN());
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("turr heating", (90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
+        telemetry.addData("raw a tan", Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX())));
 
         dash.addData("shooter vel", shooter.getMotorVel());
         dash.addData("target vel", targetVelo);

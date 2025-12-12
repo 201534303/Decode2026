@@ -25,7 +25,7 @@ public class DrivetrainTele extends Drivetrain{
         gamepad2 = g2;
     }
 
-    public void feildCentricDrive(){
+    public void feildCentricDrive(double heading){
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
         double rot = gamepad1.left_stick_x;
@@ -33,12 +33,7 @@ public class DrivetrainTele extends Drivetrain{
         double brake = gamepad1.right_trigger;
         double superBrake = gamepad1.left_trigger;
 
-        if (gamepad1.options){
-            imu.resetYaw();
-            resetHeading();
-        }
-
-        double botHeading = -Math.toRadians(botHeadingPIN());
+        double botHeading = -Math.toRadians(heading);
 
         // Rotate the movement direction counter to the bot's rotation
         double rotedX = xMove * Math.cos(botHeading) - yMove * Math.sin(botHeading);
@@ -80,7 +75,7 @@ public class DrivetrainTele extends Drivetrain{
     public double botHeadingIMU(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
-
+    /*
     public double botHeadingPIN(){
         return odo.getPosition().getHeading(AngleUnit.DEGREES);
     }
@@ -92,5 +87,7 @@ public class DrivetrainTele extends Drivetrain{
     public void updateOdo(){
         odo.update();
     }
+
+     */
 
 }

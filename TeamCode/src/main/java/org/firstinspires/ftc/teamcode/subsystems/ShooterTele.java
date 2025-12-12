@@ -42,6 +42,11 @@ public class ShooterTele extends Shooter{
 
     }
 
+    public void setTurretAngle(double angle){
+        //rotateTurret(0.5+angle/120);
+        rotateTurret(angle);
+    }
+
     public void shooterMachine(){
         if(gamepad2.dpad_left){
             turret = 0;
