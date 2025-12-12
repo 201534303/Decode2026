@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 @Autonomous
 public class NewCloseAuto extends OpMode {
     private Follower follower;
-    private Timer pathTimer, actionTimer;
+    private Timer pathTimer, actionTimer, timer;
     private int pathState;
     private ClosePaths paths;
 
@@ -34,65 +34,136 @@ public class NewCloseAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                shooter.close();
-                follower.followPath(paths.startToShoot());
-
+                intake.intakeIn();
+                follower.followPath(paths.startToShoot(), 0.6, true);
                 setPathState(1);
+
                 break;
 
             case 1:
                 if (!follower.isBusy() && paths.inBetween(80, 96, 74, 90)) {
                     telemetry.addData("IT IS: ", "BETWEEN");
                     intake.allTheWay();
+                }
+
+                if(waitSecs(4)){
                     setPathState(2);
                 }
 
                 break;
 
-//            case 2:
-//                //shooter check
-//                if (paths.inBetween(80, 96, 74, 90)) {
-//                    telemetry.addData("IT IS: ", "BETWEEN");
-//                    intake.allTheWay();
-//                }
-//
-//                break;
+            case 2:
+                if(!follower.isBusy()) {
+                    intake.transferOff();
+                    //intake.intakeIn();
+                    follower.followPath(paths.shootToCollect(paths.ballCollect1), 0.6, true);
+                    setPathState(3);
+                }
 
-//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 3) {
-//                    intake.intakeIn();
-//                    follower.followPath(paths.shootTo1());
-//
-//                    if(actionTimer.getElapsedTimeSeconds() > 2) {
-//                        intake.allTheWay();
-//                    }
-//                    if(actionTimer.getElapsedTimeSeconds() > 2.5) {
-//                        intake.transferOff();
-//                        setPathState(2);
-//                    }
-//                }
-//                else{
-//                    intake.intakeOff();
-//                }
-//                break;
-//            case 2:
-//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-//                    follower.followPath(paths.collectToShoot());
-//                    setPathState(3);
-//                }
-//                break;
-//            case 3:
-//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-//                    follower.followPath(shootGrab2,0.4, true);
-//                    setPathState(4);
-//                }
-//                break;
-//            case 4:
-//                if(!follower.isBusy() && actionTimer.getElapsedTimeSeconds() > 2) {
-//                    follower.followPath(grabShoot2,0.8, true);
-//                    setPathState(-1);
-//                }
-//                break;
+                if(waitSecs(4)){
+                    setPathState(3);
+                }
+
+                //some case checking that robot got all 3 balls
+
+                break;
+
+            case 3:
+                if(!follower.isBusy()) {
+                    follower.followPath(paths.reset(), 0.6, true);
+                    //setPathState(4);
+                }
+                if(waitSecs(1.5)){
+                    setPathState(4);
+                }
+                break;
+
+            case 4:
+                if(!follower.isBusy()) {
+                    intake.transferOff();
+                    follower.followPath(paths.collectToShoot(), 0.6, true);
+                    setPathState(5);
+                }
+                break;
+
+            case 5:
+                if(!follower.isBusy()) {
+                    intake.allTheWay();
+                    setPathState(6);
+                }
+                break;
+
+            case 6:
+                if(!follower.isBusy()){
+                    if(waitSecs(1)) {
+                        intake.transferOff();
+                        follower.followPath(paths.shootTo2(), 0.6, true);
+                        setPathState(7);
+                    }
+                }
+                break;
+
+            case 7:
+                if(!follower.isBusy()) {
+                        follower.followPath(paths.collectToShoot(), 0.6, true);
+                        setPathState(8);
+                }
+                break;
+
+            case 8:
+                if(!follower.isBusy()) {
+                    intake.allTheWay();
+                    setPathState(9);
+                }
+                break;
+
+            case 9:
+                if(!follower.isBusy()){
+                    if(waitSecs(1)) {
+                        intake.transferOff();
+                        follower.followPath(paths.shootTo3(), 0.6, true);
+                        setPathState(10);
+                    }
+                }
+                break;
+
+            case 10:
+                if(!follower.isBusy()) {
+                    follower.followPath(paths.collectToShoot(), 0.6, true);
+                    setPathState(11);
+                }
+                break;
+
+            case 11:
+                if(!follower.isBusy()) {
+                    intake.allTheWay();
+                    setPathState(12);
+                }
+                break;
+
+            case 12:
+                if(!follower.isBusy()){
+                    if(waitSecs(1)) {
+                        intake.transferOff();
+                        follower.followPath(paths.shootToOut(), 0.6, true);
+                        setPathState(13);
+                    }
+                }
+                break;
+
+            case 13:
+                if(!follower.isBusy()){
+                   shooter.off();
+                   intake.intakeOff();
+                   intake.transferOff();
+                   shooter.rotateTurret(0);
+                }
+                break;
         }
+    }
+
+    public boolean waitSecs(double seconds){
+        return actionTimer.getElapsedTimeSeconds() > seconds;
     }
 
     public void setPathState(int pState) {
@@ -107,15 +178,20 @@ public class NewCloseAuto extends OpMode {
     public void init() {
         pathTimer = new Timer();
         actionTimer = new Timer();
+
         follower = Constants.createFollower(hardwareMap);
         paths = new ClosePaths(follower);
         follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
         drivetrain = new DrivetrainAuto(hardwareMap, telemetry);
+
+        shooter.rotateTurret(-53);
+        shooter.hoodPitch(0.5);
     }
 
     public void loop() {
+        shooter.close();
         follower.update();
         autonomousPathUpdate();
         // Feedback to Driver Hub for debugging
