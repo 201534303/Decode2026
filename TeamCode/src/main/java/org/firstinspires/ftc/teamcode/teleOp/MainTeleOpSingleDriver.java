@@ -84,7 +84,6 @@ public class MainTeleOpSingleDriver extends OpMode {
 
         //intake
         intake.updateSingle();
-
         //shooter
         shooter.shooterMachineSingle();
         shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));

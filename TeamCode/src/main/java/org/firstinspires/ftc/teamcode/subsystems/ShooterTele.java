@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterTele extends Shooter{
     private Gamepad gamepad1, gamepad2;
     double turret = 0;
+    private int mode = 0;
+
 
     private double speed = 0;
     ShooterTele.shooterState shooterState = OFF;
@@ -45,22 +47,21 @@ public class ShooterTele extends Shooter{
     public void setTurretAngle(double angle){
         //rotateTurret(0.5+angle/120);
         rotateTurret(angle);
+        turret = angle;
     }
 
+    public void setMode(int m){
+        mode = m;
+    }
+
+    public int getMod(){
+        return mode;
+    }
+
+    public double getTurrentAngle() {
+        return turret;
+    }
     public void shooterMachine(){
-        if(gamepad2.dpad_left){
-            turret = 0;
-        }
-        else if (gamepad2.right_bumper){
-            if(turret < 80){
-                turret += 1;
-            }
-        }
-        else if (gamepad2.left_bumper){
-            if(turret > -80){
-                turret -= 1;
-            }
-        }
 
         telemetry.addData("turret", turret);
         rotateTurret(turret);
