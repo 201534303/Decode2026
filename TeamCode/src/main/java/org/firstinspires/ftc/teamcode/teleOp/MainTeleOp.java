@@ -58,7 +58,9 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+
         //driving
+
         follower.update();
 
         dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
@@ -66,7 +68,40 @@ public class MainTeleOp extends OpMode {
 
         //intake
         intake.update();
+
         //shooter
+
+        if(gamepad2.dpad_right){
+            shooter.setMode(0);
+        }
+
+        if(gamepad2.dpad_left){
+            shooter.setMode(1);
+        }
+
+        if(shooter.getMod() == 0){
+            shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
+        }
+
+        else if(shooter.getMod() == 1){
+            if(gamepad2.dpad_up){
+                shooter.setTurretAngle(0);
+            }
+
+            else if (gamepad2.right_bumper){
+                if(shooter.getTurrentAngle() < 80){
+                    shooter.setTurretAngle(shooter.getTurrentAngle()+1);
+                }
+            }
+
+            else if (gamepad2.left_bumper){
+                if(shooter.getTurrentAngle() > -80){
+                    shooter.setTurretAngle(shooter.getTurrentAngle()-1);
+                }
+            }
+
+        }
+
         shooter.shooterMachine();
 
         //update power var

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class ShooterTele extends Shooter{
     private Gamepad gamepad1, gamepad2;
     double turret = 0;
+    private int mode = 0;
+
 
     private double speed = 0;
     ShooterTele.shooterState shooterState = OFF;
@@ -45,29 +47,29 @@ public class ShooterTele extends Shooter{
     public void setTurretAngle(double angle){
         //rotateTurret(0.5+angle/120);
         rotateTurret(angle);
+        turret = angle;
     }
 
-    public void shooterMachine(){
-        if(gamepad2.dpad_left){
-            turret = 0;
-        }
-        else if (gamepad2.right_bumper){
-            if(turret < 80){
-                turret += 1;
-            }
-        }
-        else if (gamepad2.left_bumper){
-            if(turret > -80){
-                turret -= 1;
-            }
-        }
+    public void setMode(int m){
+        mode = m;
+    }
 
-        telemetry.addData("turret", turret);
+    public int getMod(){
+        return mode;
+    }
+
+    public double getTurrentAngle() {
+        return turret;
+    }
+    public void shooterMachine(){
+
+        telemetry.addData("turret. WE ARE HERE", turret);
         rotateTurret(turret);
 
 
         switch (shooterState){
             case CLOSE:
+                telemetry.addData("turret. WE ARE HERE close", turret);
                 runFlywheel(getMotorVel(), 1300, 0);
                 hoodPitch(0.5);
 
@@ -79,6 +81,7 @@ public class ShooterTele extends Shooter{
                 }
                 break;
             case FAR:
+                telemetry.addData("turret. WE ARE HERE far", turret);
                 if (gamepad2.a) {
                     shooterState = CLOSE;
                 }
@@ -89,6 +92,7 @@ public class ShooterTele extends Shooter{
                 hoodPitch(1);
                 break;
             case OFF:
+                telemetry.addData("turret. WE ARE HERE not", turret);
                 if (gamepad2.a) {
                     shooterState = CLOSE;
                 }
