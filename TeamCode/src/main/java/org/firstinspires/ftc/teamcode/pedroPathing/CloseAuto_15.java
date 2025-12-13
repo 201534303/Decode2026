@@ -9,12 +9,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous
-public class NewNEWCloseAuto extends OpMode {
+@Autonomous(name = "15 Close")
+
+public class CloseAuto_15 extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private ClosePaths paths;

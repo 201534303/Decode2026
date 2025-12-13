@@ -20,6 +20,7 @@ public class ClosePaths extends Paths{
     public final Pose reset = new Pose(135, 75, Math.toRadians(90));
     public final Pose ballCollect2 = makePos(135, 55);
     public final Pose ballCollect3 = makePos(135, 30);
+    public final Pose ballCollect4 = makePos(135, 11);
     public final Pose out = makePos(88, 60);
 
     public PathChain shootToOut(){
@@ -79,6 +80,20 @@ public class ClosePaths extends Paths{
                                 shootPose,
                                 new Pose(60.730, 26.930),
                                 ballCollect3
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+    }
+
+    public PathChain shootTo4(){
+        return follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                shootPose,
+                                new Pose(86, 14),
+                                ballCollect4
                         )
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
