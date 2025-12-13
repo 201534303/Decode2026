@@ -84,7 +84,7 @@ public class NewNEWCloseAuto extends OpMode {
                 if(!follower.isBusy()) {
                     follower.followPath(paths.reset(), 0.6, true);
                 }
-                if(waitSecs(3)){
+                if(waitSecs(2)){
                     resetActionTimer();
                     pathState = PathState.COLLECT_SHOOT;
                 }
