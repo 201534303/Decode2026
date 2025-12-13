@@ -57,6 +57,8 @@ public class examplecaller extends OpMode {
             telemetry.addData("tx", ll.pose.tx);
             telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);
             telemetry.addData("cornerY", 39.3701*ll.pose.cornerY);
+            telemetry.addData("cos_value", ll.pose.cos_value);
+            telemetry.addData("sin_value", ll.pose.sin_value);
             telemetry.addData("id",id);
         }
         else{

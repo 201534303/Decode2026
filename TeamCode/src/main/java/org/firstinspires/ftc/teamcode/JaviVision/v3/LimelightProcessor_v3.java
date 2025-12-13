@@ -29,7 +29,7 @@ public class LimelightProcessor_v3 {
     private Limelight3A limelight;
     private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
 
-    private final double CONSTX = 0.381;
+    private final double CONSTX = 0.4572;
     private final double CONSTY = 0.314325;
 
     private final double DIAG = 0.371475;
@@ -37,7 +37,7 @@ public class LimelightProcessor_v3 {
 
     private double stored_angle;
     private double stored_tx;
-    private final double field = 3.6195;
+    private final double field = 3.606798;
 
 
     public LimelightProcessor_v3(HardwareMap hardwareMap, GoBildaPinpointDriver odo) {
@@ -105,13 +105,14 @@ public class LimelightProcessor_v3 {
     public void getRobotPose() {
         double posX = 0;
         double posY = 0;
-
+        double transformation_angle = 0;
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
             double theta = 180 - Math.abs(stored_angle) - stored_tx;
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
+            transformation_angle = Math.abs(Math.abs(stored_angle) - 90);
             double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
             double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
             posX = field - (CONSTX + a);
@@ -123,6 +124,7 @@ public class LimelightProcessor_v3 {
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
+            transformation_angle = Math.abs(90 - Math.abs(stored_angle));
             double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
             double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
             posX = CONSTX + a;
@@ -130,13 +132,20 @@ public class LimelightProcessor_v3 {
         }
         pose.posX = posX;
         pose.posY = posY;
-        double dx = Math.cos(Math.toRadians(stored_angle))*(-0.1777999) - Math.sin(Math.toRadians(stored_angle))*(-0.20319989);
-        double dy = Math.cos(Math.toRadians(stored_angle))*(-0.1777999) + Math.sin(Math.toRadians(stored_angle))*(-0.20319989);
+
+        double cos_value = Math.abs(Math.cos(Math.toRadians(transformation_angle)));
+        double sin_value = Math.abs(Math.sin(Math.toRadians(transformation_angle)));
+
+        pose.cos_value = cos_value;
+        pose.sin_value = sin_value;
+        
+        double dx = cos_value*(-0.1777999) - sin_value*(-0.20319989);
+        double dy = sin_value*(-0.1777999) + cos_value*(-0.20319989);
 
         double cornerX = posX + dx;
-        double cornerY = posY + dx;
+        double cornerY = posY + dy;
 
         pose.cornerX = cornerX;
-        pose.cornerX = cornerY;
+        pose.cornerY = cornerY;
     }
 }
