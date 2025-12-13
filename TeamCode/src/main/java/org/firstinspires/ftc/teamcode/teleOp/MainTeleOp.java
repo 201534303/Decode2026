@@ -80,23 +80,23 @@ public class MainTeleOp extends OpMode {
         }
 
         if(shooter.getMod() == 0){
-            shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
+            //shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
         }
 
         else if(shooter.getMod() == 1){
             if(gamepad2.dpad_up){
-                shooter.setTurretAngle(0);
+                //shooter.setTurretAngle(0);
             }
 
             else if (gamepad2.right_bumper){
                 if(shooter.getTurrentAngle() < 80){
-                    shooter.setTurretAngle(shooter.getTurrentAngle()+1);
+                    //shooter.setTurretAngle(shooter.getTurrentAngle()+1);
                 }
             }
 
             else if (gamepad2.left_bumper){
                 if(shooter.getTurrentAngle() > -80){
-                    shooter.setTurretAngle(shooter.getTurrentAngle()-1);
+                    //shooter.setTurretAngle(shooter.getTurrentAngle()-1);
                 }
             }
 

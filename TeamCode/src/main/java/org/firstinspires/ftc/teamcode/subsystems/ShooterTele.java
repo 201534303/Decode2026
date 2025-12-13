@@ -43,12 +43,14 @@ public class ShooterTele extends Shooter{
         }
 
     }
-
+    /*
     public void setTurretAngle(double angle){
         //rotateTurret(0.5+angle/120);
         rotateTurret(angle);
         turret = angle;
     }
+
+     */
 
     public void setMode(int m){
         mode = m;
@@ -64,7 +66,7 @@ public class ShooterTele extends Shooter{
     public void shooterMachine(){
 
         telemetry.addData("turret. WE ARE HERE", turret);
-        rotateTurret(turret);
+        //rotateTurret(turret);
 
 
         switch (shooterState){

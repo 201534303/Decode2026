@@ -138,14 +138,14 @@ public class NewCloseAuto extends OpMode {
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
-                    shooter.rotateTurret(0);
+                    //shooter.rotateTurret(0);
                 }
                 break;
         }
     }
 
     public void setUp(){
-        shooter.rotateTurret(-50);
+        //shooter.rotateTurret(-50);
         shooter.hoodPitch(0.75);
     }
 

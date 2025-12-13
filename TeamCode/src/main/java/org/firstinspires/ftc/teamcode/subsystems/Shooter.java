@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -27,16 +29,20 @@ public abstract class Shooter {
     double integral = 0;
     final double YOFFSET = 1.0;
     final double XOFFSET = 1.0;
-    protected Servo right, left, hood;
+    protected Servo hood;
+    CRServo right, left;
+    AnalogInput leftEnc;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
         //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
         shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
-        right = hardwareMap.get(Servo.class, "turret_right");
-        left = hardwareMap.get(Servo.class, "turret_left");
+        right = hardwareMap.get(CRServo.class, "turret_right");
+        left = hardwareMap.get(CRServo.class, "turret_left");
         hood = hardwareMap.get(Servo.class, "hood");
+        leftEnc = hardwareMap.get(AnalogInput.class, "turrentencoder");
+
 
         shooterR.setInverted(true);
 
@@ -108,6 +114,32 @@ public abstract class Shooter {
         shooterL.setVelocity(speed);
     }
 
+    public void setTurretpos(double pos){
+        //1.6 is zero offset
+        double logicalPos = leftEnc.getVoltage() - 1.6;
+        if (logicalPos > 1.3){
+            logicalPos = 1.3;
+        }
+        if (logicalPos < -1.3){
+            logicalPos = -1.3;
+        }
+        double power = PIDF(pos- logicalPos, pos, 0.53,0.0003,0.35,0);
+        left.setPower(power);
+        right.setPower(power);
+    }
+
+    public void setTurretPower(double power){
+        left.setPower(power);
+        right.setPower(power);
+    }
+
+
+
+    public double getTTPos(){
+        //1.6 is 0 offset
+        return leftEnc.getVoltage() - 1.6;
+    }
+    /*
     public void rotateTurret(double theta){
         //right = -0.4695
         //left = 0.4861
@@ -125,12 +157,14 @@ public abstract class Shooter {
         left.setPosition(theta);
     }
 
+     */
+
     public void hoodPitch(double theta) {
         theta = 1-theta;
         hood.setPosition(theta);
     }
 
-        public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
+    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
 
         integral += error;
         double derivative = error - last_error;
