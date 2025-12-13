@@ -106,13 +106,13 @@ public class LimelightProcessor_v3 {
         double posX = 0;
         double posY = 0;
         double transformation_angle = 0;
+        stored_angle = Math.abs(stored_angle);
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            double theta = 180 - Math.abs(stored_angle) - stored_tx;
+            double theta = Math.abs(180 - stored_angle - stored_tx);
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            transformation_angle = Math.abs(Math.abs(stored_angle) - 90);
             double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
             double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
             posX = field - (CONSTX + a);
@@ -120,11 +120,10 @@ public class LimelightProcessor_v3 {
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
-            double theta = Math.abs(stored_angle) + stored_tx;
+            double theta = stored_angle + stored_tx;
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            transformation_angle = Math.abs(90 - Math.abs(stored_angle));
             double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
             double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
             posX = CONSTX + a;
@@ -132,6 +131,9 @@ public class LimelightProcessor_v3 {
         }
         pose.posX = posX;
         pose.posY = posY;
+
+        if (stored_angle > 90) {stored_angle -= 90; }
+        transformation_angle = Math.abs(90 - stored_angle);
 
         double cos_value = Math.abs(Math.cos(Math.toRadians(transformation_angle)));
         double sin_value = Math.abs(Math.sin(Math.toRadians(transformation_angle)));
