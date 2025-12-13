@@ -17,7 +17,7 @@ public class ClosePaths extends Paths{
     public final Pose startPose = new Pose(125, 128, Math.toRadians(-52)); // Start Pose of our robot.
     private final Pose shootPose = new Pose(88, 82, Math.toRadians(0));
     public final Pose ballCollect1 = makePos(130, 82);
-    public final Pose reset = new Pose(135, 75, Math.toRadians(90));
+    public final Pose reset = new Pose(125, 75, Math.toRadians(90));
     public final Pose ballCollect2 = makePos(135, 55);
     public final Pose ballCollect3 = makePos(135, 30);
     public final Pose out = makePos(88, 60);
@@ -85,10 +85,10 @@ public class ClosePaths extends Paths{
                 .build();
     }
 
-    public PathChain _1ToShoot(){
+    public PathChain shootTo(Pose ballCollect){
         return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect1, shootPose))
-                .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading())
+                .addPath(new BezierLine(ballCollect, shootPose))
+                .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
                 .build();
     }
 
@@ -98,6 +98,7 @@ public class ClosePaths extends Paths{
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose))
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
+                .setTValueConstraint(.98)
                 .build();
     }
     public PathChain shootToCollect(Pose ballCollect){ //test this out
