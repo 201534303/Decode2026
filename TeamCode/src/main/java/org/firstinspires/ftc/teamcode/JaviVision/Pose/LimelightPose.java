@@ -20,6 +20,9 @@ public class LimelightPose {
     public double cornerX;
     public double cornerY;
 
+    public double cos_value;
+    public double sin_value;
+
     public boolean valid = false; // set true when new data arrives
 
     //public Position RobotPos;
