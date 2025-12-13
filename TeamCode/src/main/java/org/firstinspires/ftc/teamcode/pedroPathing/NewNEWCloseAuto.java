@@ -66,9 +66,11 @@ public class NewNEWCloseAuto extends OpMode {
             case COLLECT_SHOOT:
                 if (!follower.isBusy()) {
                     if (spikeMark == 0) {
+                        spikeMark--;
                         pathState = PathState.RESET;
                     }
                     else if (spikeMark < 3){
+                        if (spikeMark < 0){ spikeMark = 0; }
                         follower.followPath(paths.collectToShoot(), 0.6, true);
                         spikeMark++;
                         resetActionTimer();
@@ -79,14 +81,12 @@ public class NewNEWCloseAuto extends OpMode {
                 break;
 
             case RESET:
-                if (!follower.isBusy() && waitSecs(3)) {
-                    spikeMark++;
+                if(!follower.isBusy()) {
+                    follower.followPath(paths.reset(), 0.6, true);
+                }
+                if(waitSecs(3)){
                     resetActionTimer();
                     pathState = PathState.COLLECT_SHOOT;
-
-                } else if (!follower.isBusy() && actionTimer.getElapsedTimeSeconds() == 0) {
-                    follower.followPath(paths.reset(), 0.6, true);
-                    resetActionTimer();
                 }
                 break;
 

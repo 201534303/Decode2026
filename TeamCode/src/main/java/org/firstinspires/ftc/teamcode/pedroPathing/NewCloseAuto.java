@@ -53,7 +53,9 @@ public class NewCloseAuto extends OpMode {
                 break;
 
             case 3:
-                if(!follower.isBusy()) { follower.followPath(paths.reset(), 0.6, true); }
+                if(!follower.isBusy()) {
+                    follower.followPath(paths.reset(), 0.6, true);
+                }
                 if(waitSecs(3)){ setPathState(4); }
                 break;
 
