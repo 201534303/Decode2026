@@ -122,7 +122,7 @@ public abstract class Shooter {
 
         theta = 1-theta;
         right.setPosition(theta);
-        right.setPosition(theta);
+        left.setPosition(theta);
     }
 
     public void hoodPitch(double theta) {

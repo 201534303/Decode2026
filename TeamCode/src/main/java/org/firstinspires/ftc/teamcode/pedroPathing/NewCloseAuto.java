@@ -1,9 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,13 +12,11 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
-import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 
 @Autonomous
 public class NewCloseAuto extends OpMode {
     private Follower follower;
-    private Timer pathTimer, actionTimer, timer;
+    private Timer pathTimer, actionTimer;
     private int pathState;
     private ClosePaths paths;
 
@@ -30,7 +25,12 @@ public class NewCloseAuto extends OpMode {
     private DrivetrainAuto drivetrain;
     private ShooterAuto shooter;
     private ElapsedTime runtime = new ElapsedTime();
-    private int counter;
+    public enum PathState2 {
+        COLLECT_SHOOT,
+        SHOOT_COLLECT
+    }
+    PathState2 pathState2;
+
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
@@ -53,113 +53,109 @@ public class NewCloseAuto extends OpMode {
                 break;
 
             case 2:
-                if(!follower.isBusy()) {
-                    intake.transferOff();
-                    //intake.intakeIn();
-                    follower.followPath(paths.shootToCollect(paths.ballCollect1), 0.6, true);
-                    setPathState(3);
-                }
+                shootCollect(paths.shootToCollect(paths.ballCollect1));
 
                 if(waitSecs(4)){
                     setPathState(3);
                 }
 
-                //some case checking that robot got all 3 balls
-
                 break;
 
             case 3:
-                if(!follower.isBusy()) {
-                    follower.followPath(paths.reset(), 0.6, true);
-                    //setPathState(4);
-                }
-                if(waitSecs(1.5)){
-                    setPathState(4);
-                }
+                if(!follower.isBusy()) { follower.followPath(paths.reset(), 0.6, true); }
+                if(waitSecs(1.5)){ setPathState(4); }
                 break;
 
             case 4:
-                if(!follower.isBusy()) {
-                    intake.transferOff();
-                    follower.followPath(paths.collectToShoot(), 0.6, true);
-                    setPathState(5);
-                }
+                collectShoot();
                 break;
 
             case 5:
-                if(!follower.isBusy()) {
-                    intake.allTheWay();
-                    setPathState(6);
-                }
+                shoot();
                 break;
 
             case 6:
-                if(!follower.isBusy()){
-                    if(waitSecs(1)) {
-                        intake.transferOff();
-                        follower.followPath(paths.shootTo2(), 0.6, true);
-                        setPathState(7);
-                    }
-                }
+                shootCollect(paths.shootTo2());
                 break;
 
             case 7:
-                if(!follower.isBusy()) {
-                        follower.followPath(paths.collectToShoot(), 0.6, true);
-                        setPathState(8);
-                }
+                collectShoot();
                 break;
 
             case 8:
-                if(!follower.isBusy()) {
-                    intake.allTheWay();
-                    setPathState(9);
-                }
+                shoot();
                 break;
 
             case 9:
-                if(!follower.isBusy()){
-                    if(waitSecs(1)) {
-                        intake.transferOff();
-                        follower.followPath(paths.shootTo3(), 0.6, true);
-                        setPathState(10);
-                    }
-                }
+                shootCollect(paths.shootTo3());
                 break;
 
             case 10:
-                if(!follower.isBusy()) {
-                    follower.followPath(paths.collectToShoot(), 0.6, true);
-                    setPathState(11);
-                }
+                collectShoot();
                 break;
 
             case 11:
-                if(!follower.isBusy()) {
-                    intake.allTheWay();
-                    setPathState(12);
-                }
+                shoot();
                 break;
 
             case 12:
-                if(!follower.isBusy()){
-                    if(waitSecs(1)) {
-                        intake.transferOff();
-                        follower.followPath(paths.shootToOut(), 0.6, true);
-                        setPathState(13);
-                    }
-                }
+                shootCollect(paths.shootToOut());
                 break;
 
             case 13:
-                if(!follower.isBusy()){
-                   shooter.off();
-                   intake.intakeOff();
-                   intake.transferOff();
-                   shooter.rotateTurret(0);
-                }
+                everythingOff();
                 break;
         }
+    }
+
+    public void autonomousPathUpdate2() {
+        switch (pathState2) {
+            case COLLECT_SHOOT:
+                collectShoot();
+                break;
+
+            case SHOOT_COLLECT:
+                collectShoot();
+                break;
+        }
+    }
+
+    public void shoot(){
+        if(!follower.isBusy()) {
+            intake.allTheWay();
+            setPathState(12);
+        }
+        nextPath();
+    }
+
+    public void shootCollect(PathChain ballCollect){
+        if(!follower.isBusy()){
+            if(waitSecs(1)) {
+                intake.transferOff();
+                follower.followPath(ballCollect, 0.6, true);
+                nextPath();
+            }
+        }
+    }
+    public void collectShoot(){
+        if(!follower.isBusy()) {
+            follower.followPath(paths.collectToShoot(), 0.6, true);
+            nextPath();
+        }
+    }
+
+    public void everythingOff(){
+        if(!follower.isBusy()) {
+            shooter.off();
+            intake.intakeOff();
+            intake.transferOff();
+            shooter.rotateTurret(0);
+        }
+    }
+
+    public void setUp(){
+        shooter.rotateTurret(-53);
+        shooter.hoodPitch(0.5);
     }
 
     public boolean waitSecs(double seconds){
@@ -170,9 +166,9 @@ public class NewCloseAuto extends OpMode {
         pathState = pState;
         actionTimer.resetTimer();
     }
-    public int nextPath(int pState) {
+    public void nextPath() {
         actionTimer.resetTimer();
-        return pState+1;
+        pathState += 1;
     }
 
     public void init() {
@@ -186,15 +182,15 @@ public class NewCloseAuto extends OpMode {
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
         drivetrain = new DrivetrainAuto(hardwareMap, telemetry);
 
-        shooter.rotateTurret(-53);
-        shooter.hoodPitch(0.5);
+        setUp();
     }
 
     public void loop() {
         shooter.close();
         follower.update();
-        autonomousPathUpdate();
-        // Feedback to Driver Hub for debugging
+
+        autonomousPathUpdate();//main auto code
+
         telemetry.addData("path state", pathState);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());

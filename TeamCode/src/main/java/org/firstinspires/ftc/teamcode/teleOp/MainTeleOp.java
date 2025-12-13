@@ -2,11 +2,13 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
@@ -18,6 +20,8 @@ public class MainTeleOp extends OpMode {
 
     private DrivetrainTele dt;
     private IntakeTele intake;
+    private Follower follower;
+
     ShooterTele shooter;
     private Telemetry dash;
     public static double power;
@@ -34,6 +38,7 @@ public class MainTeleOp extends OpMode {
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
 
 
+        follower = Constants.createFollower(hardwareMap);
 
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -48,14 +53,16 @@ public class MainTeleOp extends OpMode {
     @Override
     public void start() {
         runtime.reset();
-        dt.resetHeading();
+        //dt.resetHeading();
     }
 
     @Override
     public void loop() {
         //driving
-        dt.feildCentricDrive();
-        dt.updateOdo();
+        follower.update();
+
+        dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
+        //dt.updateOdo();
 
         //intake
         intake.update();
