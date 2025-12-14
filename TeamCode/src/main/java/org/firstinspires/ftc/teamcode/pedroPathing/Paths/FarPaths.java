@@ -17,7 +17,7 @@ public class FarPaths extends Paths{
 
     public final Pose startPose = makePos(80, 8); // Start Pose of our robot.
     private final Pose shootPose = makePos(90, 20);
-    private final Pose ballCollect1 = makePos(138, 8);
+    private final Pose ballCollect1 = new Pose(130, 8, Math.toRadians(20));
     private final Pose ballCollect2 = makePos(130, 40);
     private final Pose ballCollect3 = makePos(130, 58);
     private final Pose outPose = makePos(80, 35);
@@ -55,12 +55,12 @@ public class FarPaths extends Paths{
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                shootPose,
+                                startPose,
                                 new Pose(70, 40.5),
                                 ballCollect2
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(20))
                 .build();
     }
 
