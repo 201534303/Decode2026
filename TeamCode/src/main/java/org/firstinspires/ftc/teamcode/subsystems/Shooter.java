@@ -124,6 +124,8 @@ public abstract class Shooter {
             logicalPos = -1.3;
         }
         double power = PIDF(pos- logicalPos, pos, 0.53,0.0003,0.35,0);
+        //double power = PIDF(pos- logicalPos, pos, 0.5,0,0,0);
+
         left.setPower(power);
         right.setPower(power);
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.OFF;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
@@ -19,6 +21,7 @@ public class CloseAuto_12 extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private ClosePaths paths;
+    double loopCounter;
 
     //robot stuff
     private IntakeAuto intake;
@@ -60,7 +63,7 @@ public class CloseAuto_12 extends OpMode {
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     }
-                    else { pathState = PathState.OFF; }
+                    else { pathState = OFF; }
                 }
                 break;
 
@@ -78,7 +81,7 @@ public class CloseAuto_12 extends OpMode {
                         resetActionTimer();
                         pathState = PathState.SHOOT;
                     }
-                    else { pathState = PathState.OFF; }
+                    else { pathState = OFF; }
                 }
                 break;
 
@@ -98,7 +101,7 @@ public class CloseAuto_12 extends OpMode {
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
-                    shooter.setTurretpos(0);
+                    //shooter.setTurretpos(0);
                 }
                 break;
         }
@@ -114,7 +117,6 @@ public class CloseAuto_12 extends OpMode {
     }
 
     public void setUp(){
-        //shooter.setTurretpos(1);
         shooter.hoodPitch(0.5);
     }
 
@@ -132,10 +134,25 @@ public class CloseAuto_12 extends OpMode {
 
         setUp();
     }
+    public void init_loop(){
+        shooter.setTurretpos(1);
+    }
 
     public void loop() {
         shooter.close();
         follower.update();
+
+        if (pathState != OFF && loopCounter == 20){
+            //shooter.setTurretpos(1);
+            loopCounter = 0;
+        } else {
+            loopCounter += 1;
+            if(!follower.isBusy()) {
+                //shooter.setTurretpos(0);
+            }
+        }
+
+
 
         autonomousPathUpdate();//main auto code
 
