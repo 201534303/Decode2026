@@ -28,12 +28,15 @@ public class MainTeleOpSingleDriver extends OpMode {
     ShooterTele shooter;
     private Telemetry dash;
     public static double power = 0;
-    public static double kf = 1;
-    public static double kp = 1;
+    public static double kf = 0;
+    public static double kp = 0.02;
 
     public static double ki = 0;
 
     public static double kd = 0;
+    private double lastTurretRotation = 0;
+    private double lastPinpoint = 0;
+    private double lastTX = 100;
 
     public double cameraLoopCounter = 0;
 
@@ -86,18 +89,28 @@ public class MainTeleOpSingleDriver extends OpMode {
         dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
         //dt.updateOdo();
 
-        if (ll.pose.id == 20) {
-            aimPower = shooter.PIDF(ll.pose.tx, 0, power, 0, 0, 0);
-            shooter.setTurretPower(aimPower);
-        } else {
-            shooter.setTurretpos(0);
+        if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
+            aimPower = shooter.PIDF(ll.pose.tx, 0, kp, ki, kd, kf);
+            aimPower = Math.max(-0.5, Math.min(0.5, aimPower));
+            shooter.setTurretPower(-aimPower);
+            telemetry.addData("power", -aimPower);
+            if (Math.abs(ll.pose.tx) < lastTX) {
+                lastTX = ll.pose.tx;
+                lastPinpoint = follower.getHeading();
+                lastTurretRotation = shooter.getTTPos();
+            }
+        }
+        else {
+            telemetry.addData("last turret", lastTurretRotation);
+            telemetry.addData("last pinpoint", lastPinpoint);
+            shooter.setTurretPower(0);
         }
 
         //intake
         intake.updateSingle();
         //shooter
         shooter.shooterMachineSingle();
-
+        
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
