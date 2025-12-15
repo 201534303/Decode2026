@@ -72,6 +72,7 @@ public class CloseAuto_12 extends OpMode {
                     }
                     else if (spikeMark < 3){
                         if (spikeMark < 0){ spikeMark = 0; }
+                        //test a BezierCurve instead of Linear
                         follower.followPath(paths.collectToShoot(), 0.6, true);
                         spikeMark++;
                         resetActionTimer();
@@ -113,8 +114,8 @@ public class CloseAuto_12 extends OpMode {
     }
 
     public void setUp(){
-        shooter.setTurretpos(1);
-        shooter.hoodPitch(0.87);
+        //shooter.setTurretpos(1);
+        shooter.hoodPitch(0.5);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }

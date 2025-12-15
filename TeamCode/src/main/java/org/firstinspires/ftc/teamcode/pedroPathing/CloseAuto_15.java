@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -107,13 +108,14 @@ public class CloseAuto_15 extends OpMode {
             case 0: return paths.shootTo1();
             case 1: return paths.shootTo2();
             case 2: return paths.shootTo3();
+            //case 3: return paths.shootTo4();
             default: return null;
         }
     }
 
     public void setUp(){
-        shooter.setTurretpos(1);
-        shooter.hoodPitch(0.87);
+        //shooter.setTurretpos(1);
+        shooter.hoodPitch(0.5);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
