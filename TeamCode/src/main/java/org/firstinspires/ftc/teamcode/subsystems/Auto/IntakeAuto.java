@@ -30,6 +30,10 @@ public class IntakeAuto extends Intake {
         setTransferPower(1);
     }
 
+    public void setIntakeSpeed(double power){
+        intake.setPower(power);
+    }
+
     public void transferOff(){
         setTransferPower(0);
     }

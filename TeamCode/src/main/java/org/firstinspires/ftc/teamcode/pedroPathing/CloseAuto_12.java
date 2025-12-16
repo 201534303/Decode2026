@@ -39,7 +39,7 @@ public class CloseAuto_12 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
-                intake.intakeIn();
+                intake.setIntakeSpeed(0.4);
                 follower.followPath(paths.startToShoot(), 0.6, true);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
@@ -69,6 +69,7 @@ public class CloseAuto_12 extends OpMode {
 
             case COLLECT_SHOOT:
                 if (!follower.isBusy()) {
+                    intake.setIntakeSpeed(0.4);
                     if (spikeMark == 0) {
                         spikeMark--;
                         pathState = PathState.RESET;
@@ -135,7 +136,7 @@ public class CloseAuto_12 extends OpMode {
         setUp();
     }
     public void init_loop(){
-        shooter.setTurretpos(1);
+        //shooter.setTurretpos(1);
     }
 
     public void loop() {
@@ -151,8 +152,6 @@ public class CloseAuto_12 extends OpMode {
                 //shooter.setTurretpos(0);
             }
         }
-
-
 
         autonomousPathUpdate();//main auto code
 

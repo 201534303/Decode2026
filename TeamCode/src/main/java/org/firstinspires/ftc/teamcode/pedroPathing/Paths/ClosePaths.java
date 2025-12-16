@@ -15,18 +15,20 @@ public class ClosePaths extends Paths{
     //private final Pose shootPose = makePos(88, 82);
 
     public final Pose startPose = new Pose(125, 128, Math.toRadians(-52)); // Start Pose of our robot.
-    private final Pose shootPose = new Pose(88, 82, Math.toRadians(0));
-    public final Pose ballCollect1 = makePos(130, 82);
-    public final Pose reset = new Pose(135, 75, Math.toRadians(90));
-    public final Pose ballCollect2 = makePos(135, 55);
-    public final Pose ballCollect3 = makePos(135, 30);
-    public final Pose ballCollect4 = makePos(135, 11);
-    public final Pose out = makePos(88, 60);
+    //public final Pose startPose = new Pose(126, 118, Math.toRadians(-52)); // Start Pose of our robot.
+    private final Pose shootPose = new Pose(100, 82, Math.toRadians(0));
+    public final Pose ballCollect1 = makePos(125, 82);
+    public final Pose reset = new Pose(130, 75, Math.toRadians(90));
+    public final Pose ballCollect2 = makePos(133, 55);
+    public final Pose ballCollect3 = makePos(130, 30);
+    public final Pose ballCollect4 = makePos(130, 11);
+    public final Pose out = makePos(115, 70, 0);
 
     public PathChain shootToOut(){
         return follower.pathBuilder()
                 .addPath(new BezierLine(shootPose, out))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), out.getHeading())
+                //.setTValueConstraint(.50)
                 .build();
     }
 
@@ -64,7 +66,7 @@ public class ClosePaths extends Paths{
                     .addPath(
                             new BezierCurve(
                                     shootPose,
-                                    new Pose(76.114, 52.551),
+                                    new Pose(75.114, 52.551),
                                     ballCollect2
                             )
                     )
@@ -78,7 +80,7 @@ public class ClosePaths extends Paths{
                 .addPath(
                         new BezierCurve(
                                 shootPose,
-                                new Pose(60.730, 26.930),
+                                new Pose(65.730, 26.930),
                                 ballCollect3
                         )
                 )
