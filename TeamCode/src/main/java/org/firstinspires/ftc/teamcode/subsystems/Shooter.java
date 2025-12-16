@@ -139,7 +139,7 @@ public abstract class Shooter {
 
     public double getTTPos(){
         //1.6 is 0 offset
-        return leftEnc.getVoltage() - 1.6;
+        return 1.6 - leftEnc.getVoltage();
     }
     /*
     public void rotateTurret(double theta){

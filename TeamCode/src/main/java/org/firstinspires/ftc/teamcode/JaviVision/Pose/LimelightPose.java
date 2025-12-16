@@ -20,6 +20,9 @@ public class LimelightPose {
     public double cornerX;
     public double cornerY;
 
+    public double posX2;
+    public double posY2;
+
     public double cos_value;
     public double sin_value;
 

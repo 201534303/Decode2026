@@ -87,8 +87,14 @@ public class MainTeleOpSingleDriver extends OpMode {
         }
         follower.update();
 
-        ll.updateTele(Math.toDegrees(follower.getPose().getHeading() - shooter.getTTPos()));
+        ll.updateTele(follower.getPose().getHeading(), shooter.getTTPos());
         ll.getRobotPose();
+        telemetry.addData("cornerX", ll.pose.cornerX * 39.3701);
+        telemetry.addData("cornerY", ll.pose.cornerY * 39.3701);
+        telemetry.addData("centerX", ll.pose.posX * 39.3701);
+        telemetry.addData("centerY", ll.pose.posY * 39.3701);
+        telemetry.addData("centerX2", ll.pose.posX2 * 39.3701);
+        telemetry.addData("centerY2", ll.pose.posY2 * 39.3701);
         dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
         //dt.updateOdo();
 
@@ -109,13 +115,14 @@ public class MainTeleOpSingleDriver extends OpMode {
                 double heading_error = Math.toDegrees(Math.abs(follower.getPose().getHeading())) - Math.toDegrees(Math.abs(lastPinpoint));
                 //double heading_error = 0;
                 double angle = turret_error - heading_error;
+                /*
                 telemetry.addLine("//////");
                 telemetry.addData("angle", angle);
                 telemetry.addData("current turret", Math.toDegrees(shooter.getTTPos()));
                 telemetry.addData("last turret", Math.toDegrees(lastTurretRotation));
                 telemetry.addData("current heading", Math.toDegrees(Math.abs(follower.getPose().getHeading())));
                 telemetry.addData("last heading", Math.toDegrees(Math.abs(lastPinpoint)));
-                telemetry.addLine("////");
+                telemetry.addLine("////");*/
 
                 aimPower = shooter.PIDF(angle, 0, kp2, ki2, kd2, kf);
                 if (aimPower > 0) {
@@ -127,7 +134,7 @@ public class MainTeleOpSingleDriver extends OpMode {
             }
         }
         telemetry.addData("power", -aimPower);
-        shooter.setTurretPower(-aimPower);
+        shooter.setTurretPower(0);
 
         //intake
         intake.updateSingle();

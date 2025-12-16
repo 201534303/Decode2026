@@ -29,9 +29,11 @@ public class LimelightProcessor_v3Tele {
     private final double DIAG = 0.371475;
     private final double DIAG2 = 0.3302;
 
-    private double stored_angle;
+    private double stored_yaw;
+    private double stored_shooter;
     private double stored_tx;
     private final double field = 3.606798;
+    private final double halfPi = Math.PI/2;
 
 
     public LimelightProcessor_v3Tele(HardwareMap hardwareMap) {
@@ -41,12 +43,14 @@ public class LimelightProcessor_v3Tele {
     }
 
 
-    public void updateTele(double yawIn) {
+    public void updateTele(double yawIn, double shooterIn) {
         //odo.update();
         //Pose2D pos = odo.getPosition();
         double yaw = yawIn;
+        double shooterAngle = shooterIn;
 
-        stored_angle = yaw;
+        stored_yaw = yaw;
+        stored_shooter = shooterAngle;
 
         LLResult result = limelight.getLatestResult();
 
@@ -57,7 +61,7 @@ public class LimelightProcessor_v3Tele {
                 LLResultTypes.FiducialResult fiducial = fiducials.get(0);
                 int id = fiducial.getFiducialId();
 
-                stored_tx = fiducial.getTargetXDegrees();
+                stored_tx = Math.toRadians(fiducial.getTargetXDegrees());
 
                 Pose3D camPose = fiducial.getCameraPoseTargetSpace();
                 Position position = camPose.getPosition();
@@ -100,44 +104,71 @@ public class LimelightProcessor_v3Tele {
         double posX = 0;
         double posY = 0;
         double transformation_angle = 0;
+        double angle = stored_yaw + stored_shooter;
+        angle = Math.abs(angle);
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            double theta = 180 - Math.abs(stored_angle) - stored_tx;
-            pose.heading = stored_angle;
+            double theta = Math.abs(Math.PI - angle - stored_tx);
+            pose.heading = angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            transformation_angle = Math.abs(Math.abs(stored_angle) - 90);
-            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            double a = Math.abs(Math.cos(theta)) * pose.distance;
+            double b = Math.abs(Math.sin(theta)) * pose.distance;
             posX = field - (CONSTX + a);
             posY = field - (CONSTY + b);
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
-            double theta = Math.abs(stored_angle) + stored_tx;
-            pose.heading = stored_angle;
+            double theta = angle + stored_tx;
+            pose.heading = angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            transformation_angle = Math.abs(90 - Math.abs(stored_angle));
-            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            double a = Math.abs(Math.cos(theta)) * pose.distance;
+            double b = Math.abs(Math.sin(theta)) * pose.distance;
             posX = CONSTX + a;
             posY = field - (CONSTY + b);
         }
-        pose.posX = posX;
-        pose.posY = posY;
 
-        double cos_value = Math.abs(Math.cos(Math.toRadians(transformation_angle)));
-        double sin_value = Math.abs(Math.sin(Math.toRadians(transformation_angle)));
+        if (stored_yaw > halfPi) { stored_yaw -= halfPi; }
+        transformation_angle = Math.abs(halfPi - stored_yaw);
+
+        double cos_value = Math.abs(Math.cos(transformation_angle));
+        double sin_value = Math.abs(Math.sin(transformation_angle));
 
         pose.cos_value = cos_value;
         pose.sin_value = sin_value;
-        
+
         double dx = cos_value*(-0.1777999) - sin_value*(-0.20319989);
         double dy = sin_value*(-0.1777999) + cos_value*(-0.20319989);
 
         double cornerX = posX + dx;
         double cornerY = posY + dy;
+
+        cos_value = Math.abs(Math.cos(transformation_angle));
+        sin_value = Math.abs(Math.sin(transformation_angle));
+
+        dx = sin_value*(2/39.3701);
+        dy = cos_value*(-2/39.3701);
+
+        double centerX = posX + dx;
+        double centerY = posY + dy;
+
+        pose.posX = centerX;
+        pose.posY = centerY;
+
+        transformation_angle += stored_shooter;
+
+        cos_value = Math.abs(Math.cos(transformation_angle));
+        sin_value = Math.abs(Math.sin(transformation_angle));
+
+        dx = sin_value*(2/39.3701);
+        dy = cos_value*(-2/39.3701);
+
+        centerX = posX + dx;
+        centerY = posY + dy;
+        
+        pose.posX2 = centerX;
+        pose.posY2 = centerY;
 
         pose.cornerX = cornerX;
         pose.cornerY = cornerY;

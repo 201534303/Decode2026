@@ -38,6 +38,7 @@ public class LimelightProcessor_v3 {
     private double stored_angle;
     private double stored_tx;
     private final double field = 3.606798;
+    private final double halfPi = Math.PI/2;
 
 
     public LimelightProcessor_v3(HardwareMap hardwareMap, GoBildaPinpointDriver odo) {
@@ -63,7 +64,7 @@ public class LimelightProcessor_v3 {
                 LLResultTypes.FiducialResult fiducial = fiducials.get(0);
                 int id = fiducial.getFiducialId();
 
-                stored_tx = fiducial.getTargetXDegrees();
+                stored_tx = Math.toRadians(fiducial.getTargetXDegrees());
 
                 Pose3D camPose = fiducial.getCameraPoseTargetSpace();
                 Position position = camPose.getPosition();
@@ -109,12 +110,14 @@ public class LimelightProcessor_v3 {
         stored_angle = Math.abs(stored_angle);
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            double theta = Math.abs(180 - stored_angle - stored_tx);
+            double theta = Math.abs(Math.PI - stored_angle - stored_tx);
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            double a = Math.abs(Math.cos(theta)) * pose.distance;
+            double b = Math.abs(Math.sin(theta)) * pose.distance;
+            pose.x = a;
+            pose.y = b;
             posX = field - (CONSTX + a);
             posY = field - (CONSTY + b);
         }
@@ -124,19 +127,18 @@ public class LimelightProcessor_v3 {
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
-            double a = Math.abs(Math.cos(Math.toRadians(theta))) * pose.distance;
-            double b = Math.abs(Math.sin(Math.toRadians(theta))) * pose.distance;
+            double a = Math.abs(Math.cos(theta)) * pose.distance;
+            double b = Math.abs(Math.sin(theta)) * pose.distance;
+            pose.x = a;
+            pose.y = b;
             posX = CONSTX + a;
             posY = field - (CONSTY + b);
         }
-        pose.posX = posX;
-        pose.posY = posY;
+        if (stored_angle > halfPi) { stored_angle -= halfPi; }
+        transformation_angle = Math.abs(halfPi - stored_angle);
 
-        if (stored_angle > 90) {stored_angle -= 90; }
-        transformation_angle = Math.abs(90 - stored_angle);
-
-        double cos_value = Math.abs(Math.cos(Math.toRadians(transformation_angle)));
-        double sin_value = Math.abs(Math.sin(Math.toRadians(transformation_angle)));
+        double cos_value = Math.abs(Math.cos(transformation_angle));
+        double sin_value = Math.abs(Math.sin(transformation_angle));
 
         pose.cos_value = cos_value;
         pose.sin_value = sin_value;
@@ -146,6 +148,13 @@ public class LimelightProcessor_v3 {
 
         double cornerX = posX + dx;
         double cornerY = posY + dy;
+        dx = sin_value*(2/39.3701);
+        dy = cos_value*(-2/39.3701);
+
+        double centerX = posX + dx;
+        double centerY = posY + dy;
+        pose.posX = centerX;
+        pose.posY = centerY;
 
         pose.cornerX = cornerX;
         pose.cornerY = cornerY;
