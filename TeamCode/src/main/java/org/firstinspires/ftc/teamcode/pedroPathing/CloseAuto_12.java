@@ -40,7 +40,7 @@ public class CloseAuto_12 extends OpMode {
         switch (pathState) {
             case START://start state
                 intake.setIntakeSpeed(0.4);
-                follower.followPath(paths.startToShoot(), 0.6, true);
+                follower.followPath(paths.startToShoot(), 0.7, true);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
                 break;
@@ -59,7 +59,7 @@ public class CloseAuto_12 extends OpMode {
                     if (collectPath != null) {//if there is a spike pos
                         intake.intakeIn();
                         intake.transferOff();
-                        follower.followPath(collectPath, 0.6, true);
+                        follower.followPath(collectPath, 0.7, true);
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     }
@@ -77,7 +77,7 @@ public class CloseAuto_12 extends OpMode {
                     else if (spikeMark < 3){
                         if (spikeMark < 0){ spikeMark = 0; }
                         //test a BezierCurve instead of Linear
-                        follower.followPath(paths.collectToShoot(), 0.6, true);
+                        follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
                         pathState = PathState.SHOOT;
@@ -88,7 +88,7 @@ public class CloseAuto_12 extends OpMode {
 
             case RESET:
                 if(!follower.isBusy()) {
-                    follower.followPath(paths.reset(), 0.6, true);
+                    follower.followPath(paths.reset(), 0.7, true);
                 }
                 if(waitSecs(2)){
                     resetActionTimer();
@@ -98,7 +98,7 @@ public class CloseAuto_12 extends OpMode {
 
             case OFF:
                 if(!follower.isBusy()) {
-                    follower.followPath(paths.shootToOut(), 0.6, true);
+                    follower.followPath(paths.shootToOut(), 0.7, true);
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
