@@ -110,7 +110,7 @@ public class LimelightProcessor_v3 {
         stored_angle = Math.abs(stored_angle);
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
-            double theta = Math.abs(Math.PI - stored_angle - stored_tx);
+            double theta = Math.abs(Math.PI - stored_angle - 1.12*stored_tx);
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;
@@ -123,7 +123,7 @@ public class LimelightProcessor_v3 {
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
-            double theta = stored_angle + stored_tx;
+            double theta = stored_angle + 1.12*stored_tx;
             pose.heading = stored_angle;
             pose.tx = stored_tx;
             pose.theta = theta;

@@ -104,7 +104,7 @@ public class LimelightProcessor_v3Tele {
         double posX = 0;
         double posY = 0;
         double transformation_angle = 0;
-        double angle = stored_yaw + stored_shooter;
+        double angle = Math.abs(stored_yaw) + stored_shooter;
         angle = Math.abs(angle);
         // IF STATEMENT FOR RED
         if (pose.id == 24) {
@@ -116,6 +116,8 @@ public class LimelightProcessor_v3Tele {
             double b = Math.abs(Math.sin(theta)) * pose.distance;
             posX = field - (CONSTX + a);
             posY = field - (CONSTY + b);
+            pose.posX = posX;
+            pose.posY = posY;
         }
         // IF STATEMENT FOR BL
         else if (pose.id == 20) {
@@ -127,6 +129,8 @@ public class LimelightProcessor_v3Tele {
             double b = Math.abs(Math.sin(theta)) * pose.distance;
             posX = CONSTX + a;
             posY = field - (CONSTY + b);
+            pose.posX = posX;
+            pose.posY = posY;
         }
 
         if (stored_yaw > halfPi) { stored_yaw -= halfPi; }
@@ -153,10 +157,10 @@ public class LimelightProcessor_v3Tele {
         double centerX = posX + dx;
         double centerY = posY + dy;
 
-        pose.posX = centerX;
-        pose.posY = centerY;
 
+        pose.z = transformation_angle;
         transformation_angle += stored_shooter;
+        pose.pitch = transformation_angle;
 
         cos_value = Math.abs(Math.cos(transformation_angle));
         sin_value = Math.abs(Math.sin(transformation_angle));
@@ -166,7 +170,7 @@ public class LimelightProcessor_v3Tele {
 
         centerX = posX + dx;
         centerY = posY + dy;
-        
+        pose.roll = stored_shooter;
         pose.posX2 = centerX;
         pose.posY2 = centerY;
 

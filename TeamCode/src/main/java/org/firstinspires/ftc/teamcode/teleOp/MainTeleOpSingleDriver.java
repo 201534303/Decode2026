@@ -89,12 +89,17 @@ public class MainTeleOpSingleDriver extends OpMode {
 
         ll.updateTele(follower.getPose().getHeading(), shooter.getTTPos());
         ll.getRobotPose();
+        telemetry.addData("distance", ll.pose.distance * 39.3701);
         telemetry.addData("cornerX", ll.pose.cornerX * 39.3701);
         telemetry.addData("cornerY", ll.pose.cornerY * 39.3701);
-        telemetry.addData("centerX", ll.pose.posX * 39.3701);
-        telemetry.addData("centerY", ll.pose.posY * 39.3701);
-        telemetry.addData("centerX2", ll.pose.posX2 * 39.3701);
-        telemetry.addData("centerY2", ll.pose.posY2 * 39.3701);
+        telemetry.addData("posX", ll.pose.posX * 39.3701);
+        telemetry.addData("posY", ll.pose.posY * 39.3701);
+        telemetry.addData("centerX", ll.pose.posX2 * 39.3701);
+        telemetry.addData("centerY", ll.pose.posY2 * 39.3701);
+        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
+        telemetry.addData("stored_shooter",ll.pose.roll);
+        telemetry.addData("trans_angle", Math.toDegrees(ll.pose.pitch));
+        telemetry.addData("trans_angle2", Math.toDegrees(ll.pose.z));
         dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
         //dt.updateOdo();
 
@@ -144,9 +149,9 @@ public class MainTeleOpSingleDriver extends OpMode {
         //telemetry.addData("x", follower.getPose().getX());
         //telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
-        telemetry.addData("tt pos", shooter.getTTPos());
+        telemetry.addData("tt pos", Math.toDegrees(shooter.getTTPos()));
 
-        telemetry.addData("tx", ll.pose.tx);
+        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
         //telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);
         //telemetry.addData("cornerY", 39.3701*ll.pose.cornerY);
 
