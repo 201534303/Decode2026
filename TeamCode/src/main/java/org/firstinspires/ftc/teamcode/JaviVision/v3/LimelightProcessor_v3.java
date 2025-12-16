@@ -140,7 +140,7 @@ public class LimelightProcessor_v3 {
 
         pose.cos_value = cos_value;
         pose.sin_value = sin_value;
-        
+
         double dx = cos_value*(-0.1777999) - sin_value*(-0.20319989);
         double dy = sin_value*(-0.1777999) + cos_value*(-0.20319989);
 

@@ -29,11 +29,14 @@ public class MainTeleOpSingleDriver extends OpMode {
     private Telemetry dash;
     public static double power = 0;
     public static double kf = 0;
-    public static double kp = 0.02;
+    public static double kp1 = 0.007;
 
-    public static double ki = 0;
+    public static double ki1 = 0.0001;
 
-    public static double kd = 0;
+    public static double kd1 = 0.004;
+    public static double kp2 = 0.007;
+    public static double ki2 = 0.0001;
+    public static double kd2 = 0.004;
     private double lastTurretRotation = 0;
     private double lastPinpoint = 0;
     private double lastTX = 100;
@@ -84,16 +87,15 @@ public class MainTeleOpSingleDriver extends OpMode {
         }
         follower.update();
 
-        ll.updateTele(Math.toDegrees(follower.getPose().getHeading()));
+        ll.updateTele(Math.toDegrees(follower.getPose().getHeading() - shooter.getTTPos()));
         ll.getRobotPose();
         dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
         //dt.updateOdo();
 
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
-            aimPower = shooter.PIDF(ll.pose.tx, 0, kp, ki, kd, kf);
+            aimPower = shooter.PIDF(ll.pose.tx, 0, kp1, ki1, kd1, kf);
             aimPower = Math.max(-0.5, Math.min(0.5, aimPower));
-            shooter.setTurretPower(-aimPower);
-            telemetry.addData("power", -aimPower);
+
             if (Math.abs(ll.pose.tx) < lastTX) {
                 lastTX = ll.pose.tx;
                 lastPinpoint = follower.getHeading();
@@ -101,27 +103,48 @@ public class MainTeleOpSingleDriver extends OpMode {
             }
         }
         else {
-            telemetry.addData("last turret", lastTurretRotation);
-            telemetry.addData("last pinpoint", lastPinpoint);
-            shooter.setTurretPower(0);
+            if (lastTX != 100) {
+                double turret_error = Math.toDegrees(shooter.getTTPos()) - Math.toDegrees(lastTurretRotation);
+                //double turret_error = 0;
+                double heading_error = Math.toDegrees(Math.abs(follower.getPose().getHeading())) - Math.toDegrees(Math.abs(lastPinpoint));
+                //double heading_error = 0;
+                double angle = turret_error - heading_error;
+                telemetry.addLine("//////");
+                telemetry.addData("angle", angle);
+                telemetry.addData("current turret", Math.toDegrees(shooter.getTTPos()));
+                telemetry.addData("last turret", Math.toDegrees(lastTurretRotation));
+                telemetry.addData("current heading", Math.toDegrees(Math.abs(follower.getPose().getHeading())));
+                telemetry.addData("last heading", Math.toDegrees(Math.abs(lastPinpoint)));
+                telemetry.addLine("////");
+
+                aimPower = shooter.PIDF(angle, 0, kp2, ki2, kd2, kf);
+                if (aimPower > 0) {
+                    aimPower = Math.max(0.05, Math.min(0.5, aimPower));
+                }
+                else {
+                    aimPower = Math.max(-0.5, Math.min(-0.05, aimPower));
+                }
+            }
         }
+        telemetry.addData("power", -aimPower);
+        shooter.setTurretPower(-aimPower);
 
         //intake
         intake.updateSingle();
         //shooter
         shooter.shooterMachineSingle();
         
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
+        //telemetry.addData("x", follower.getPose().getX());
+        //telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("tt pos", shooter.getTTPos());
 
         telemetry.addData("tx", ll.pose.tx);
-        telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);
-        telemetry.addData("cornerY", 39.3701*ll.pose.cornerY);
+        //telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);
+        //telemetry.addData("cornerY", 39.3701*ll.pose.cornerY);
 
-        dash.addData("shooter vel", shooter.getMotorVel());
-        dash.addData("target vel", kf);
+        //dash.addData("shooter vel", shooter.getMotorVel());
+        //dash.addData("target vel", kf);
         dash.addData("flywheel rpm", shooter.getMotorRPM());
         telemetry.update();
         dash.update();
