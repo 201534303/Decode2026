@@ -103,6 +103,7 @@ public class MainTeleOp extends OpMode {
         }
 
         shooter.shooterMachine();
+        shooter.setTurretAngle(0);
 
         //update power var
         power = shooter.power;

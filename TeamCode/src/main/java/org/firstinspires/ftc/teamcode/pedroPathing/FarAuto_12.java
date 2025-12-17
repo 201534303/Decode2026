@@ -91,7 +91,7 @@ public class FarAuto_12 extends OpMode {
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
-                    shooter.setTurretpos(0);
+                    shooter.rotateTurret(0);
                 }
                 break;
         }

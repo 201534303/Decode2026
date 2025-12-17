@@ -45,7 +45,7 @@ public class MainTeleOpSingleDriver extends OpMode {
 
     LimelightProcessor_v3Tele ll;
 
-    public final Pose homing = new Pose(72, 0, -Math.toRadians(90));
+    public final Pose homing = new Pose(72, 3, -Math.toRadians(90));
     public Pose reset = new Pose(0, 0, 0);
 
 
@@ -78,15 +78,25 @@ public class MainTeleOpSingleDriver extends OpMode {
     @Override
     public void loop() {
         //driving
+        double heading = Math.toDegrees(follower.getPose().getHeading());
+        double posX = follower.getPose().getX();
+        double posY = follower.getPose().getY();
+        double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
+
         if (gamepad1.share){
             follower.setPose(homing);
         }
-        reset = new Pose (follower.getPose().getX(), follower.getPose().getY(), 0);
+        reset = new Pose (posX, posY, 0);
         if (gamepad1.options){
             follower.setPose(reset);
         }
         follower.update();
 
+        shooter.setTurretAngle(turretAngle);
+        dt.feildCentricDrive(heading);
+
+
+        /*
         ll.updateTele(follower.getPose().getHeading(), shooter.getTTPos());
         ll.getRobotPose();
         telemetry.addData("distance", ll.pose.distance * 39.3701);
@@ -100,7 +110,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         telemetry.addData("stored_shooter",ll.pose.roll);
         telemetry.addData("trans_angle", Math.toDegrees(ll.pose.pitch));
         telemetry.addData("trans_angle2", Math.toDegrees(ll.pose.z));
-        dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
         //dt.updateOdo();
 
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
@@ -120,14 +129,14 @@ public class MainTeleOpSingleDriver extends OpMode {
                 double heading_error = Math.toDegrees(Math.abs(follower.getPose().getHeading())) - Math.toDegrees(Math.abs(lastPinpoint));
                 //double heading_error = 0;
                 double angle = turret_error - heading_error;
-                /*
-                telemetry.addLine("//////");
-                telemetry.addData("angle", angle);
-                telemetry.addData("current turret", Math.toDegrees(shooter.getTTPos()));
-                telemetry.addData("last turret", Math.toDegrees(lastTurretRotation));
-                telemetry.addData("current heading", Math.toDegrees(Math.abs(follower.getPose().getHeading())));
-                telemetry.addData("last heading", Math.toDegrees(Math.abs(lastPinpoint)));
-                telemetry.addLine("////");*/
+
+                //telemetry.addLine("//////");
+                //telemetry.addData("angle", angle);
+                //telemetry.addData("current turret", Math.toDegrees(shooter.getTTPos()));
+                //telemetry.addData("last turret", Math.toDegrees(lastTurretRotation));
+                //telemetry.addData("current heading", Math.toDegrees(Math.abs(follower.getPose().getHeading())));
+                //telemetry.addData("last heading", Math.toDegrees(Math.abs(lastPinpoint)));
+                //telemetry.addLine("////");
 
                 aimPower = shooter.PIDF(angle, 0, kp2, ki2, kd2, kf);
                 if (aimPower > 0) {
@@ -139,17 +148,25 @@ public class MainTeleOpSingleDriver extends OpMode {
             }
         }
         telemetry.addData("power", -aimPower);
-        shooter.setTurretPower(0);
+        //shooter.setTurretPower(0);
+
+         */
+
+
+
 
         //intake
         intake.updateSingle();
         //shooter
-        shooter.shooterMachineSingle();
+        shooter.shooterMachineSingle(Math.abs(posY));
+
+        telemetry.addData("turret target heading", turretAngle);
         
-        //telemetry.addData("x", follower.getPose().getX());
-        //telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", Math.toDegrees(follower.getPose().getHeading()));
-        telemetry.addData("tt pos", Math.toDegrees(shooter.getTTPos()));
+        telemetry.addData("x", posX);
+        telemetry.addData("y", posY);
+        telemetry.addData("heading", heading);
+        telemetry.addData("heading delta", -(heading+90));
+
 
         telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
         //telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);

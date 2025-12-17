@@ -30,7 +30,7 @@ public abstract class Shooter {
     final double YOFFSET = 1.0;
     final double XOFFSET = 1.0;
     protected Servo hood;
-    CRServo right, left;
+    Servo right, left;
     AnalogInput leftEnc;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
@@ -38,8 +38,8 @@ public abstract class Shooter {
         //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
         shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
-        right = hardwareMap.get(CRServo.class, "turret_right");
-        left = hardwareMap.get(CRServo.class, "turret_left");
+        right = hardwareMap.get(Servo.class, "turret_right");
+        left = hardwareMap.get(Servo.class, "turret_left");
         hood = hardwareMap.get(Servo.class, "hood");
         leftEnc = hardwareMap.get(AnalogInput.class, "turrentencoder");
 
@@ -114,6 +114,7 @@ public abstract class Shooter {
         shooterL.setVelocity(speed);
     }
 
+    /*
     public void setTurretpos(double pos){
         //1.6 is zero offset
         double logicalPos = leftEnc.getVoltage() - 1.6;
@@ -142,7 +143,10 @@ public abstract class Shooter {
         return 1.6 - leftEnc.getVoltage();
     }
     /*
+
+     */
     public void rotateTurret(double theta){
+        /*
         //right = -0.4695
         //left = 0.4861
         theta = theta/360 * 2;
@@ -155,11 +159,21 @@ public abstract class Shooter {
         theta = theta + 0.5 + + 0.0072;
 
         theta = 1-theta;
+
+         */
+        if (theta > 63){
+            theta = 63;
+        }
+        if (theta < -63){
+            theta = -63;
+        }
+
+        theta = 0.48 + theta * (0.425/60);
         right.setPosition(theta);
         left.setPosition(theta);
     }
 
-     */
+
 
     public void hoodPitch(double theta) {
         theta = 1-theta;

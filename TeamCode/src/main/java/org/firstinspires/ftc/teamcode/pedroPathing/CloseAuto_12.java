@@ -110,7 +110,7 @@ public class CloseAuto_12 extends OpMode {
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
-                    //shooter.setTurretpos(0);
+                    shooter.rotateTurret(0);
                 }
                 break;
         }
@@ -128,7 +128,8 @@ public class CloseAuto_12 extends OpMode {
     }
 
     public void setUp(){
-        shooter.hoodPitch(0.5);
+        shooter.hoodPitch(0.2);
+        shooter.rotateTurret(50);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -153,15 +154,7 @@ public class CloseAuto_12 extends OpMode {
         shooter.close();
         follower.update();
 
-        if (pathState != OFF && loopCounter == 20){
-            //shooter.setTurretpos(1);
-            loopCounter = 0;
-        } else {
-            loopCounter += 1;
-            if(!follower.isBusy()) {
-                //shooter.setTurretpos(0);
-            }
-        }
+
 
         autonomousPathUpdate();//main auto code
 

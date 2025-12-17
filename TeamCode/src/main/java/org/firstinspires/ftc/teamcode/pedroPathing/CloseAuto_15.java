@@ -97,7 +97,7 @@ public class CloseAuto_15 extends OpMode {
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
-                    shooter.setTurretpos(0);
+                    shooter.rotateTurret(0);
                 }
                 break;
         }
@@ -114,8 +114,8 @@ public class CloseAuto_15 extends OpMode {
     }
 
     public void setUp(){
-        //shooter.setTurretpos(1);
-        shooter.hoodPitch(0.5);
+        shooter.rotateTurret(50);
+        shooter.hoodPitch(0.2);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
