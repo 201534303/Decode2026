@@ -17,11 +17,13 @@ public class ClosePaths extends Paths{
     public final Pose startPose = new Pose(125, 128, Math.toRadians(-52)); // Start Pose of our robot.
     //public final Pose startPose = new Pose(126, 118, Math.toRadians(-52)); // Start Pose of our robot.
     private final Pose shootPose = new Pose(100, 82, Math.toRadians(0));
-    public final Pose ballCollect1 = makePos(125, 82);
+    public final Pose ballCollect1 = makePos(128, 82);
     public final Pose reset = new Pose(130, 75, Math.toRadians(90));
-    public final Pose ballCollect2 = makePos(133, 55);
-    public final Pose ballCollect3 = makePos(130, 30);
-    public final Pose ballCollect4 = makePos(130, 11);
+    public final Pose ballCollect2 = makePos(134, 50);
+    public final Pose ballCollect3 = makePos(134, 28);
+    public final Pose ballCollect4 = makePos(135, 11, -70);
+    public final Pose ballCollect5 = makePos(135, 10, -90);
+
     public final Pose out = makePos(115, 70, 0);
 
     public PathChain shootToOut(){
@@ -89,16 +91,16 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain shootTo4(){
-        return follower
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                shootPose,
-                                new Pose(86, 14),
-                                ballCollect4
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+        return follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, ballCollect4))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollect4.getHeading())
+                .build();
+    }
+
+    public PathChain shootTo5(){
+        return follower.pathBuilder()
+                .addPath(new BezierLine(shootPose, ballCollect5))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollect5.getHeading())
                 .build();
     }
 
@@ -118,6 +120,21 @@ public class ClosePaths extends Paths{
                 .setTValueConstraint(.98)
                 .build();
     }
+
+//    public PathChain collectToShoot(){
+//        final Pose ballCollect = follower.getPose();
+//        return follower
+//                .pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                ballCollect,
+//                                new Pose(70, ballCollect.getY()+20),
+//                                shootPose
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+//                .build();
+//    }
     public PathChain shootToCollect(Pose ballCollect){ //test this out
         return follower.pathBuilder()
                 .addPath(new BezierLine(shootPose, ballCollect))

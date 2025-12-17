@@ -39,7 +39,7 @@ public class CloseAuto_12 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
-                intake.setIntakeSpeed(0.4);
+                //intake.setIntakeSpeed(0.4);
                 follower.followPath(paths.startToShoot(), 0.7, true);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
@@ -54,12 +54,19 @@ public class CloseAuto_12 extends OpMode {
                 break;
 
             case SHOOT_COLLECT:
-                if (!follower.isBusy() && waitSecs(1.0)) {//waits 1 sec
+                if (!follower.isBusy() && waitSecs(0.6)) {//waits 0.5 works
                     PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
-                    if (collectPath != null) {//if there is a spike pos
+                    if (spikeMark < 3) {//if there is a spike pos
                         intake.intakeIn();
                         intake.transferOff();
-                        follower.followPath(collectPath, 0.7, true);
+                        follower.followPath(collectPath, 0.65, true);
+                        resetActionTimer();
+                        pathState = PathState.COLLECT_SHOOT;
+                    }
+                    else if (spikeMark > 2 && spikeMark < 5){
+                        intake.intakeIn();
+                        intake.transferOff();
+                        follower.followPath(collectPath, 1, true);
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     }
@@ -69,12 +76,12 @@ public class CloseAuto_12 extends OpMode {
 
             case COLLECT_SHOOT:
                 if (!follower.isBusy()) {
-                    intake.setIntakeSpeed(0.4);
                     if (spikeMark == 0) {
                         spikeMark--;
                         pathState = PathState.RESET;
                     }
-                    else if (spikeMark < 3){
+                    else if (spikeMark < 5){
+                        //intake.setIntakeSpeed(0);
                         if (spikeMark < 0){ spikeMark = 0; }
                         //test a BezierCurve instead of Linear
                         follower.followPath(paths.collectToShoot(), 0.8, true);
@@ -87,10 +94,11 @@ public class CloseAuto_12 extends OpMode {
                 break;
 
             case RESET:
+                //intake.intakeIn();
                 if(!follower.isBusy()) {
                     follower.followPath(paths.reset(), 0.7, true);
                 }
-                if(waitSecs(2)){
+                if(waitSecs(1.5)){//used to be 1.5
                     resetActionTimer();
                     pathState = PathState.COLLECT_SHOOT;
                 }
@@ -113,6 +121,8 @@ public class CloseAuto_12 extends OpMode {
             case 0: return paths.shootTo1();
             case 1: return paths.shootTo2();
             case 2: return paths.shootTo3();
+            case 3: return paths.shootTo4();
+            case 4: return paths.shootTo5();
             default: return null;
         }
     }
