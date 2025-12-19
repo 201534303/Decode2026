@@ -21,8 +21,12 @@ public class ClosePaths extends Paths{
     public final Pose reset = new Pose(130, 75, Math.toRadians(90));
     public final Pose ballCollect2 = makePos(134, 50);
     public final Pose ballCollect3 = makePos(134, 28);
-    public final Pose ballCollect4 = makePos(135, 11, -70);
-    public final Pose ballCollect5 = makePos(135, 10, -90);
+    //public final Pose ballCollect4 = makePos(133, 11, -70);
+
+    public final Pose ballCollect4 = makePos(135, 16, -90);//135, 10
+    public final Pose ballCollectMiddle4 = makePos(130, 30, -90);//135, 10
+    public final Pose backUp = makePos(130,25,-90);
+    public final Pose goUp = makePos(130,5,-90);
 
     public final Pose out = makePos(115, 70, 0);
 
@@ -90,17 +94,48 @@ public class ClosePaths extends Paths{
                 .build();
     }
 
+    public PathChain shootTo5(){
+        return follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                shootPose,
+                                new Pose(92, 5),
+                                ballCollect4
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
+//        return follower.pathBuilder()
+//                .addPath(new BezierLine(shootPose, ballCollect4))
+//                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollect4.getHeading())
+//                .build();
+    }
+
     public PathChain shootTo4(){
         return follower.pathBuilder()
-                .addPath(new BezierLine(shootPose, ballCollect4))
-                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollect4.getHeading())
+                .addPath(new BezierLine(ballCollectMiddle4, ballCollect4))
+                .setLinearHeadingInterpolation(ballCollectMiddle4.getHeading(), ballCollect4.getHeading())
                 .build();
     }
 
-    public PathChain shootTo5(){
+    public PathChain shootTo4Mid(){
         return follower.pathBuilder()
-                .addPath(new BezierLine(shootPose, ballCollect5))
-                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollect5.getHeading())
+                .addPath(new BezierLine(shootPose, ballCollectMiddle4))
+                .setLinearHeadingInterpolation(shootPose.getHeading(), ballCollectMiddle4.getHeading())
+                .build();
+    }
+
+    public PathChain down(){
+        return follower.pathBuilder()
+                .addPath(new BezierLine(ballCollect4, backUp))
+                .setLinearHeadingInterpolation(ballCollect4.getHeading(), goUp.getHeading())
+                .build();
+    }
+    public PathChain up(){
+        return follower.pathBuilder()
+                .addPath(new BezierLine(backUp, goUp))
+                .setLinearHeadingInterpolation(backUp.getHeading(), goUp.getHeading())
                 .build();
     }
 

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.OFF;
+import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.SHOOT;
+import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.START;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -29,9 +31,10 @@ public class CloseAuto_12 extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 0;
+    private boolean reset = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
-        OFF, RESET, START
+        OFF, RESET, START, BACK, UP
     }
     PathState pathState = PathState.START;
 
@@ -47,14 +50,25 @@ public class CloseAuto_12 extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    intake.allTheWay();//go all the way to shoot
-                    resetActionTimer();
-                    pathState = PathState.SHOOT_COLLECT;
+                    if(spikeMark == 3) {
+                        if(waitSecs(2)) {
+                            shooter.rotateTurret(47.5);
+                            intake.allTheWay();//go all the way to shoot
+                            resetActionTimer();
+                            pathState = PathState.SHOOT_COLLECT;
+                        }
+                    }
+                    else {
+                        shooter.rotateTurret(47.5);
+                        intake.allTheWay();//go all the way to shoot
+                        resetActionTimer();
+                        pathState = PathState.SHOOT_COLLECT;
+                    }
                 }
                 break;
 
             case SHOOT_COLLECT:
-                if (!follower.isBusy() && waitSecs(0.6)) {//waits 0.5 works
+                if (!follower.isBusy() && waitSecs(0.75)) {//waits 0.5 works
                     PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
                     if (spikeMark < 3) {//if there is a spike pos
                         intake.intakeIn();
@@ -63,45 +77,83 @@ public class CloseAuto_12 extends OpMode {
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     }
-                    else if (spikeMark > 2 && spikeMark < 5){
+                    else if (spikeMark < 4){//change back to 5
                         intake.intakeIn();
                         intake.transferOff();
-                        follower.followPath(collectPath, 1, true);
+                        follower.followPath(collectPath, 0.9, true);
                         resetActionTimer();
-                        pathState = PathState.COLLECT_SHOOT;
+                        pathState = PathState.BACK;
+                        //pathState = PathState.COLLECT_SHOOT;
                     }
                     else { pathState = OFF; }
                 }
                 break;
 
             case COLLECT_SHOOT:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() &&  waitSecs(1)) {
+                    intake.setIntakeSpeed(0.5);
                     if (spikeMark == 0) {
                         spikeMark--;
                         pathState = PathState.RESET;
                     }
-                    else if (spikeMark < 5){
-                        //intake.setIntakeSpeed(0);
+                    else if (spikeMark < 3){
                         if (spikeMark < 0){ spikeMark = 0; }
-                        //test a BezierCurve instead of Linear
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
                         pathState = PathState.SHOOT;
                     }
+                    else if (spikeMark < 4){
+                        follower.followPath(paths.collectToShoot(), 0.9, true);
+                        spikeMark++;
+                        resetActionTimer();
+                        pathState = PathState.UP;
+                        //pathState = PathState.SHOOT;
+                    }
                     else { pathState = OFF; }
+                }
+                break;
+
+//            case BACK:
+//                if (!follower.isBusy()) {
+//                    follower.followPath(paths.down(), 0.6, true);
+//                    resetActionTimer();
+//                    reset = true;
+//                    pathState = PathState.UP;
+//                }
+//                break;
+
+            case UP:
+                if (!follower.isBusy()) {
+                    //if (spikeMark == 4){
+                        follower.followPath(paths.shootTo4(), 0.6, true);
+                        //pathState = PathState.BACK;
+                    pathState = SHOOT;
+                    //}
+//                    else {
+//                        follower.followPath(paths.up(), 0.6, true);
+//                        pathState = PathState.COLLECT_SHOOT;
+//                    }
                 }
                 break;
 
             case RESET:
                 //intake.intakeIn();
                 if(!follower.isBusy()) {
-                    follower.followPath(paths.reset(), 0.7, true);
+                    if(waitSecs(2.25)){
+                        resetActionTimer();
+                        reset = false;
+                        pathState = PathState.COLLECT_SHOOT;
+                    }
+                    else{
+                        follower.followPath(paths.reset(), 0.75, true);
+                        if (!reset){
+                            resetActionTimer();
+                            reset = true;
+                        }
+                    }
                 }
-                if(waitSecs(1.5)){//used to be 1.5
-                    resetActionTimer();
-                    pathState = PathState.COLLECT_SHOOT;
-                }
+
                 break;
 
             case OFF:
@@ -121,15 +173,15 @@ public class CloseAuto_12 extends OpMode {
             case 0: return paths.shootTo1();
             case 1: return paths.shootTo2();
             case 2: return paths.shootTo3();
-            case 3: return paths.shootTo4();
-            case 4: return paths.shootTo5();
+            case 3: return paths.shootTo4Mid();
+            //case 4: return paths.shootTo5();
             default: return null;
         }
     }
 
     public void setUp(){
-        shooter.hoodPitch(0.2);
-        shooter.rotateTurret(50);
+        shooter.hoodPitch(0.17);
+        shooter.rotateTurret(47.5);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }

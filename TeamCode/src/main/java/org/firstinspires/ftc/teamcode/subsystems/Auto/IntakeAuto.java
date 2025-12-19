@@ -27,7 +27,7 @@ public class IntakeAuto extends Intake {
 
     public void allTheWay(){
         intakeIn();
-        setTransferPower(1);
+        setTransferPower(0.9);
     }
 
     public void setIntakeSpeed(double power){
