@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.JaviVision.v3;
+package org.firstinspires.ftc.teamcode.JaviVision.v4;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -16,14 +16,14 @@ import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 import java.util.List;
 
 
-public class LimelightProcessor_v3Tele {
+public class LimelightProcessor_v4Tele {
 
     public final LimelightPose pose = new LimelightPose();
     public GoBildaPinpointDriver odo;
     private Limelight3A limelight;
     private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
 
-    private final double CONSTX = 17/39.3701;
+    private final double CONSTX = 0.4572;
     private final double CONSTY = 0.314325;
 
     private final double DIAG = 0.371475;
@@ -32,11 +32,11 @@ public class LimelightProcessor_v3Tele {
     private double stored_yaw;
     private double stored_shooter;
     private double stored_tx;
-    private final double field = 144/39.3701;
+    private final double field = 3.606798;
     private final double halfPi = Math.PI/2;
 
 
-    public LimelightProcessor_v3Tele(HardwareMap hardwareMap) {
+    public LimelightProcessor_v4Tele(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(5);
         limelight.start();
@@ -101,94 +101,75 @@ public class LimelightProcessor_v3Tele {
     }
 
     public void getRobotPose() {
-        double posX = 0;
-        double posY = 0;
-        double transformation_angle = 0;
-        double angle = Math.abs(stored_yaw) + stored_shooter*0.8889;
-        angle = Math.abs(angle);
-        // IF STATEMENT FOR RED
-        if (pose.id == 24) {
-            double theta = Math.abs(Math.PI - angle - stored_tx);
-            pose.heading = stored_yaw;
-            pose.tx = stored_tx;
-            pose.theta = theta;
-            double a = Math.abs(Math.cos(theta)) * pose.distance;
-            double b = Math.abs(Math.sin(theta)) * pose.distance;
-            pose.rawX = a;
-            pose.rawY = b;
-            posX = field - (CONSTX + a);
-            posY = field - (CONSTY + b);
-            pose.posX = posX;
-            pose.posY = posY;
+
+        if (!pose.valid) return;
+
+        // =========================
+        // 1. Tag position (field)
+        // =========================
+        double tagX, tagY;
+
+        if (pose.id == 24) {       // RED
+            tagX = field - CONSTX;
+            tagY = field - CONSTY;
+        } else if (pose.id == 20) { // BLUE
+            tagX = CONSTX;
+            tagY = field - CONSTY;
+        } else {
+            pose.valid = false;
+            return;
         }
-        // IF STATEMENT FOR BL
-        else if (pose.id == 20) {
-            double theta = angle + stored_tx;
-            pose.heading = stored_yaw;
-            pose.tx = stored_tx;
-            pose.theta = theta;
-            double a = Math.abs(Math.cos(theta)) * pose.distance;
-            double b = Math.abs(Math.sin(theta)) * pose.distance;
-            pose.rawX = a;
-            pose.rawY = b;
-            posX = CONSTX + a;
-            posY = field - (CONSTY + b);
-            pose.posX = posX;
-            pose.posY = posY;
-        }
-        transformation_angle = Math.abs(stored_yaw) + stored_shooter;
-        pose.roll = stored_shooter;
-        pose.pitch = transformation_angle;
-        double cos_value = Math.abs(Math.cos(transformation_angle));
-        double sin_value = Math.abs(Math.sin(transformation_angle));
-        double dx = 1.5/39.3701 * cos_value;
-        double dy = -1.5/39.3701 * sin_value;
-        pose.posX2 = posX + dx;
-        pose.posY2 = posY + dy;
 
-        /*
+        // =========================
+        // 2. Camera → robot center offset
+        // Rotate into field frame using robot heading
+        // =========================
+        double robotHeading = Math.abs(stored_yaw); // IMU: -90° = facing +Y
+        double offsetX = -1.5/39.3701 * Math.cos(robotHeading);
+        double offsetY = -1.5/39.3701 * Math.sin(robotHeading);
 
-        double cos_value = Math.abs(Math.cos(transformation_angle));
-        double sin_value = Math.abs(Math.sin(transformation_angle));
+        double offsetMag = Math.hypot(offsetX, offsetY); // camera → center distance
 
-        pose.cos_value = cos_value;
-        pose.sin_value = sin_value;
+        // =========================
+        // 3. Turret angle in standard unit circle
+        // =========================
+        double turretAngleStd = Math.PI/2 - stored_shooter; // convert your turret convention
 
-        double dx = cos_value*(-0.1777999) - sin_value*(-0.20319989);
-        double dy = sin_value*(-0.1777999) + cos_value*(-0.20319989);
+        // =========================
+        // 4. Law of cosines to get tag → robot center distance
+        // =========================
+        double tagToCenterDist = Math.sqrt(
+                pose.distance * pose.distance
+                        + offsetMag * offsetMag
+                        - 2 * pose.distance * offsetMag * Math.cos(turretAngleStd)
+        );
 
-        double cornerX = posX + dx;
-        double cornerY = posY + dy;
+        // =========================
+        // 5. Law of sines to get angle opposite the camera offset
+        // (triangle: tag-camera-center)
+        // =========================
+        double theta = robotHeading + stored_tx;
 
-        cos_value = Math.abs(Math.cos(transformation_angle));
-        sin_value = Math.abs(Math.sin(transformation_angle));
+        // =========================
+        // 6. Decompose into X/Y components relative to field
+        // =========================
+        double dx = tagToCenterDist * Math.cos(robotHeading + theta);
+        double dy = tagToCenterDist * Math.sin(robotHeading + theta);
 
-        dx = sin_value*(2/39.3701);
-        dy = cos_value*(-2/39.3701);
+        // =========================
+        // 7. Compute robot center position
+        // =========================
+        pose.posX = tagX - dx;
+        pose.posY = tagY - dy;
 
-        double centerX = posX + dx;
-        double centerY = posY + dy;
-
-
-        pose.z = transformation_angle;
-        transformation_angle += stored_shooter;
-        pose.pitch = transformation_angle;
-
-        cos_value = Math.abs(Math.cos(transformation_angle));
-        sin_value = Math.abs(Math.sin(transformation_angle));
-
-        dx = 1.5/39.3701 * Math.cos(transformation_angle);
-        dy = 1.5/39.3701 * Math.sin(transformation_angle);
-
-        centerX = posX + dx;
-        centerY = posY + dy;
-        pose.roll = stored_shooter;
-        pose.posX2 = centerX;
-        pose.posY2 = centerY;
-
-        pose.cornerX = cornerX;
-        pose.cornerY = cornerY;
-        */
-
+        // =========================
+        // 8. Optional: store additional info
+        // =========================
+        pose.heading = robotHeading;  // field heading
+        pose.theta = theta;      // triangle angle for debug / visualization
+        pose.posX2 = pose.posX;       // can apply further transforms if needed
+        pose.posY2 = pose.posY;
     }
+
+
 }

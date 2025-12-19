@@ -52,6 +52,8 @@ public class ShooterTele extends Shooter{
 
 
 
+
+
     public void setMode(int m){
         mode = m;
     }

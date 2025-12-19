@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3Tele;
+import org.firstinspires.ftc.teamcode.JaviVision.v4.LimelightProcessor_v4Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
@@ -83,6 +84,7 @@ public class MainTeleOpSingleDriver extends OpMode {
         double posY = follower.getPose().getY();
         double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
 
+
         if (gamepad1.share){
             follower.setPose(homing);
         }
@@ -92,26 +94,24 @@ public class MainTeleOpSingleDriver extends OpMode {
         }
         follower.update();
 
+        /*
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
+         */
 
 
-        /*
-        ll.updateTele(follower.getPose().getHeading(), shooter.getTTPos());
+        ll.updateTele(follower.getPose().getHeading(), shooter.getTurrentAngle());
         ll.getRobotPose();
         telemetry.addData("distance", ll.pose.distance * 39.3701);
-        telemetry.addData("cornerX", ll.pose.cornerX * 39.3701);
-        telemetry.addData("cornerY", ll.pose.cornerY * 39.3701);
         telemetry.addData("posX", ll.pose.posX * 39.3701);
         telemetry.addData("posY", ll.pose.posY * 39.3701);
-        telemetry.addData("centerX", ll.pose.posX2 * 39.3701);
-        telemetry.addData("centerY", ll.pose.posY2 * 39.3701);
+        telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("stored_shooter",ll.pose.roll);
-        telemetry.addData("trans_angle", Math.toDegrees(ll.pose.pitch));
-        telemetry.addData("trans_angle2", Math.toDegrees(ll.pose.z));
+        telemetry.addData("stored_shooter",Math.toDegrees(shooter.getTurrentAngle()));
+        telemetry.addData("rawPosX", ll.pose.rawX * 39.3701);
+        telemetry.addData("rawPosY", ll.pose.rawY * 39.3701);
         //dt.updateOdo();
-
+        /*
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
             aimPower = shooter.PIDF(ll.pose.tx, 0, kp1, ki1, kd1, kf);
             aimPower = Math.max(-0.5, Math.min(0.5, aimPower));
@@ -150,7 +150,7 @@ public class MainTeleOpSingleDriver extends OpMode {
         telemetry.addData("power", -aimPower);
         //shooter.setTurretPower(0);
 
-         */
+        */
 
 
 

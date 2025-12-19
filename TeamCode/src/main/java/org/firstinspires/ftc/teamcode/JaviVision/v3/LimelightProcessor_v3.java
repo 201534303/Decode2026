@@ -118,6 +118,8 @@ public class LimelightProcessor_v3 {
             double b = Math.abs(Math.sin(theta)) * pose.distance;
             pose.x = a;
             pose.y = b;
+            pose.posX2 = a;
+            pose.posY2 = b;
             posX = field - (CONSTX + a);
             posY = field - (CONSTY + b);
         }
@@ -131,6 +133,8 @@ public class LimelightProcessor_v3 {
             double b = Math.abs(Math.sin(theta)) * pose.distance;
             pose.x = a;
             pose.y = b;
+            pose.posX2 = a;
+            pose.posY2 = b;
             posX = CONSTX + a;
             posY = field - (CONSTY + b);
         }
