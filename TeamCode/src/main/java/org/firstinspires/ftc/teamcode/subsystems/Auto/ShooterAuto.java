@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.supperClasses.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 public class ShooterAuto extends Shooter {
 

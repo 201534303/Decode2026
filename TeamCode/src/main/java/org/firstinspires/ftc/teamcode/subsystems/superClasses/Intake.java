@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems.supperClasses;
+package org.firstinspires.ftc.teamcode.subsystems.superClasses;
 
-import static org.firstinspires.ftc.teamcode.subsystems.supperClasses.Intake.intakeState.IN;
-import static org.firstinspires.ftc.teamcode.subsystems.supperClasses.Intake.intakeState.OFF;
-import static org.firstinspires.ftc.teamcode.subsystems.supperClasses.Intake.intakeState.OUT;
+import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.IN;
+import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OFF;
+import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OUT;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

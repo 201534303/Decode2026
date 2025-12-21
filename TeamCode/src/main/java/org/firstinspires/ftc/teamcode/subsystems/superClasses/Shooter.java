@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.supperClasses;
+package org.firstinspires.ftc.teamcode.subsystems.superClasses;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
