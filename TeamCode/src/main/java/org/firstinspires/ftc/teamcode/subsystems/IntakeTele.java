@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.subsystems.supperClasses.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 
 public class IntakeTele extends Intake {
     protected Gamepad gamepad1, gamepad2;

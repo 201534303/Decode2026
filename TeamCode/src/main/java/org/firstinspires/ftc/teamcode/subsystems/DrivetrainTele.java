@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.subsystems.supperClasses.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 
 public class DrivetrainTele extends Drivetrain {
 
@@ -14,7 +14,9 @@ public class DrivetrainTele extends Drivetrain {
 
 
     public DrivetrainTele(HardwareMap hardwareMap, Gamepad g1, Gamepad g2, Telemetry t) {
+
         super(hardwareMap, t);
+
         frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -70,22 +72,8 @@ public class DrivetrainTele extends Drivetrain {
         telemetry.addData("xHeading", rotedX);
     }
 
-    public double botHeadingIMU(){
+    public double getIMUHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
-    /*
-    public double botHeadingPIN(){
-        return odo.getPosition().getHeading(AngleUnit.DEGREES);
-    }
-
-    public void resetHeading(){
-        odo.setHeading(0, AngleUnit.DEGREES);
-    }
-
-    public void updateOdo(){
-        odo.update();
-    }
-
-     */
 
 }

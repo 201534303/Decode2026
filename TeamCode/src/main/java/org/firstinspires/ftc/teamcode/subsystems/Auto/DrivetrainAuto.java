@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.Auto;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.supperClasses.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 
 public class DrivetrainAuto extends Drivetrain {
     public DrivetrainAuto(HardwareMap hardwareMap, Telemetry t) {
