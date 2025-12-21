@@ -36,12 +36,13 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
+        follower = Constants.createFollower(hardwareMap);
+
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
 
 
-        follower = Constants.createFollower(hardwareMap);
 
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
