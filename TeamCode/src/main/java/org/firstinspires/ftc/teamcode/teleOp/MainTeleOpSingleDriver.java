@@ -69,6 +69,7 @@ public class MainTeleOpSingleDriver extends OpMode {
 
     @Override
     public void init_loop() {
+
     }
 
     @Override
@@ -84,7 +85,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         double posY = follower.getPose().getY();
         double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
 
-
         if (gamepad1.share){
             follower.setPose(homing);
         }
@@ -94,11 +94,8 @@ public class MainTeleOpSingleDriver extends OpMode {
         }
         follower.update();
 
-
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
-
-
 
         ll.updateTele(follower.getPose().getHeading(), shooter.getTurrentAngle());
         ll.getRobotPose();

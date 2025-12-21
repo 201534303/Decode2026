@@ -120,8 +120,6 @@ public class MainTeleOp extends OpMode {
 
         //telemetry
 
-
-
         dash.addData("shooter vel", shooter.getMotorVel());
         dash.addData("target vel", targetVelo);
         dash.addData("flywheel rpm", shooter.getMotorRPM());

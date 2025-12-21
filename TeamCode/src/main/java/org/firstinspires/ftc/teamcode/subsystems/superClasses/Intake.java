@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public abstract class Intake {
+public class Intake {
     protected DcMotorEx intake, transfer;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
@@ -25,7 +25,7 @@ public abstract class Intake {
         telemetry = t;
     }
 
-    protected void setIntPower(double power){
+    public void setIntPower(double power){
         iSpeed = power;
     }
     public void intakeIn(){
@@ -33,20 +33,26 @@ public abstract class Intake {
     }
 
 
-    protected void intakeOut(){
+    public void intakeOut(){
         intakeState = OUT;
     }
 
-    protected void intakeOff(){
+    public void intakeOff(){
         intakeState = OFF;
     }
 
-    protected void setTransferPower(double power){
+    public void setTransferPower(double power){
         tSpeed = power;
         transfer.setPower(tSpeed);
     }
 
-    protected void intakeMachine(){
+    public void setIntakePower(double power){
+        iSpeed = power;
+        transfer.setPower(iSpeed);
+    }
+
+
+    public void intakeMachine(){
         switch (intakeState){
             case IN:
                 intake.setPower(iSpeed);

@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public abstract class Shooter {
+public class Shooter {
 
     protected Telemetry telemetry;
     MotorEx shooterR;

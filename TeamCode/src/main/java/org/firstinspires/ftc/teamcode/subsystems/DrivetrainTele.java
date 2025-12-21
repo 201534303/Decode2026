@@ -72,8 +72,5 @@ public class DrivetrainTele extends Drivetrain {
         telemetry.addData("xHeading", rotedX);
     }
 
-    public double getIMUHeading(){
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-    }
 
 }
