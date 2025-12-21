@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 @Autonomous(name = "15 Close")
 
 public class CloseAuto_15 extends OpMode {
-    public int setValue = 0;
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private ClosePaths paths;

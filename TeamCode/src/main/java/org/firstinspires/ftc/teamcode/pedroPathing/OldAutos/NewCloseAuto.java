@@ -30,7 +30,7 @@ public class NewCloseAuto extends OpMode {
         switch (pathState) {
             case 0:
                 intake.intakeIn();
-                follower.followPath(paths.startToShoot(), 0.6, true);
+                //follower.followPath(paths.startToShoot(), 0.6, true);
                 setPathState(1);
 
                 break;
@@ -48,7 +48,7 @@ public class NewCloseAuto extends OpMode {
                 if(!follower.isBusy()) {
                     intake.transferOff();
                     //intake.intakeIn();
-                    follower.followPath(paths.shootToCollect(paths.ballCollect1), 0.6, true);
+                    //follower.followPath(paths.shootToCollect(paths.ballCollect1), 0.6, true);
                     setPathState(3);
                 }
                 break;
