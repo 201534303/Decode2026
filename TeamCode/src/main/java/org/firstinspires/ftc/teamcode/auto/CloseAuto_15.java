@@ -1,7 +1,7 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_15.PathState.OFF;
-import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_15.PathState.SHOOT;
+import static org.firstinspires.ftc.teamcode.auto.CloseAuto_15.PathState.OFF;
+import static org.firstinspires.ftc.teamcode.auto.CloseAuto_15.PathState.SHOOT;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;

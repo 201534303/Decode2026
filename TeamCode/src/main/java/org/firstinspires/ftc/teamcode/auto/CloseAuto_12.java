@@ -1,8 +1,7 @@
-package org.firstinspires.ftc.teamcode.pedroPathing;
+package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.OFF;
-import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.SHOOT;
-import static org.firstinspires.ftc.teamcode.pedroPathing.CloseAuto_12.PathState.START;
+import static org.firstinspires.ftc.teamcode.auto.CloseAuto_12.PathState.OFF;
+import static org.firstinspires.ftc.teamcode.auto.CloseAuto_12.PathState.SHOOT;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -13,7 +12,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 

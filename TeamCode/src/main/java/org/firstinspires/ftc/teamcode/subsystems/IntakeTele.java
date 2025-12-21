@@ -31,14 +31,7 @@ public class IntakeTele extends Intake {
     }
 
     public void updateSingle(){
-        /*
-        if((gamepad1.right_trigger > 0.1 && gamepad1.left_trigger > 0.1) || gamepad1.right_trigger < 0.1 || gamepad1.left_trigger < 0.1){
-            intakeOff();
-        }
 
-
-         */
-        //if(gamepad1.right_trigger > .1){
         setIntPower(gamepad1.right_trigger+0.1);
         intakeIn();
         //}
