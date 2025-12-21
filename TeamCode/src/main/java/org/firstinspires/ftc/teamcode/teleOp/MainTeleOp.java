@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -27,6 +28,8 @@ public class MainTeleOp extends OpMode {
     public static double power;
     public static double targetVelo = 1300;
 
+    public final Pose homing = new Pose(72, 3, -Math.toRadians(90));
+    public Pose reset = new Pose(0, 0, 0);
 
 
 
@@ -61,24 +64,31 @@ public class MainTeleOp extends OpMode {
 
         //driving
 
+        double heading = Math.toDegrees(follower.getPose().getHeading());
+        double posX = follower.getPose().getX();
+        double posY = follower.getPose().getY();
+        double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
+
+
+        if (gamepad1.share){
+            follower.setPose(homing);
+        }
+        reset = new Pose(posX, posY, 0);
+        if (gamepad1.options){
+            follower.setPose(reset);
+        }
         follower.update();
 
-        dt.feildCentricDrive(Math.toDegrees(follower.getPose().getHeading()));
-        //dt.updateOdo();
+
+        shooter.setTurretAngle(turretAngle);
+        dt.feildCentricDrive(heading);        //dt.updateOdo();
 
         //intake
         intake.update();
 
         //shooter
 
-        if(gamepad2.dpad_right){
-            shooter.setMode(0);
-        }
-
-        if(gamepad2.dpad_left){
-            shooter.setMode(1);
-        }
-
+        /*
         if(shooter.getMod() == 0){
             //shooter.setTurretAngle(-(90-Math.toDegrees(Math.atan((144-Math.abs(follower.getPose().getY()))/follower.getPose().getX()))));
         }
@@ -102,11 +112,10 @@ public class MainTeleOp extends OpMode {
 
         }
 
-        shooter.shooterMachine();
-        shooter.setTurretAngle(0);
+         */
 
-        //update power var
-        power = shooter.power;
+        //shooter
+        shooter.shooterMachine(Math.abs(posY));
 
         //telemetry
 

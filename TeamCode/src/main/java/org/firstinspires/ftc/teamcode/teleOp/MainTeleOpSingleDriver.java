@@ -94,10 +94,10 @@ public class MainTeleOpSingleDriver extends OpMode {
         }
         follower.update();
 
-        /*
+
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
-         */
+
 
 
         ll.updateTele(follower.getPose().getHeading(), shooter.getTurrentAngle());

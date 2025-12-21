@@ -65,7 +65,8 @@ public class ShooterTele extends Shooter{
     public double getTurrentAngle() {
         return turret;
     }
-    public void shooterMachine(){
+
+    public void shooterMachine(double yPos){
 
         telemetry.addData("turret. WE ARE HERE", turret);
         //rotateTurret(turret);
@@ -73,11 +74,9 @@ public class ShooterTele extends Shooter{
 
         switch (shooterState){
             case CLOSE:
-                telemetry.addData("turret. WE ARE HERE close", turret);
-                runFlywheel(getMotorVel(), 1300, 0);
+                runFlywheel(getMotorVel(), 1290, 0);
                 hoodPitch(0.2);
-
-                if (gamepad2.x) {
+                if (gamepad2.a || yPos < 35) {
                     shooterState = FAR;
                 }
                 if (gamepad2.b) {
@@ -86,7 +85,7 @@ public class ShooterTele extends Shooter{
                 break;
             case FAR:
                 telemetry.addData("turret. WE ARE HERE far", turret);
-                if (gamepad2.a) {
+                if (gamepad2.y || yPos > 35) {
                     shooterState = CLOSE;
                 }
                 if (gamepad2.b) {
@@ -97,17 +96,16 @@ public class ShooterTele extends Shooter{
                 break;
             case OFF:
                 telemetry.addData("turret. WE ARE HERE not", turret);
-                if (gamepad2.a) {
+                if (gamepad2.y) {
                     shooterState = CLOSE;
                 }
-                if (gamepad2.x) {
+                if (gamepad2.a) {
                     shooterState = FAR;
                 }
                 runFlywheel(getMotorVel(), 0, 0);
                 hoodPitch(0.4);
                 break;
         }
-
     }
 
     public void shooterMachineSingle(double yPos){
