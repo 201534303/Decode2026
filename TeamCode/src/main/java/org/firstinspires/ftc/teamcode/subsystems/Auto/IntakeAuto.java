@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems.Auto;
 
-import static org.firstinspires.ftc.teamcode.subsystems.Intake.intakeState.IN;
-import static org.firstinspires.ftc.teamcode.subsystems.Intake.intakeState.OFF;
-import static org.firstinspires.ftc.teamcode.subsystems.Intake.intakeState.OUT;
-
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.supperClasses.Intake;
 
 public class IntakeAuto extends Intake {
     public IntakeAuto(HardwareMap hardwareMap, Telemetry t) {
