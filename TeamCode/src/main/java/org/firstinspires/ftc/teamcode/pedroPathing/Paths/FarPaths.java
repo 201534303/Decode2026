@@ -17,10 +17,11 @@ public class FarPaths extends Paths{
     private final Pose outPose = makePos(80, 35);
 
 //    public bluePath() {
-//        //this.follower = r.f;
+//        this.follower = r.f;
 //
-//        //if (r.a.equals(Alliance.RED)) {
+//        if (r.a.equals(Choose.Alliance.RED)) {
 //            start = start.mirror();
+//        }
 //    }
 
     public PathChain shootToOut(){

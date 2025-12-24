@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
-import static org.firstinspires.ftc.teamcode.auto.CloseAuto_15.PathState.OFF;
-import static org.firstinspires.ftc.teamcode.auto.CloseAuto_15.PathState.SHOOT;
+import static org.firstinspires.ftc.teamcode.pedroPathing.OldAutos.CloseAuto_15.PathState.OFF;
+import static org.firstinspires.ftc.teamcode.pedroPathing.OldAutos.CloseAuto_15.PathState.SHOOT;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 @Autonomous(name = "15 Close")
+@Disabled
 
 public class CloseAuto_15 extends OpMode {
     private Follower follower;

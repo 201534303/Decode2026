@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -11,17 +10,33 @@ public class ClosePaths extends Paths{
         this.follower = follower;
     }
 
-    public final Pose startPose = makePos(125, 128, -52); // Start Pose of our robot.
-    private final Pose shootPose = makePos(100, 82);
-    public final Pose ballCollect1 = makePos(128, 82);
-    public final Pose reset = makePos(133, 70, 90);
-    public final Pose ballCollect2 = makePos(134, 50);
-    public final Pose ballCollect3 = makePos(134, 28);
-    public final Pose ballCollect4 = makePos(135, 16, -90);//135, 10
-    public final Pose ballCollectMiddle4 = makePos(130, 30, -90);//135, 10
-    public final Pose backUp = makePos(130,25,-90);
-    public final Pose goUp = makePos(130,5,-90);
-    public final Pose out = makePos(115, 70);
+    public Pose startPose = makePos(125, 128, -52); // Start Pose of our robot.
+    private Pose shootPose = makePos(100, 82);
+    public Pose ballCollect1 = makePos(128, 82);
+    public Pose reset = makePos(133, 72, 90);
+    public Pose ballCollect2 = makePos(135, 50);//135, 50
+    public Pose ballCollect3 = makePos(130, 28);
+    public Pose ballCollect4 = makePos(130, 5, -90);//135, 10
+    public Pose ballCollectMiddle4 = makePos(143, 20, -90);//130, 30
+    public Pose backUp = makePos(130,25,-90);
+    public Pose goUp = makePos(130,5,-90);
+    public Pose out = makePos(115, 70);
+
+    public void bluePath() {
+//        if (r.a.equals(Choose.Alliance.RED)) {
+//            startPose = startPose.mirror();
+//            shootPose = shootPose.mirror();
+//            ballCollect1 = ballCollect1.mirror();
+//            reset = reset.mirror();
+//            ballCollect2 = ballCollect2.mirror();
+//            ballCollect3 = ballCollect3.mirror();
+//            ballCollect4 = ballCollect4.mirror();
+//            ballCollectMiddle4 = ballCollectMiddle4.mirror();
+//            backUp = backUp.mirror();
+//            goUp = goUp.mirror();
+//            out = out.mirror();
+//        }
+    }
 
     public PathChain shootToOut(){
         return bezierLine(shootPose, out);
@@ -66,7 +81,7 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain shootTo2(){
-        return bezierCurve(shootPose, new Pose(75.114, 52.551), ballCollect2);
+        return bezierCurve(shootPose, new Pose(61.260700389105054, 46.964980544747085), ballCollect2);//75.114, 52.551
     }
 
     public PathChain shootTo3(){

@@ -1,52 +1,50 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
-@Autonomous(name = "Auto Selector")
 public class Choose {
+    protected Gamepad gamepad1;
+    protected Telemetry telemetry;
     public enum Alliance { RED, BLUE, NONE }
     public Alliance selectedAlliance = Alliance.NONE;
     private boolean allianceConfirmed = false;
-
     public enum Auto { FAR, CLOSE, NONE }
     private Auto selectedAuto = Auto.NONE;
     private boolean autoConfirmed = false;
 
-    private int mark = 0;
+    private int mark = 4;
     private boolean numConfirmed = false;
-
-    // Button debouncing variables - CRITICAL for proper button handling
     private boolean dpadUpPressed = false;
     private boolean dpadDownPressed = false;
     private boolean aPressed = false;
 
-    public void initPrint() {
-        telemetry.addLine("Autonomous Selector Initialized");
-        telemetry.addLine("Ready to configure auto routine");
-        telemetry.update();
+    public Choose(Gamepad g1, Telemetry t) {
+        telemetry = t;
+        gamepad1 = g1;
+    }
+
+    public boolean tripsInit(){
+         if (!numConfirmed) {
+            handleAutoNum();
+            displayNumSelectionMenu();
+            return false;
+        } else {
+             displayReadyTripsScreen();
+             return true;
+         }
     }
 
     public void init_loop() {
         if (!autoConfirmed) {
             handleAutoSelection();
             displayAutoSelectionMenu();
-        }
-
-        else if (!numConfirmed) {
+        } else if (!numConfirmed) {
             handleAutoNum();
             displayNumSelectionMenu();
-        }
-
-        else if (!allianceConfirmed) {
+        } else if (!allianceConfirmed) {
             handleAllianceSelection();
             displayAllianceSelectionMenu();
-        }
-        // STEP 4: Ready to start
-        else {
+        } else {
             displayReadyScreen();
         }
 
@@ -80,7 +78,6 @@ public class Choose {
     }
 
     private void handleAutoNum() {
-        // Dpad Down - Decrease trips
         if (gamepad1.dpad_down && !dpadDownPressed) {
             if (mark > 0) {
                 mark -= 1;
@@ -90,9 +87,8 @@ public class Choose {
             dpadDownPressed = false;
         }
 
-        // Dpad Up - Increase trips
         if (gamepad1.dpad_up && !dpadUpPressed) {
-            if (mark < 5) {
+            if (mark < 4) {
                 mark += 1;
             }
             dpadUpPressed = true;
@@ -100,7 +96,6 @@ public class Choose {
             dpadUpPressed = false;
         }
 
-        // A button - Confirm selection
         if (gamepad1.a && !aPressed) {
             numConfirmed = true;
             aPressed = true;
@@ -110,7 +105,6 @@ public class Choose {
     }
 
     private void handleAllianceSelection() {
-        // Dpad Up - Select RED
         if (gamepad1.dpad_up && !dpadUpPressed) {
             selectedAlliance = Alliance.RED;
             dpadUpPressed = true;
@@ -118,7 +112,6 @@ public class Choose {
             dpadUpPressed = false;
         }
 
-        // Dpad Down - Select BLUE
         if (gamepad1.dpad_down && !dpadDownPressed) {
             selectedAlliance = Alliance.BLUE;
             dpadDownPressed = true;
@@ -126,7 +119,6 @@ public class Choose {
             dpadDownPressed = false;
         }
 
-        // A button - Confirm selection
         if (gamepad1.a && !aPressed && selectedAlliance != Alliance.NONE) {
             allianceConfirmed = true;
             aPressed = true;
@@ -154,21 +146,18 @@ public class Choose {
     }
 
     private void displayNumSelectionMenu() {
-        telemetry.addLine("=================================");
-        telemetry.addLine("NUMBER OF TRIPS");
-        telemetry.addLine("=================================");
+        telemetry.addLine("---------------------------------");
+        telemetry.addLine("NUMBER OF TRIPS:");
         telemetry.addLine("");
         telemetry.addLine("Use D-Pad Up/Down to adjust");
+        telemetry.addData("Trips:", mark);
         telemetry.addLine("");
-        telemetry.addData(">>> Trips", mark + " <<<");
-        telemetry.addLine("");
-        telemetry.addLine("---------------------------------");
-        telemetry.addData("Confirmed", numConfirmed ? "YES ✓" : "NO");
+        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
         telemetry.addLine("---------------------------------");
 
         if (!numConfirmed) {
             telemetry.addLine("");
-            telemetry.addLine("Press A to confirm and continue");
+            telemetry.addLine("Press X to confirm");
         }
     }
 
@@ -200,11 +189,18 @@ public class Choose {
         telemetry.addLine("");
     }
 
+    private void displayReadyTripsScreen() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addData("NUMBER OF TRIPS:", mark);
+        telemetry.addLine("");
+        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
+    }
+
+
     public void startPrint() {
-        // Provide warnings if selections weren't made
         if (selectedAuto == Auto.NONE) {
             telemetry.addLine("WARNING: No auto version selected!");
-            telemetry.addLine("Defaulting to CLOSE auto");
+            telemetry.addLine("Defaulting to CLOSE_12 auto");
             selectedAuto = Auto.CLOSE;
         }
 
@@ -215,14 +211,8 @@ public class Choose {
         }
 
         telemetry.addLine("");
-        telemetry.addData("Starting Auto Type", selectedAuto);
         telemetry.addData("Starting with Trips", mark);
         telemetry.addData("Starting Alliance", selectedAlliance);
-        telemetry.update();
-    }
-
-    public void stopPrint() {
-        telemetry.addLine("Auto selector stopped");
         telemetry.update();
     }
 
