@@ -14,7 +14,7 @@ public class ClosePaths extends Paths{
     private Pose shootPose = makePos(100, 82);
     public Pose ballCollect1 = makePos(128, 82);
     public Pose reset = makePos(133, 72, 90);
-    public Pose ballCollect2 = makePos(135, 50);//135, 50
+    public Pose ballCollect2 = makePos(135, 60);//135, 50
     public Pose ballCollect3 = makePos(130, 28);
     public Pose ballCollect4 = makePos(130, 5, -90);//135, 10
     public Pose ballCollectMiddle4 = makePos(143, 20, -90);//130, 30
@@ -22,7 +22,7 @@ public class ClosePaths extends Paths{
     public Pose goUp = makePos(130,5,-90);
     public Pose out = makePos(115, 70);
 
-    public void bluePath() {
+    public void bluePath() {//a
 //        if (r.a.equals(Choose.Alliance.RED)) {
 //            startPose = startPose.mirror();
 //            shootPose = shootPose.mirror();
