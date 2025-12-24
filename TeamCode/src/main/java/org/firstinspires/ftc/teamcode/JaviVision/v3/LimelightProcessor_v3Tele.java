@@ -101,94 +101,10 @@ public class LimelightProcessor_v3Tele {
     }
 
     public void getRobotPose() {
-        double posX = 0;
-        double posY = 0;
-        double transformation_angle = 0;
-        double angle = Math.abs(stored_yaw) + stored_shooter*0.8889;
-        angle = Math.abs(angle);
-        // IF STATEMENT FOR RED
-        if (pose.id == 24) {
-            double theta = Math.abs(Math.PI - angle - stored_tx);
-            pose.heading = stored_yaw;
-            pose.tx = stored_tx;
-            pose.theta = theta;
-            double a = Math.abs(Math.cos(theta)) * pose.distance;
-            double b = Math.abs(Math.sin(theta)) * pose.distance;
-            pose.rawX = a;
-            pose.rawY = b;
-            posX = field - (CONSTX + a);
-            posY = field - (CONSTY + b);
-            pose.posX = posX;
-            pose.posY = posY;
-        }
-        // IF STATEMENT FOR BL
-        else if (pose.id == 20) {
-            double theta = angle + stored_tx;
-            pose.heading = stored_yaw;
-            pose.tx = stored_tx;
-            pose.theta = theta;
-            double a = Math.abs(Math.cos(theta)) * pose.distance;
-            double b = Math.abs(Math.sin(theta)) * pose.distance;
-            pose.rawX = a;
-            pose.rawY = b;
-            posX = CONSTX + a;
-            posY = field - (CONSTY + b);
-            pose.posX = posX;
-            pose.posY = posY;
-        }
-        transformation_angle = Math.abs(stored_yaw) + stored_shooter;
-        pose.roll = stored_shooter;
-        pose.pitch = transformation_angle;
-        double cos_value = Math.abs(Math.cos(transformation_angle));
-        double sin_value = Math.abs(Math.sin(transformation_angle));
-        double dx = 1.5/39.3701 * cos_value;
-        double dy = -1.5/39.3701 * sin_value;
-        pose.posX2 = posX + dx;
-        pose.posY2 = posY + dy;
-
-        /*
-
-        double cos_value = Math.abs(Math.cos(transformation_angle));
-        double sin_value = Math.abs(Math.sin(transformation_angle));
-
-        pose.cos_value = cos_value;
-        pose.sin_value = sin_value;
-
-        double dx = cos_value*(-0.1777999) - sin_value*(-0.20319989);
-        double dy = sin_value*(-0.1777999) + cos_value*(-0.20319989);
-
-        double cornerX = posX + dx;
-        double cornerY = posY + dy;
-
-        cos_value = Math.abs(Math.cos(transformation_angle));
-        sin_value = Math.abs(Math.sin(transformation_angle));
-
-        dx = sin_value*(2/39.3701);
-        dy = cos_value*(-2/39.3701);
-
-        double centerX = posX + dx;
-        double centerY = posY + dy;
-
-
-        pose.z = transformation_angle;
-        transformation_angle += stored_shooter;
-        pose.pitch = transformation_angle;
-
-        cos_value = Math.abs(Math.cos(transformation_angle));
-        sin_value = Math.abs(Math.sin(transformation_angle));
-
-        dx = 1.5/39.3701 * Math.cos(transformation_angle);
-        dy = 1.5/39.3701 * Math.sin(transformation_angle);
-
-        centerX = posX + dx;
-        centerY = posY + dy;
-        pose.roll = stored_shooter;
-        pose.posX2 = centerX;
-        pose.posY2 = centerY;
-
-        pose.cornerX = cornerX;
-        pose.cornerY = cornerY;
-        */
-
+        double theta = Math.abs(stored_shooter + stored_yaw + stored_tx);
+        double rawX = (1.5/39.3701 + pose.distance)*Math.sin(theta);
+        double rawY = (1.5/39.3701 + pose.distance)*Math.cos(theta);
+        pose.posX = rawX;
+        pose.posY = rawY;
     }
 }
