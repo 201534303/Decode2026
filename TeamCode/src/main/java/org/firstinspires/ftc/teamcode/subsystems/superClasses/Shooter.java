@@ -11,46 +11,49 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Shooter {
 
+    //telemetry
     protected Telemetry telemetry;
+
+    //motors
     MotorEx shooterR;
     MotorEx shooterL;
-    protected double rotSpeed;
+
+    //runtime
     protected ElapsedTime runtime;
-    protected double lastTime;
-    protected double lastTicks;
-    protected PIDFController PIDF;
+
+
     public double power = 0;
     protected double idealSpeed;
     double last_error = 0;
     double integral = 0;
-    final double YOFFSET = 1.0;
-    final double XOFFSET = 1.0;
     protected Servo hood;
     Servo right, left;
     AnalogInput leftEnc;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
-        //shooterR = hardwareMap.get(MotorEx.class, "shooterR");
-        //shooterL = hardwareMap.get(MotorEx.class, "shooterL");
+        //init servos and motors
         shooterR = new MotorEx(hardwareMap, "shooterR", MotorEx.GoBILDA.BARE);
         shooterL = new MotorEx(hardwareMap, "shooterL", MotorEx.GoBILDA.BARE);
         right = hardwareMap.get(Servo.class, "turret_right");
         left = hardwareMap.get(Servo.class, "turret_left");
         hood = hardwareMap.get(Servo.class, "hood");
+
+        //notUsed
         leftEnc = hardwareMap.get(AnalogInput.class, "turrentencoder");
 
-
+        //invertMotor
         shooterR.setInverted(true);
 
+        //break
         shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
         shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
+        //VelocityMode
         shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
         shooterL.setRunMode(MotorEx.RunMode.VelocityControl);
 
         telemetry = t;
         runtime = r;
-        //PIDF = new PIDFController(0.001,0,0, .55);
     }
 
     public double getMotorVel(){
@@ -63,15 +66,11 @@ public class Shooter {
         return (shooterL.getVelocity()/28)*60;
     }
 
-    public double velToRPM(double vel){
-        return (vel/28)*60;
-    }
-
     public double RPMToVel(double RPM){
         return (RPM/60)*28;
     }
 
-    protected void setVel(double flywheelV){
+    public void setVel(double flywheelV){
         shooterR.setVelocity(flywheelV);
         shooterL.setVelocity(flywheelV);
     }
@@ -80,29 +79,6 @@ public class Shooter {
         shooterR.setVelocity(RPMToVel(flywheelRPM));
         shooterL.setVelocity(RPMToVel(flywheelRPM));
     }
-    
-    protected void setSpeed(double s){
-        idealSpeed = s;
-    }
-
-    /*
-    protected void updateRoot(){
-        power = PIDF.calculate(rotSpeed(), idealSpeed);
-        setVel(power);
-        telemetry.addData("power", power);
-    }
-
-    protected double rotSpeed(){
-        double timeChatnge =  runtime.time() - lastTime;
-        double tickChange = shooterL.getCurrentPosition() -lastTicks;
-        double rotSpeed = tickChange/(28.0*timeChatnge);
-        telemetry.addData("RPM", rotSpeed);
-        lastTime = runtime.time();
-        lastTicks = shooterL.getCurrentPosition();
-        return rotSpeed;
-    }
-
-     */
 
     public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
         double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
@@ -110,53 +86,10 @@ public class Shooter {
         shooterL.setVelocity(speed);
     }
 
-    /*
-    public void setTurretpos(double pos){
-        //1.6 is zero offset
-        double logicalPos = leftEnc.getVoltage() - 1.6;
-        if (logicalPos > 1.3){
-            logicalPos = 1.3;
-        }
-        if (logicalPos < -1.3){
-            logicalPos = -1.3;
-        }
-        double power = PIDF(pos- logicalPos, pos, 0.53,0.0003,0.35,0);
-        //double power = PIDF(pos- logicalPos, pos, 0.5,0,0,0);
-
-        left.setPower(power);
-        right.setPower(power);
-    }
-
-    public void setTurretPower(double power){
-        left.setPower(power);
-        right.setPower(power);
-    }
-
-
-
-    public double getTTPos(){
-        //1.6 is 0 offset
-        return 1.6 - leftEnc.getVoltage();
-    }
-    /*
-
-     */
     public void rotateTurret(double theta){
-        /*
-        //right = -0.4695
-        //left = 0.4861
-        theta = theta/360 * 2;
-        if(theta < -0.4845){
-            theta = -0.4845;
-        }
-        if(theta > 0.4811){
-            theta = 0.4811;
-        }
-        theta = theta + 0.5 + + 0.0072;
+        theta = normalizeDeg(theta);
 
-        theta = 1-theta;
-
-         */
+        //hard stops
         if (theta > 63){
             theta = 63;
         }
@@ -164,14 +97,24 @@ public class Shooter {
             theta = -63;
         }
 
+        //setting it
         theta = 0.48 + theta * (0.425/60);
         right.setPosition(theta);
         left.setPosition(theta);
     }
 
+    public static double normalizeDeg(double angleDeg) {
+        angleDeg = angleDeg % 360.0;
+        if (angleDeg > 180.0) {
+            angleDeg -= 360.0;
+        } else if (angleDeg <= -180.0) {
+            angleDeg += 360.0;
+        }
+        return angleDeg;
+    }
 
 
-    public void hoodPitch(double theta) {
+    public void setHood(double theta) {
         theta = 1-theta;
         hood.setPosition(theta);
     }
@@ -194,4 +137,6 @@ public class Shooter {
 
         return correction;
     }
+
+
 }

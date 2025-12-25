@@ -46,10 +46,10 @@ public class Drivetrain {
         backRight.setPower((drive + strafe - turn) * -1);
     }
 
-    public void setMotorPowers(double fl, double fr, double bl, double br) {
+    public void setMotorPowers(double fl, double bl, double fr, double br) {
         frontLeft.setPower(fl);
-        frontRight.setPower(fr);
         backLeft.setPower(bl);
+        frontRight.setPower(fr);
         backRight.setPower(br);
     }
 }

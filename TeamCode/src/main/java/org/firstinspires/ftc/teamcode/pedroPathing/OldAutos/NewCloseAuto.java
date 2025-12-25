@@ -146,7 +146,7 @@ public class NewCloseAuto extends OpMode {
 
     public void setUp(){
         //shooter.rotateTurret(-50);
-        shooter.hoodPitch(0.75);
+        shooter.setHood(0.75);
     }
 
     public boolean waitSecs(double seconds){

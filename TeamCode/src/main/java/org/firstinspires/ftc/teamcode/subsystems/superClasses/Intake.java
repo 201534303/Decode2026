@@ -42,11 +42,13 @@ public class Intake {
     }
 
     public void setTransferPower(double power){
+        telemetry.addData("We are settin transfer", power);
         tSpeed = power;
         transfer.setPower(tSpeed);
     }
 
     public void setIntakePower(double power){
+        telemetry.addData("We are setting intake", power);
         iSpeed = power;
         transfer.setPower(iSpeed);
     }

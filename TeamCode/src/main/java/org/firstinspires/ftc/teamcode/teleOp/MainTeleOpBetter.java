@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -20,9 +21,16 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
+
 @TeleOp(name="mainTeleOpBetter", group="Iterative OpMode")
 @Config
 public class MainTeleOpBetter extends OpMode {
+
+    private double DELETEBUTTHISISELAPSEDTIME1 = 0;
+    private double DELETEBUTTHISISELAPSEDTIME2 = 0;
+
+    //choose
+    private Choose choose;
 
     //runtime
     private ElapsedTime overallRuntime;
@@ -38,16 +46,16 @@ public class MainTeleOpBetter extends OpMode {
     //robot
     private RobotActions robot;
 
-    //color
-    public enum color{
-        RED,
-        BLUE
-    }
-
-    private color currentColor;
+    private Choose.Alliance currentColor;
 
     @Override
     public void init() {
+        //choose
+        choose = new Choose(gamepad1, telemetry);
+
+
+        //localization
+        follower = Constants.createFollower(hardwareMap);
 
         //runtime
         overallRuntime = new ElapsedTime();
@@ -56,9 +64,6 @@ public class MainTeleOpBetter extends OpMode {
         drivetrain = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry);
         shooter = new Shooter(hardwareMap, telemetry, overallRuntime);
-
-        //localazation
-        follower = Constants.createFollower(hardwareMap);
 
         //telemetry
         telemetry.addData("Status", "Initialized");
@@ -69,26 +74,21 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void init_loop() {
-        currentColor = color.RED;
-        switch (currentColor){
-            case RED:
-                telemetry.addData("Color", " red");
-                if(gamepad1.y){
-                    currentColor = color.BLUE;
-                }
-                break;
-            case BLUE:
-                telemetry.addData("Color", " blue");
-                if(gamepad1.y){
-                    currentColor = color.RED;
-                }
-                break;
-        }
+        currentColor = Choose.Alliance.RED;
+        choose.allianceInit();
+        currentColor = choose.getSelectedAlliance();
+        telemetry.update();
     }
 
     @Override
     public void start() {
         overallRuntime.reset();
+        if(currentColor == Choose.Alliance.RED){
+            follower.setPose(new Pose(115, 70, 0));
+        }
+        if(currentColor == Choose.Alliance.BLUE){
+            follower.setPose(new Pose(29, 70, Math.PI));
+        }
     }
 
     @Override
@@ -104,11 +104,11 @@ public class MainTeleOpBetter extends OpMode {
         }
 
         //reset imu to 0
-        if (gamepad1.share){
-            robot.setIMUZero();
+        if (gamepad1.options){
+            robot.setIMUZero(currentColor);
         }
 
-        robot.fieldCentricDrive();
+        robot.fieldCentricDrive(currentColor);
 
         /*
         --------------------------DRIVER TWO CONTROLS--------------------------
@@ -125,15 +125,33 @@ public class MainTeleOpBetter extends OpMode {
             robot.setShootingOff();
         }
 
-        /*
-        --------------------------OTHER--------------------------
-         */
-
-        robot.setTurret(currentColor);
+        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME1 > 1){
+            if(gamepad1.dpad_up){
+                robot.shooter(25, 0);
+                DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
+            }
+            if(gamepad1.dpad_down){
+                robot.shooter(-25, 0);
+                DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
+            }
+        }
+        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME2 > 1){
+            if(gamepad1.dpad_right){
+                robot.shooter(0, 0.05);
+                DELETEBUTTHISISELAPSEDTIME2 = overallRuntime.time();
+            }
+            if(gamepad1.dpad_left){
+                robot.shooter(0, -0.05);
+                DELETEBUTTHISISELAPSEDTIME2 = overallRuntime.time();
+            }
+        }
 
         /*
         --------------------------UPDATE--------------------------
          */
+
+        robot.update(currentColor);
+        follower.update();
         telemetry.update();
     }
 

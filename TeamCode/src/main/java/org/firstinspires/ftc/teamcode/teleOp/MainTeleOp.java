@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 @TeleOp(name="mainTeleOp", group="Iterative OpMode")
 @Config
 public class MainTeleOp extends OpMode {
+
     private ElapsedTime runtime = new ElapsedTime();
 
     private DrivetrainTele dt;
@@ -68,6 +69,9 @@ public class MainTeleOp extends OpMode {
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
         double posY = follower.getPose().getY();
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Theta", follower.getPose().getHeading());
         double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
 
 

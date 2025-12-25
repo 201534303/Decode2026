@@ -146,7 +146,7 @@ public class BLUE_CloseAuto extends OpMode {
     }
 
     public void setUp(){
-        shooter.hoodPitch(0.17);
+        shooter.setHood(0.17);
         shooter.rotateTurret(47.5);
     }
 

@@ -28,21 +28,12 @@ public class ShooterTele extends Shooter {
     public void setVel(double flywheelV){
         super.setVel(flywheelV);
     }
-/*
-    public void update() {
-        updateRoot();
-        telemetry.addData("We are here", "yeah");
-        rotSpeed();
-    }
-
- */
 
     public void runFlywheel(double currentV, double targetV, double kf){
         flywheelSpin(targetV, currentV, kf);
         if (gamepad2.b) {
             flywheelSpin(0, currentV, kf);
         }
-
     }
 
     public void setTurretAngle(double angle){
@@ -76,7 +67,7 @@ public class ShooterTele extends Shooter {
         switch (shooterState){
             case CLOSE:
                 runFlywheel(getMotorVel(), 1290, 0);
-                hoodPitch(0.2);
+                setHood(0.2);
                 if (gamepad2.a || yPos < 35) {
                     shooterState = FAR;
                 }
@@ -93,7 +84,7 @@ public class ShooterTele extends Shooter {
                     shooterState = OFF;
                 }
                 runFlywheel(getMotorVel(), 1610, 0);
-                hoodPitch(0);
+                setHood(0);
                 break;
             case OFF:
                 telemetry.addData("turret. WE ARE HERE not", turret);
@@ -104,7 +95,7 @@ public class ShooterTele extends Shooter {
                     shooterState = FAR;
                 }
                 runFlywheel(getMotorVel(), 0, 0);
-                hoodPitch(0.4);
+                setHood(0.4);
                 break;
         }
     }
@@ -113,7 +104,7 @@ public class ShooterTele extends Shooter {
         switch (shooterState){
             case CLOSE:
                 runFlywheel(getMotorVel(), 1285, 0);
-                hoodPitch(0.2);
+                setHood(0.2);
 
                 if (gamepad1.x || yPos < 35) {
                     shooterState = FAR;
@@ -130,7 +121,7 @@ public class ShooterTele extends Shooter {
                     shooterState = OFF;
                 }
                 runFlywheel(getMotorVel(), 1590, 0);
-                hoodPitch(0);
+                setHood(0);
                 break;
             case OFF:
                 if (gamepad1.a) {
@@ -140,7 +131,7 @@ public class ShooterTele extends Shooter {
                     shooterState = FAR;
                 }
                 runFlywheel(getMotorVel(), 0, 0);
-                hoodPitch(0.4);
+                setHood(0.4);
                 break;
         }
 

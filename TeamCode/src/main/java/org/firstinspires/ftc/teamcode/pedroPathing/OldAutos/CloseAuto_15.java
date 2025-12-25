@@ -178,7 +178,7 @@ public class CloseAuto_15 extends OpMode {
     }
 
     public void setUp(){
-        shooter.hoodPitch(0.17);
+        shooter.setHood(0.17);
         shooter.rotateTurret(47.5);
     }
 

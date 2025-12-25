@@ -7,12 +7,17 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
-//hey
+
 public class RobotActions {
+
+    //DELETELATER
+    double DELETEBUTTHISISVEL = 900;
+    double DELETEBUTTHISISHOOD = 0.2;
 
     //gamepads
     Gamepad gamepad1, gamepad2;
@@ -32,7 +37,7 @@ public class RobotActions {
     private Follower follower;
 
     //constants
-    private final Pose HOMING = new Pose(72, 3, -Math.toRadians(90));
+    private final Pose HOMING = new Pose(72, 3, Math.toRadians(90));
 
     //variables
     private int shootingMode = 1;
@@ -52,13 +57,18 @@ public class RobotActions {
         follower.setPose(HOMING);
     }
 
-    public void setIMUZero() {
+    public void setIMUZero(Choose.Alliance currentColor) {
         double x = follower.getPose().getX();
-        double y = follower.getPose().getX();
-        follower.setPose(new Pose(x, y, 0));
+        double y = follower.getPose().getY();
+        if(currentColor == Choose.Alliance.RED){
+            follower.setPose(new Pose(x, y, Math.PI));
+        }
+        if(currentColor == Choose.Alliance.BLUE){
+            follower.setPose(new Pose(x, y, 0));
+        }
     }
 
-    public void fieldCentricDrive(){
+    public void fieldCentricDrive(Choose.Alliance currentColor){
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
         double rot = gamepad1.left_stick_x;
@@ -66,13 +76,18 @@ public class RobotActions {
         double brake = gamepad1.right_trigger;
         double superBrake = gamepad1.left_trigger;
 
-        double heading = follower.getPose().getHeading();
-
-        double botHeading = -Math.toRadians(heading);
+        double botHeadingaForMatrix = follower.getPose().getHeading();
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotedX = xMove * Math.cos(botHeading) - yMove * Math.sin(botHeading);
-        double rotedY = xMove * Math.sin(botHeading) + yMove * Math.cos(botHeading);
+
+        if (currentColor == Choose.Alliance.RED) {
+            // Flip the field coordinate system 180 degrees
+            botHeadingaForMatrix += Math.PI;
+        }
+        botHeadingaForMatrix = - botHeadingaForMatrix;
+
+        double rotedX = xMove * Math.cos(botHeadingaForMatrix) - yMove * Math.sin(botHeadingaForMatrix);
+        double rotedY = xMove * Math.sin(botHeadingaForMatrix) + yMove * Math.cos(botHeadingaForMatrix);
 
         rotedX = rotedX * 1.1;  // Counteract imperfect strafing
 
@@ -91,11 +106,13 @@ public class RobotActions {
     }
 
     public void updateIntake() {
-        intake.setIntakePower(-gamepad1.right_stick_y + 0.15);
+        intake.setIntPower(-gamepad2.right_stick_y + 0.1);
+        intake.intakeIn();
+        intake.intakeMachine();
     }
 
     public void updateTransfer() {
-        intake.setTransferPower(-gamepad1.left_stick_y);
+        intake.setTransferPower(-gamepad2.left_stick_y);
     }
 
     public void setShootingAuto() {
@@ -106,19 +123,75 @@ public class RobotActions {
         shootingMode = 1;
     }
 
-    public void setTurret(MainTeleOpBetter.color currentColor) {
+    private void updateTurret(Choose.Alliance currentColor){
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
         double posY = follower.getPose().getY();
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Theta", follower.getPose().getHeading());
 
-        if(currentColor == MainTeleOpBetter.color.BLUE){
-            double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
+        telemetry.addData("color", currentColor);
+
+        double turretAngle = 0;
+
+        if(currentColor == Choose.Alliance.BLUE){
+            double delX = -posX;
+            double delY = 144-posY;
+            turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
         }
 
-        //TODO flip
-        if(currentColor == MainTeleOpBetter.color.RED){
-            double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
+        if(currentColor == Choose.Alliance.RED){
+            double delX = 144-posX;
+            double delY = 144-posY;
+            turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
         }
+
+        shooter.rotateTurret(turretAngle);
+    }
+
+    public void update(Choose.Alliance currentColor) {
+        updateTurret(currentColor);
+        updateShooter(currentColor);
+        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+        shooter.setHood(DELETEBUTTHISISHOOD);
+        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
+        telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
+    }
+
+    public void shooter(double velChange, double hooodChange){
+        DELETEBUTTHISISVEL += velChange;
+        DELETEBUTTHISISHOOD += hooodChange;
+        telemetry.addData("We are in shooter function", "Thats right Javi!");
+    }
+
+    private void updateShooter(Choose.Alliance currentColor) {
+        double posX = follower.getPose().getX();
+        double posY = follower.getPose().getY();
+
+        double dist;
+
+        if(currentColor == Choose.Alliance.BLUE){
+            double delX = -posX;
+            double delY = 144-posY;
+            dist = Math.hypot(delX, delY);
+        }
+        if(currentColor == Choose.Alliance.RED){
+            double delX = 144-posX;
+            double delY = 144-posY;
+            dist = Math.hypot(delX, delY);
+        }
+
+        /*if(shootingMode == 0){
+            if((posY > 120-posX && posY > -24+posX )|| (posY < 120-posX && posY < -24+posX)){
+
+                shooter.setHood(1-);
+                shooter.setVel();
+            }
+        }
+
+         */
 
     }
+
 }

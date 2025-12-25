@@ -34,6 +34,17 @@ public class Choose {
          }
     }
 
+    public boolean allianceInit(){
+        if (!allianceConfirmed) {
+            handleAllianceSelection();
+            displayAllianceSelectionMenu();
+            return false;
+        } else {
+            displayReadyTeleScreen();
+            return true;
+        }
+    }
+
     public void init_loop() {
         if (!autoConfirmed) {
             handleAutoSelection();
@@ -163,7 +174,7 @@ public class Choose {
 
     private void displayAllianceSelectionMenu() {
         telemetry.addLine("=================================");
-        telemetry.addLine("STEP 3: SELECT ALLIANCE");
+        telemetry.addLine("SELECT ALLIANCE");
         telemetry.addLine("=================================");
         telemetry.addLine("");
         telemetry.addLine((selectedAlliance == Alliance.RED ? ">>> RED ALLIANCE <<<" : "    Red Alliance"));
@@ -185,6 +196,13 @@ public class Choose {
         telemetry.addLine("");
         telemetry.addData("Auto Type", selectedAuto);
         telemetry.addData("Number of Trips", mark);
+        telemetry.addData("Alliance", selectedAlliance);
+        telemetry.addLine("");
+    }
+
+    private void displayReadyTeleScreen() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
         telemetry.addData("Alliance", selectedAlliance);
         telemetry.addLine("");
     }
