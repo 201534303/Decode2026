@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
 public class RobotActions {
 
     //DELETELATER
-    double DELETEBUTTHISISVEL = 900;
+    double DELETEBUTTHISISVEL = 1685;
     double DELETEBUTTHISISHOOD = 0.2;
 
     //gamepads
@@ -37,7 +38,7 @@ public class RobotActions {
     private Follower follower;
 
     //constants
-    private final Pose HOMING = new Pose(72, 3, Math.toRadians(90));
+    private final Pose HOMING = new Pose(72, 8, Math.toRadians(90));
 
     //variables
     private int shootingMode = 1;
@@ -105,7 +106,7 @@ public class RobotActions {
         }
     }
 
-    public void updateIntake() {
+    public void updateIntake(){
         intake.setIntPower(-gamepad2.right_stick_y + 0.1);
         intake.intakeIn();
         intake.intakeMachine();
@@ -123,7 +124,21 @@ public class RobotActions {
         shootingMode = 1;
     }
 
-    private void updateTurret(Choose.Alliance currentColor){
+    //UPDATE
+
+    public void update(Choose.Alliance currentColor) {
+        double[] velocities = getVelocities(currentColor);
+        double rVel = velocities[0];
+        double tVel = velocities[0];
+        updateTurret(currentColor, tVel);
+        updateShooter(currentColor, rVel);
+        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+        shooter.setHood(DELETEBUTTHISISHOOD);
+        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
+        telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
+    }
+
+    private void updateTurret(Choose.Alliance currentColor, double tVel){
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
         double posY = follower.getPose().getY();
@@ -150,26 +165,17 @@ public class RobotActions {
         shooter.rotateTurret(turretAngle);
     }
 
-    public void update(Choose.Alliance currentColor) {
-        updateTurret(currentColor);
-        updateShooter(currentColor);
-        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
-        shooter.setHood(DELETEBUTTHISISHOOD);
-        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
-        telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
-    }
 
-    public void shooter(double velChange, double hooodChange){
+    public void shooter(double velChange, double hooodChange){ //TESTING ONLY
         DELETEBUTTHISISVEL += velChange;
         DELETEBUTTHISISHOOD += hooodChange;
-        telemetry.addData("We are in shooter function", "Thats right Javi!");
     }
 
-    private void updateShooter(Choose.Alliance currentColor) {
+    private void updateShooter(Choose.Alliance currentColor, double rVel) {
         double posX = follower.getPose().getX();
         double posY = follower.getPose().getY();
 
-        double dist;
+        double dist = 0;
 
         if(currentColor == Choose.Alliance.BLUE){
             double delX = -posX;
@@ -182,16 +188,48 @@ public class RobotActions {
             dist = Math.hypot(delX, delY);
         }
 
-        /*if(shootingMode == 0){
+        if(shootingMode == 0){
             if((posY > 120-posX && posY > -24+posX )|| (posY < 120-posX && posY < -24+posX)){
-
-                shooter.setHood(1-);
-                shooter.setVel();
             }
         }
-
-         */
-
+        telemetry.addData("distance", dist);
     }
 
+    private double[] getVelocities(Choose.Alliance currentColor) {
+        Vector vel = follower.getVelocity();
+        double velX = vel.getXComponent();
+        double velY = vel.getYComponent();
+
+        double posX = follower.getPose().getX();
+        double posY = follower.getPose().getY();
+
+        double delX = 0;
+        double delY = 0;
+
+        if(currentColor == Choose.Alliance.BLUE){
+            delX = -posX;
+            delY = 144-posY;
+        }
+
+        if(currentColor == Choose.Alliance.RED){
+            delX = 144-posX;
+            delY = 144-posY;
+        }
+
+        double rMag = Math.hypot(delX, delY);
+        double rHatX = delX / rMag;
+        double rHatY = delY / rMag;
+
+        double vRadial = velX * rHatX + velY * rHatY;
+
+        telemetry.addData("radial vel", vRadial);
+
+        double tHatX = rHatY;
+        double tHatY = -rHatX;
+
+        double vTangential = velX * tHatX + velY * tHatY;
+
+        telemetry.addData("tangent vel", vTangential);
+        return new double[] { vRadial, vTangential };
+    }
 }

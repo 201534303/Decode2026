@@ -43,7 +43,7 @@ public class Intake {
 
     public void setTransferPower(double power){
         telemetry.addData("We are settin transfer", power);
-        tSpeed = power;
+        tSpeed = power * 0.7;
         transfer.setPower(tSpeed);
     }
 

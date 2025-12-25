@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 
-@TeleOp(name="mainTeleOpBetter", group="Iterative OpMode")
+@TeleOp(name="Two Driver Tele", group="Iterative OpMode")
 @Config
 public class MainTeleOpBetter extends OpMode {
 
@@ -125,7 +125,7 @@ public class MainTeleOpBetter extends OpMode {
             robot.setShootingOff();
         }
 
-        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME1 > 1){
+        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME1 > 0.25){
             if(gamepad1.dpad_up){
                 robot.shooter(25, 0);
                 DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
@@ -135,7 +135,7 @@ public class MainTeleOpBetter extends OpMode {
                 DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
             }
         }
-        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME2 > 1){
+        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME2 > 0.25){
             if(gamepad1.dpad_right){
                 robot.shooter(0, 0.05);
                 DELETEBUTTHISISELAPSEDTIME2 = overallRuntime.time();
