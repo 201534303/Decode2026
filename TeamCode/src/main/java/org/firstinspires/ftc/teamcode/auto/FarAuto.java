@@ -48,19 +48,19 @@ public class FarAuto extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    if (spikeMark == 1){
+                    //if (spikeMark == 1){
                         if (waitSecs(1.8)){
                             shooter.rotateTurret(63);
                             intake.allTheWay();//go all the way to shoot
                             resetActionTimer();
                             pathState = PathState.SHOOT_COLLECT;
                         }
-                    } else{
+                    /*} else{
                         shooter.rotateTurret(63);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
-                    }
+                    }*/
                 }
                 break;
 
