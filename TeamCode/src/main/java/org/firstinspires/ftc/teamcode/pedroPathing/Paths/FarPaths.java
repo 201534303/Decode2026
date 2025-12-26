@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -10,11 +11,12 @@ public class FarPaths extends Paths{
         this.follower = follower;
     }
     public final Pose startPose = makePos(80, 8); // Start Pose of our robot.
-    private final Pose shootPose = makePos(90, 20);
-    private final Pose ballCollect1 = makePos(130, 8, 20);
-    private final Pose ballCollect2 = makePos(130, 40);
-    private final Pose ballCollect3 = makePos(130, 58);
-    private final Pose outPose = makePos(80, 35);
+    private final Pose shootPose = makePos(80, 18, 5);
+    private final Pose ballCollect1 = makePos(130, 45.67);
+    private final Pose ballCollect2 = makePos(130, 10, -90);
+    private final Pose ballCollect3 = makePos(125, 7);
+    private final Pose out3 = makePos(117, 10);
+    private final Pose outPose = makePos(100, 10);
 
 //    public bluePath() {
 //        this.follower = r.f;
@@ -24,24 +26,26 @@ public class FarPaths extends Paths{
 //        }
 //    }
 
+    public  PathChain startToShoot(){
+        return bezierLine(startPose, shootPose);
+    }
     public PathChain shootToOut(){
         return bezierLine(shootPose, outPose);
     }
 
-    public PathChain startToShoot(){
-        return bezierLine(startPose, shootPose);
-    }
-
     public PathChain shootTo1(){
-        return bezierLine(shootPose, ballCollect1);
-    }
-
-    public PathChain shootTo2(){
-        return bezierCurve(startPose, new Pose(70, 40.5), ballCollect2);
-    }
-
-    public PathChain shootTo3(){
-        return bezierCurve(shootPose, new Pose(70, 70), ballCollect3);
+        return follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                startPose,
+                                new Pose(82.366, 44.366),
+                                new Pose(99.922, 46.607),
+                                ballCollect1
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
+                .build();
     }
 
     public PathChain collectToShoot(){
@@ -51,5 +55,31 @@ public class FarPaths extends Paths{
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
                 .setTValueConstraint(.98)
                 .build();
+    }
+
+    public PathChain shootTo2(){
+        return follower
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                shootPose,
+                                new Pose(115.518, 46.506),
+                                new Pose(125.506, 40.342),
+                                ballCollect2
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-90))
+                .build();
+    }
+
+    public PathChain shootTo3(){
+        return bezierLine(shootPose, ballCollect3);
+    }
+
+    public PathChain Out3(){
+        return bezierLine(ballCollect3, out3);
+    }
+    public PathChain In3(){
+        return bezierLine(out3, ballCollect3);
     }
 }

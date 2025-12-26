@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.Auto;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 
 public class IntakeAuto extends Intake {
@@ -16,6 +17,7 @@ public class IntakeAuto extends Intake {
     public void intakeOut(){ intake.setPower(-1); }
     @Override
     public void intakeOff(){ intake.setPower(0); }
+
     @Override
     public void setTransferPower(double power){
         transfer.setPower(power);
@@ -32,6 +34,10 @@ public class IntakeAuto extends Intake {
 
     public void transferOff(){
         setTransferPower(0);
+    }
+
+    public double transferAmps(){
+        return transfer.getCurrent(CurrentUnit.AMPS);
     }
 
 }

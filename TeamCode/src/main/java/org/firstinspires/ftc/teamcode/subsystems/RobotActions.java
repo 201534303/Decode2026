@@ -132,8 +132,8 @@ public class RobotActions {
         double tVel = velocities[0];
         updateTurret(currentColor, tVel);
         updateShooter(currentColor, rVel);
-        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
-        shooter.setHood(DELETEBUTTHISISHOOD);
+        //shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+        //shooter.setHood(DELETEBUTTHISISHOOD);
         telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
         telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
     }
