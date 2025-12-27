@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
 public class RobotActions {
 
     //DELETELATER
-    double DELETEBUTTHISISVEL = 1685;
+    double DELETEBUTTHISISVEL = 1610;
     double DELETEBUTTHISISHOOD = 0.2;
 
     //gamepads
@@ -38,7 +38,7 @@ public class RobotActions {
     private Follower follower;
 
     //constants
-    private final Pose HOMING = new Pose(72, 8, Math.toRadians(90));
+    private final Pose HOMING = new Pose(72, 3, Math.toRadians(90));
 
     //variables
     private int shootingMode = 1;
@@ -132,8 +132,8 @@ public class RobotActions {
         double tVel = velocities[0];
         updateTurret(currentColor, tVel);
         updateShooter(currentColor, rVel);
-        //shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
-        //shooter.setHood(DELETEBUTTHISISHOOD);
+        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+        shooter.setHood(DELETEBUTTHISISHOOD);
         telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
         telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
     }
@@ -193,6 +193,17 @@ public class RobotActions {
             }
         }
         telemetry.addData("distance", dist);
+        /*
+        if(posY < 48){
+            shooter.setHood(0.2);
+            shooter.flywheelSpin(1610, shooter.getMotorVel(), 0);
+        }
+        else{
+            shooter.setHood(0);
+            shooter.flywheelSpin(1290, shooter.getMotorVel(), 0);
+        }
+
+         */
     }
 
     private double[] getVelocities(Choose.Alliance currentColor) {
