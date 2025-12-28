@@ -26,9 +26,6 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 @Config
 public class MainTeleOpBetter extends OpMode {
 
-    private double DELETEBUTTHISISELAPSEDTIME1 = 0;
-    private double DELETEBUTTHISISELAPSEDTIME2 = 0;
-
     //choose
     private Choose choose;
 
@@ -39,6 +36,7 @@ public class MainTeleOpBetter extends OpMode {
     private Drivetrain drivetrain;
     private Intake intake;
     private Shooter shooter;
+    private double turretAngle = 0.48;
 
     //localization
     private Follower follower;
@@ -125,25 +123,17 @@ public class MainTeleOpBetter extends OpMode {
             robot.setShootingOff();
         }
 
-        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME1 > 0.25){
-            if(gamepad1.dpad_up){
-                robot.shooter(25, 0);
-                DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
-            }
-            if(gamepad1.dpad_down){
-                robot.shooter(-25, 0);
-                DELETEBUTTHISISELAPSEDTIME1 = overallRuntime.time();
-            }
+        if(gamepad1.dpadUpWasPressed()){
+            robot.shooter(5, 0);
         }
-        if(overallRuntime.time() - DELETEBUTTHISISELAPSEDTIME2 > 0.25){
-            if(gamepad1.dpad_right){
-                robot.shooter(0, 0.05);
-                DELETEBUTTHISISELAPSEDTIME2 = overallRuntime.time();
-            }
-            if(gamepad1.dpad_left){
-                robot.shooter(0, -0.05);
-                DELETEBUTTHISISELAPSEDTIME2 = overallRuntime.time();
-            }
+        if(gamepad1.dpadDownWasPressed()){
+            robot.shooter(-5, 0);
+        }
+        if(gamepad1.dpadRightWasPressed()){
+            robot.shooter(0, 0.05);
+        }
+        if(gamepad1.dpadLeftWasPressed()){
+            robot.shooter(0, -0.05);
         }
 
         /*

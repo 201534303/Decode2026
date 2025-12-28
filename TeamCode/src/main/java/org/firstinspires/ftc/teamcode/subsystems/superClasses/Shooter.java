@@ -98,7 +98,12 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.48 + theta * (0.425/60);
+        theta = 0.48 /*center*/ + theta * (1/360.0)*(2);
+        right.setPosition(theta);
+        left.setPosition(theta);
+    }
+
+    public void seTurretRaw(double theta){
         right.setPosition(theta);
         left.setPosition(theta);
     }

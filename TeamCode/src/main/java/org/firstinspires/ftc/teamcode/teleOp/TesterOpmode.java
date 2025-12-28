@@ -35,8 +35,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -53,12 +56,15 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @TeleOp(name="testeropmode", group="Iterative OpMode")
-@Disabled
 public class TesterOpmode extends OpMode
 {
+    private ElapsedTime runtime = new ElapsedTime();
     // Declare OpMode members.
     AnalogInput axonWire;
     CRServo turret;
+    Shooter shooter;
+    double turretAngle = 0.48;
+    double hoodAngle = 0;
 
     /*
      * Code to run ONCE when the driver hits INIT
@@ -66,9 +72,7 @@ public class TesterOpmode extends OpMode
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        axonWire  = hardwareMap.get(AnalogInput.class, "turretencoder");
-        turret  = hardwareMap.get(CRServo.class, "turret_left");
-
+        shooter = new Shooter(hardwareMap, telemetry, runtime);
 
     }
 
@@ -92,9 +96,24 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-        turret.setPower(0);
-        telemetry.addData("pos", axonWire.getVoltage());
-        telemetry.update();
+        shooter.seTurretRaw(turretAngle);
+        shooter.setHood(hoodAngle);
+        telemetry.addData("hood", hoodAngle);
+        telemetry.addData("turret", turretAngle);
+        if(gamepad1.dpadUpWasPressed()){
+            turretAngle += 0.001;
+        }
+        if(gamepad1.dpadDownWasPressed()){
+            turretAngle -= 0.001;
+        }
+        if(gamepad1.dpadLeftWasPressed()){
+             hoodAngle -= 0.05;
+        }
+        if(gamepad1.dpadRightWasPressed()){
+            hoodAngle += 0.05;
+        }
+
+
     }
 
     /*
