@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,115 +8,108 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "BLUE_CloseAuto")
+@Autonomous(name = "BLUE_FarAuto")
 
-public class BLUE_CloseAuto extends OpMode {
+public class BLUE_FarAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
-    private ClosePaths paths;
+    private FarPaths paths;
 
-    //robot stuff
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private Choose choose;
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 1;
-    private int maxTrips = 4;
+    private Choose.Alliance alliance = Choose.Alliance.BLUE;
+    private boolean once = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
-        OFF, RESET, START, UP
+        OFF, START, IN, OUT
     }
     PathState pathState = PathState.START;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }
+    public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
+
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
-                follower.followPath(paths.startToShoot(), 0.7, true);
                 resetActionTimer();
+                follower.followPath(paths.startToShoot(), 0.75, false);
                 pathState = PathState.SHOOT;
                 break;
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    if(spikeMark == 3) {
-                        if(waitSecs(2)) {
-                            shooter.rotateTurret(47.5);
-                            intake.allTheWay();//go all the way to shoot
-                            resetActionTimer();
-                            pathState = PathState.SHOOT_COLLECT;
-                        }
-                    }
-                    else {
-                        shooter.rotateTurret(47.5);
+                    //if (spikeMark == 1){
+                    if (waitSecs(1.8)){
+                        shooter.rotateTurret(63);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
                     }
+                    /*} else{
+                        shooter.rotateTurret(63);
+                        intake.allTheWay();//go all the way to shoot
+                        resetActionTimer();
+                        pathState = PathState.SHOOT_COLLECT;
+                    }*/
                 }
                 break;
 
             case SHOOT_COLLECT:
                 if (!follower.isBusy() && waitSecs(0.75)) {//waits 0.5 works
-                    PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
-                    if (spikeMark <= maxTrips && spikeMark < 4) {//if there is a spike pos
-                        intake.intakeIn();
-                        intake.transferOff();
-                        follower.followPath(collectPath, 0.7, true);
+                    intake.intakeIn();
+                    intake.transferOff();
+
+                    if (spikeMark < 4){
+                        follower.followPath(paths.shootTo3(), 0.75, false);
                         resetActionTimer();
-                        pathState = PathState.COLLECT_SHOOT;
-                    } else if (spikeMark <= maxTrips && spikeMark < 5) {
-                        intake.intakeIn();
-                        intake.transferOff();
-                        follower.followPath(collectPath, 0.9, true);
-                        resetActionTimer();
-                        pathState = PathState.UP;
+                        pathState = PathState.OUT;
                     }
                     else { pathState = PathState.OFF; }
                 }
                 break;
 
             case COLLECT_SHOOT:
-                if (!follower.isBusy() &&  waitSecs(1)) {
+                if (!follower.isBusy()  &&  waitSecs(1) || waitSecs(2)) {
+                    intake.transferOff();
                     intake.setIntakeSpeed(0.5);
-                    if (spikeMark == 1) {
-                        spikeMark--;
-                        follower.followPath(paths.reset(), 0.75, false);
-                        resetActionTimer();
-                        pathState = PathState.RESET;
-                    } else if (spikeMark <= maxTrips && spikeMark < 4){
-                        if (spikeMark < 1){ spikeMark = 1; }
+                    if (spikeMark < 4) {
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
                         pathState = PathState.SHOOT;
-                    } else if (spikeMark < 5) {
-                        follower.followPath(paths.collectToShoot(), 0.9, true);
-                        spikeMark++;
-                        resetActionTimer();
-                        pathState = PathState.SHOOT;
-                    } else { pathState = PathState.OFF; }
+                    } else{ pathState = PathState.OFF; }
                 }
                 break;
 
-            case RESET:
-                if(!follower.isBusy()) {
-                    if(waitSecs(0.75)){
-                        pathState = PathState.COLLECT_SHOOT;
-                    }
-                }
 
+            case OUT:
+                if(!follower.isBusy() && waitSecs(1.5) || waitSecs(2)){
+                    intake.setIntakePower(-0.7);
+                    follower.followPath(paths.Out3(), 0.8, true);
+                    resetActionTimer();
+                    pathState = PathState.IN;
+                }
                 break;
 
-            case UP:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.shootTo4(), 0.6, true);
-                    if (!follower.isBusy() || waitSecs(2)) {
+            case IN:
+                if(!follower.isBusy() && waitSecs(1)){
+                    intake.setTransferPower(0.2);
+                    intake.intakeIn();
+                    follower.followPath(paths.In3(), 0.8, true);
+                    resetActionTimer();
+                    if (!once){
+                        pathState = PathState.OUT;
+                        once = true;
+                    } else {
+                        //intake.setTransferPower(0.3);
                         pathState = PathState.COLLECT_SHOOT;
                     }
                 }
@@ -135,52 +127,43 @@ public class BLUE_CloseAuto extends OpMode {
         }
     }
 
-    private PathChain getCollectPath(int spikeMark) {
-        switch (spikeMark) {
-            case 1: return paths.shootTo1();
-            case 2: return paths.shootTo2();
-            case 3: return paths.shootTo3();
-            case 4: return paths.shootTo4Mid();
-            default: return null;
-        }
-    }
-
     public void setUp(){
-        shooter.setHood(0.17);
-        shooter.rotateTurret(47.5);
+        shooter.setHood(0.5);
+        shooter.rotateTurret(63);
     }
 
-    public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
-
+    @Override
     public void init() {
         pathTimer = new Timer();
         actionTimer = new Timer();
 
         choose = new Choose(gamepad1, telemetry);
         follower = Constants.createFollower(hardwareMap);
-        paths = new ClosePaths(follower);
+        paths = new FarPaths(follower);
         follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
         setUp();
+        resetActionTimer();
     }
 
     public void init_loop(){
-        boolean ready = choose.tripsInit();
-        maxTrips = choose.getMark();
+        choose.allianceInit();
+        alliance = choose.getSelectedAlliance();
         telemetry.update();
     }
 
+    @Override
     public void loop() {
-        shooter.close();
+        shooter.far();
         follower.update();
 
         autonomousPathUpdate();//main auto code
 
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
-        telemetry.addData("max trips", maxTrips);
+        telemetry.addData("alliance", alliance);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
@@ -191,6 +174,7 @@ public class BLUE_CloseAuto extends OpMode {
     public void start() {
         runtime.reset();
         pathTimer.resetTimer();
+        paths.bluePath(alliance);
         pathState = PathState.START;
     }
 }

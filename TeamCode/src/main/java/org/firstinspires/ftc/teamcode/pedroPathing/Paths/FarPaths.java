@@ -10,27 +10,31 @@ public class FarPaths extends Paths{
     public FarPaths(Follower follower) {
         this.follower = follower;
     }
-    public final Pose startPose = makePos(80, 8); // Start Pose of our robot.
-    private final Pose shootPose = makePos(80, 18, 5);
-    private final Pose ballCollect1 = makePos(130, 45.67);
-    private final Pose ballCollect2 = makePos(130, 10, -90);
-    private final Pose ballCollect3 = makePos(125, 7);
-    private final Pose out3 = makePos(117, 10);
-    private final Pose outPose = makePos(100, 10);
+    public Pose startPose = makePos(80, 8); // Start Pose of our robot.
+    private Pose shootPose = makePos(80, 18, 5);
+    private Pose ballCollect1 = makePos(130, 45.67);
+    private Pose ballCollect2 = makePos(130, 10, -90);
+    private Pose ballCollect3 = makePos(125, 7);
+    private Pose out3 = makePos(117, 10);
+    private Pose parkPose = makePos(100, 10);
 
-//    public bluePath() {
-//        this.follower = r.f;
-//
-//        if (r.a.equals(Choose.Alliance.RED)) {
-//            start = start.mirror();
-//        }
-//    }
+    public void bluePath(Choose.Alliance alliance) {
+        if (alliance == Choose.Alliance.BLUE) {
+            startPose = startPose.mirror();
+            shootPose = shootPose.mirror();
+            ballCollect1 = ballCollect1.mirror();
+            ballCollect2 = ballCollect2.mirror();
+            ballCollect3 = ballCollect3.mirror();
+            out3 = out3.mirror();
+            parkPose = parkPose.mirror();
+        }
+    }
 
     public  PathChain startToShoot(){
         return bezierLine(startPose, shootPose);
     }
     public PathChain shootToOut(){
-        return bezierLine(shootPose, outPose);
+        return bezierLine(shootPose, parkPose);
     }
 
     public PathChain shootTo1(){
