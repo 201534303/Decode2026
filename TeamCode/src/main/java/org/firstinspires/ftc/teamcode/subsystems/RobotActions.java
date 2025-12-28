@@ -62,10 +62,10 @@ public class RobotActions {
         double x = follower.getPose().getX();
         double y = follower.getPose().getY();
         if(currentColor == Choose.Alliance.RED){
-            follower.setPose(new Pose(x, y, Math.PI));
+            follower.setPose(new Pose(x, y, 0));
         }
         if(currentColor == Choose.Alliance.BLUE){
-            follower.setPose(new Pose(x, y, 0));
+            follower.setPose(new Pose(x, y, Math.PI));
         }
     }
 
@@ -81,7 +81,7 @@ public class RobotActions {
 
         // Rotate the movement direction counter to the bot's rotation
 
-        if (currentColor == Choose.Alliance.RED) {
+        if (currentColor == Choose.Alliance.BLUE) {
             // Flip the field coordinate system 180 degrees
             botHeadingaForMatrix += Math.PI;
         }
@@ -113,7 +113,16 @@ public class RobotActions {
     }
 
     public void updateTransfer() {
-        intake.setTransferPower(-gamepad2.left_stick_y);
+        Vector vel = follower.getVelocity();
+        double velX = vel.getXComponent();
+        double velY = vel.getYComponent();
+        double total = Math.hypot(velY, velX);
+        if(total < 3){
+            intake.setTransferPower(-gamepad2.left_stick_y);
+        }
+        else{
+            intake.setTransferPower(0);
+        }
     }
 
     public void setShootingAuto() {
@@ -132,10 +141,10 @@ public class RobotActions {
         double tVel = velocities[0];
         updateTurret(currentColor, tVel);
         updateShooter(currentColor, rVel);
-        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
-        shooter.setHood(DELETEBUTTHISISHOOD);
-        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
-        telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
+        //shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+        //shooter.setHood(DELETEBUTTHISISHOOD);
+        //telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
+        //telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
     }
 
     private void updateTurret(Choose.Alliance currentColor, double tVel){
@@ -187,12 +196,23 @@ public class RobotActions {
             double delY = 144-posY;
             dist = Math.hypot(delX, delY);
         }
-
-        if(shootingMode == 0){
-            if((posY > 120-posX && posY > -24+posX )|| (posY < 120-posX && posY < -24+posX)){
-            }
+        double speed = -1265 + 593*Math.log(dist);
+        if(speed < 0){
+            speed = 0;
         }
+        telemetry.addData("logSpeed", speed);
+        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
+
+        if(dist > 135){
+            shooter.setHood(0.05);
+        }
+        else{
+            double hoodAngle = ((135-dist)/135)*(1.5) + 0.15;
+            shooter.setHood(hoodAngle);
+        }
+
         telemetry.addData("distance", dist);
+
         /*
         if(posY < 48){
             shooter.setHood(0.2);

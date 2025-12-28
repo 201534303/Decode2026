@@ -44,7 +44,7 @@ public class MainTeleOpBetter extends OpMode {
     //robot
     private RobotActions robot;
 
-    private Choose.Alliance currentColor;
+    private Choose.Alliance currentColor = Choose.Alliance.RED;
 
     @Override
     public void init() {
@@ -82,10 +82,10 @@ public class MainTeleOpBetter extends OpMode {
     public void start() {
         overallRuntime.reset();
         if(currentColor == Choose.Alliance.RED){
-            follower.setPose(new Pose(115, 70, 0));
+            follower.setPose(new Pose(29, 70, Math.PI));
         }
         if(currentColor == Choose.Alliance.BLUE){
-            follower.setPose(new Pose(29, 70, Math.PI));
+            follower.setPose(new Pose(115, 70, 0));
         }
     }
 
