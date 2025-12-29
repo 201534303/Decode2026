@@ -121,11 +121,6 @@ public class FarAuto extends OpMode {
         }
     }
 
-    public void setUp(){
-        shooter.setHood(0.05);
-        //shooter.rotateTurret(turnTableAngle);
-    }
-
     @Override
     public void init() {
         pathTimer = new Timer();
@@ -135,7 +130,7 @@ public class FarAuto extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        setUp();
+        shooter.setHood(0.05);
         resetActionTimer();
     }
 
@@ -153,17 +148,6 @@ public class FarAuto extends OpMode {
         autonomousPathUpdate();//main auto code
 
         telemetry.addData("mirror", isMirror);
-        telemetry.addData("startPose", paths.startPose);
-        telemetry.addData("startPoseMirror", paths.startPose.mirror());
-        telemetry.addData("shootPose", paths.shootPose);
-        telemetry.addData("shootPoseMirror", paths.shootPose.mirror());
-        telemetry.addData("ballCollect3", paths.ballCollect3);
-        telemetry.addData("ballCollect3Mirror", paths.ballCollect3.mirror());
-        telemetry.addData("out3", paths.out3);
-        telemetry.addData("out3Mirror", paths.out3.mirror());
-        telemetry.addData("parkPose", paths.parkPose);
-        telemetry.addData("parkPoseMirror", paths.parkPose.mirror());
-
         telemetry.addData("path state", pathState);
         telemetry.addData("alliance", alliance);
         telemetry.addData("x", follower.getPose().getX());

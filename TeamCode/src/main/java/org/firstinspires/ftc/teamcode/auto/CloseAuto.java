@@ -17,14 +17,16 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 @Autonomous(name = "CloseAuto")
 
 public class CloseAuto extends OpMode {
-    private Follower follower;
-    private Timer pathTimer, actionTimer;
-    private ClosePaths paths;
+    //ROBOT
     private IntakeAuto intake;
     private ShooterAuto shooter;
-    private Choose choose;
-    private ElapsedTime runtime = new ElapsedTime();
+    private double turnTableAngle = 47.5;
 
+    //AUTO
+    private Follower follower;
+    private ClosePaths paths;
+    private Choose choose;
+    private Timer actionTimer;
     private int spikeMark = 1;
     private int maxTrips = 4;
     public enum PathState {
@@ -32,12 +34,14 @@ public class CloseAuto extends OpMode {
         OFF, RESET, START, UP
     }
     PathState pathState = PathState.START;
-    private double turnTableAngle = 47.5;
-    private boolean isMirror = false;
-    private boolean ready = false;
     private Choose.Alliance alliance = Choose.Alliance.RED;
+    private ElapsedTime runtime = new ElapsedTime();
+    private boolean isMirror = false;
+    private boolean readyTrips = false;
 
-    public void resetActionTimer(){ actionTimer.resetTimer(); }
+    public void resetActionTimer(){ actionTimer.resetTimer(); }//resets timer
+    public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
+
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
@@ -48,16 +52,16 @@ public class CloseAuto extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    if(spikeMark == 3) {
-                        if(waitSecs(2)) {
-                            shooter.rotateTurret(turnTableAngle);
-                            intake.allTheWay();//go all the way to shoot
+                    shooter.rotateTurret(turnTableAngle);
+
+                    if(spikeMark == 3) {//if on the 3rd one
+                        if(waitSecs(2)) {//waits 2
+                            intake.allTheWay();//run intake + transfer all the way to shoot
                             resetActionTimer();
                             pathState = PathState.SHOOT_COLLECT;
                         }
                     }
                     else {
-                        shooter.rotateTurret(turnTableAngle);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
@@ -66,9 +70,9 @@ public class CloseAuto extends OpMode {
                 break;
 
             case SHOOT_COLLECT:
-                if (!follower.isBusy() && waitSecs(0.75)) {//waits 0.5 works
-                    PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
-                    if (spikeMark <= maxTrips && spikeMark < 4) {//if there is a spike pos
+                if (!follower.isBusy() && waitSecs(0.75)) {//waits to finish shooting
+                    PathChain collectPath = getCollectPath(spikeMark);//gets spike mark path
+                    if (spikeMark <= maxTrips && spikeMark < 4) {
                         intake.intakeIn();
                         intake.transferOff();
                         follower.followPath(collectPath, 0.7, true);
@@ -88,12 +92,17 @@ public class CloseAuto extends OpMode {
             case COLLECT_SHOOT:
                 if (!follower.isBusy() &&  waitSecs(1)) {
                     intake.setIntakeSpeed(0.5);
-                    if (spikeMark == 1) {
+                    if (spikeMark == 1) {//for 1st one
                         spikeMark--;
                         follower.followPath(paths.reset(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
-                    } else if (spikeMark <= maxTrips && spikeMark < 4){
+                    } /*else if (spikeMark == 1) {//for wolfpack auto
+                        spikeMark--;
+                        follower.followPath(paths.reset(), 0.75, false);
+                        resetActionTimer();
+                        pathState = PathState.RESET;
+                    }*/ else if (spikeMark <= maxTrips && spikeMark < 4){
                         if (spikeMark < 1){ spikeMark = 1; }
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
@@ -148,37 +157,41 @@ public class CloseAuto extends OpMode {
         }
     }
 
-    public void setUp(){
-        shooter.setHood(0.2);
-        //shooter.rotateTurret(turnTableAngle);
-    }
-
-    public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
-
     public void init() {
-        pathTimer = new Timer();
         actionTimer = new Timer();
 
         choose = new Choose(gamepad1, telemetry);
-        //follower = Constants.createFollower(hardwareMap);
-        //paths = new ClosePaths(follower);
-        //follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        setUp();
+        shooter.setHood(0.2);
     }
 
     public void init_loop(){
-        if (!ready){
-            ready = choose.tripsInit();
+        if (!readyTrips){//run trips selection
+            readyTrips = choose.tripsInit();
             maxTrips = choose.getMark();
-        } else{
+        } else{ //run alliance selection
             choose.allianceInit();
             alliance = choose.getSelectedAlliance();
         }
 
         telemetry.update();
+    }
+
+    public void start() {
+        follower = Constants.createFollower(hardwareMap);
+        paths = new ClosePaths(follower);
+
+        isMirror = paths.bluePath(alliance);//mirrors the paths if blue
+        follower.setStartingPose(paths.startPose);//sets up the starting pose
+
+        if(isMirror) {turnTableAngle = turnTableAngle * -1; }//if it's mirrored turn the turntable
+        shooter.rotateTurret(turnTableAngle);//rotates the turntable
+
+        runtime.reset();//resets overall timer
+        actionTimer.resetTimer();//resets path timer
+        pathState = PathState.START;//sets the path state
     }
 
     public void loop() {
@@ -195,20 +208,5 @@ public class CloseAuto extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
-    }
-
-    public void start() {
-        follower = Constants.createFollower(hardwareMap);
-        paths = new ClosePaths(follower);
-
-        isMirror = paths.bluePath(alliance);
-        follower.setStartingPose(paths.startPose);
-
-        if(isMirror) {turnTableAngle = turnTableAngle * -1; }
-        shooter.rotateTurret(turnTableAngle);
-
-        runtime.reset();
-        pathTimer.resetTimer();
-        pathState = PathState.START;
     }
 }
