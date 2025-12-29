@@ -49,8 +49,8 @@ public class FarAuto extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    if (waitSecs(2.5)){
-                        shooter.rotateTurret(turnTableAngle);
+                    shooter.rotateTurret(turnTableAngle);
+                    if (waitSecs(2)){
                         intake.allTheWaySlow();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
@@ -59,12 +59,12 @@ public class FarAuto extends OpMode {
                 break;
 
             case SHOOT_COLLECT:
-                if (!follower.isBusy() && waitSecs(2)) {//waits 0.5 works
+                if (!follower.isBusy() && waitSecs(1.25)) {//waits 0.5 works
                     intake.intakeIn();
                     intake.transferOff();
 
                     if (spikeMark < 4){
-                        follower.followPath(paths.shootTo(), 0.7, false);
+                        follower.followPath(paths.shootTo(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.OUT;
                     }
@@ -88,8 +88,9 @@ public class FarAuto extends OpMode {
 
             case OUT:
                 if(!follower.isBusy() && waitSecs(1.5) || waitSecs(2)){
-                    intake.setIntakePower(-0.7);
-                    follower.followPath(paths.Out(), 0.7, true);
+                    //intake.setIntakePower(-0.5);
+                    //if (spikeMark < )
+                    follower.followPath(paths.Out(), 0.75, true);
                     resetActionTimer();
                     pathState = PathState.IN;
                 }
@@ -97,9 +98,9 @@ public class FarAuto extends OpMode {
 
             case IN:
                 if(!follower.isBusy() && waitSecs(1)){
-                    intake.setTransferPower(0.2);
+                    //intake.setTransferPower(0.2);
                     intake.intakeIn();
-                    follower.followPath(paths.In(), 0.7, true);
+                    follower.followPath(paths.In(), 0.75, true);
                     resetActionTimer();
 //                    if (!once){
 //                        pathState = PathState.OUT;

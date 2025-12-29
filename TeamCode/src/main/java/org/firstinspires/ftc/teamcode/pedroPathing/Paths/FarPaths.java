@@ -15,9 +15,9 @@ public class FarPaths extends Paths{
     public Pose ballCollect = makePos(125, 7);
     public Pose out = makePos(117, 10);
 
-    public Pose outSide = makePos(117, 10);
-    public Pose ballCollectSide = makePos(125, 7);
-    public Pose parkPose = makePos(110, 15, 90);
+    public Pose outSide = makePos(117, 20);
+    public Pose ballCollectSide = makePos(125, 20);
+    public Pose parkPose = makePos(95, 15, 90);
 
     public boolean bluePath(Choose.Alliance alliance) {
         if (alliance == Choose.Alliance.BLUE) {
@@ -59,9 +59,9 @@ public class FarPaths extends Paths{
     }
 
     public PathChain OutSide(){
-        return bezierLine(ballCollect, out);
+        return bezierLine(ballCollect, outSide);
     }
     public PathChain InSide(){
-        return bezierLine(out, ballCollect);
+        return bezierLine(out, ballCollectSide);
     }
 }
