@@ -107,10 +107,10 @@ public class TesterOpmode extends OpMode
             turretAngle -= 0.001;
         }
         if(gamepad1.dpadLeftWasPressed()){
-             hoodAngle -= 0.05;
+            turretAngle = 1;
         }
         if(gamepad1.dpadRightWasPressed()){
-            hoodAngle += 0.05;
+            turretAngle = 0;
         }
 
 

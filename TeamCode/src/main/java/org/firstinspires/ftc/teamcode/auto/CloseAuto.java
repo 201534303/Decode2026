@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -54,8 +56,8 @@ public class CloseAuto extends OpMode {
                 if(!follower.isBusy()) {
                     shooter.rotateTurret(turnTableAngle);
 
-                    if(spikeMark == 3) {//if on the 3rd one
-                        if(waitSecs(2)) {//waits 2
+                    if(spikeMark == 3 || spikeMark == 2 || spikeMark == 1) {//if on the 3rd one
+                        if(waitSecs(1.5)) {//waits 2
                             intake.allTheWay();//run intake + transfer all the way to shoot
                             resetActionTimer();
                             pathState = PathState.SHOOT_COLLECT;
@@ -91,8 +93,8 @@ public class CloseAuto extends OpMode {
 
             case COLLECT_SHOOT:
                 if (!follower.isBusy() &&  waitSecs(1)) {
-                    intake.setIntakeSpeed(0.5);
                     if (spikeMark == 1) {//for 1st one
+                        intake.setIntakeSpeed(0.5);
                         spikeMark--;
                         follower.followPath(paths.reset(), 0.75, false);
                         resetActionTimer();
@@ -102,13 +104,16 @@ public class CloseAuto extends OpMode {
                         follower.followPath(paths.reset(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
-                    }*/ else if (spikeMark <= maxTrips && spikeMark < 4){
+                    }*/
+                    else if (spikeMark <= maxTrips && spikeMark < 4){
+                        intake.setIntakeSpeed(0.5);
                         if (spikeMark < 1){ spikeMark = 1; }
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
                         pathState = PathState.SHOOT;
-                    } else if (spikeMark < 5) {
+                    } else if (spikeMark <= 5) {
+                        intake.setIntakePower(0);
                         follower.followPath(paths.collectToShoot(), 0.9, true);
                         spikeMark++;
                         resetActionTimer();
@@ -118,8 +123,8 @@ public class CloseAuto extends OpMode {
                 break;
 
             case RESET:
-                if(!follower.isBusy()) {
-                    if(waitSecs(0.75)){
+                if(!follower.isBusy() /*|| paths.inBetween(110, 120,70,80)*/) {
+                    if(waitSecs(2.5)){//0.75
                         pathState = PathState.COLLECT_SHOOT;
                     }
                 }
@@ -129,7 +134,11 @@ public class CloseAuto extends OpMode {
             case UP:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.shootTo4(), 0.6, true);
+//                    if(waitSecs(1)){
+//                        intake.setIntakePower(-0.7);
+//                    }
                     if (!follower.isBusy() || waitSecs(2)) {
+                        intake.intakeIn();
                         pathState = PathState.COLLECT_SHOOT;
                     }
                 }
@@ -164,7 +173,7 @@ public class CloseAuto extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        shooter.setHood(0.2);
+        shooter.setHood(0.3);
     }
 
     public void init_loop(){
@@ -186,7 +195,7 @@ public class CloseAuto extends OpMode {
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue
         follower.setStartingPose(paths.startPose);//sets up the starting pose
 
-        if(isMirror) {turnTableAngle = turnTableAngle * -1; }//if it's mirrored turn the turntable
+        if(isMirror) {turnTableAngle = -43; }//if it's mirrored turn the turntable
         shooter.rotateTurret(turnTableAngle);//rotates the turntable
 
         runtime.reset();//resets overall timer

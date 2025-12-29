@@ -98,8 +98,8 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.48 /*center*/ + theta * (1/315.0)*(2);
-        telemetry.addData("315", "315");
+        theta = 0.48 /*center*/ + theta * (1/(71.35*2));
+        telemetry.addData("image!", "71.35*2!");
         right.setPosition(theta);
         left.setPosition(theta);
     }
