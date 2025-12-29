@@ -67,7 +67,7 @@ public class OLDFarAuto extends OpMode {
                     intake.transferOff();
 
                     if (spikeMark < 4){
-                        follower.followPath(paths.shootTo3(), 0.75, false);
+                        follower.followPath(paths.shootTo(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.OUT;
                     }
@@ -92,7 +92,7 @@ public class OLDFarAuto extends OpMode {
             case OUT:
                 if(!follower.isBusy() && waitSecs(1.5) || waitSecs(2)){
                     intake.setIntakePower(-0.7);
-                    follower.followPath(paths.Out3(), 0.8, true);
+                    follower.followPath(paths.Out(), 0.8, true);
                     resetActionTimer();
                     pathState = PathState.IN;
                 }
@@ -102,7 +102,7 @@ public class OLDFarAuto extends OpMode {
                 if(!follower.isBusy() && waitSecs(1)){
                     intake.setTransferPower(0.2);
                     intake.intakeIn();
-                    follower.followPath(paths.In3(), 0.8, true);
+                    follower.followPath(paths.In(), 0.8, true);
                     resetActionTimer();
                     if (!once){
                         pathState = PathState.OUT;

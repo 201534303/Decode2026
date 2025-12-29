@@ -40,6 +40,8 @@ public class CloseAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private boolean isMirror = false;
     private boolean readyTrips = false;
+    private boolean done = false;
+
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }//resets timer
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -47,20 +49,12 @@ public class CloseAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
-                follower.followPath(paths.startToShoot(), 0.7, true);
+                follower.followPath(paths.startToShoot(), 0.8, true);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
                 break;
 
             case SHOOT:
-
-                //on way to shoot
-                if(spikeMark >= 5 && follower.getPose().getY() < 12){
-                    intake.setIntakeSpeed(-1);
-                }
-                else{
-                    intake.setIntakeSpeed(0.7);
-                }
 
                 if(!follower.isBusy()) {
                     shooter.rotateTurret(turnTableAngle);
@@ -86,7 +80,7 @@ public class CloseAuto extends OpMode {
                     if (spikeMark <= maxTrips && spikeMark < 4) {
                         intake.intakeIn();
                         intake.transferOff();
-                        follower.followPath(collectPath, 0.7, true);
+                        follower.followPath(collectPath, 0.8, true);
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     } else if (spikeMark <= maxTrips && spikeMark < 5) {
@@ -105,7 +99,7 @@ public class CloseAuto extends OpMode {
                     if (spikeMark == 1) {//for 1st one
                         intake.setIntakeSpeed(0.7);
                         spikeMark--;
-                        follower.followPath(paths.reset(), 0.75, false);
+                        follower.followPath(paths.reset(), 0.8, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
                     } /*else if (spikeMark == 1) {//for wolfpack auto
@@ -123,6 +117,7 @@ public class CloseAuto extends OpMode {
                         pathState = PathState.SHOOT;
                     } else if (spikeMark <= 5) {
                         intake.setIntakeSpeed(0.7);
+                        waitSecs(1);
                         follower.followPath(paths.collectToShoot(), 0.9, true);
                         spikeMark++;
                         resetActionTimer();
@@ -142,7 +137,7 @@ public class CloseAuto extends OpMode {
 
             case UP:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.shootTo4(), 0.6, true);
+                    follower.followPath(paths.shootTo4(), 0.7, true);
 //                    if(waitSecs(1)){
 //                        intake.setIntakePower(-0.7);
 //                    }
@@ -155,7 +150,8 @@ public class CloseAuto extends OpMode {
 
             case OFF:
                 if(!follower.isBusy()) {
-                    follower.followPath(paths.shootToOut(), 0.7, true);
+                    done = true;
+                    follower.followPath(paths.shootToOut(), 0.8, true);
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
@@ -182,7 +178,7 @@ public class CloseAuto extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        shooter.setHood(0.3);
+        shooter.setHood(0.30);
     }
 
     public void init_loop(){
@@ -213,7 +209,7 @@ public class CloseAuto extends OpMode {
     }
 
     public void loop() {
-        shooter.close();
+        if (!done) { shooter.close(); }
         follower.update();
 
         autonomousPathUpdate();//main auto code
