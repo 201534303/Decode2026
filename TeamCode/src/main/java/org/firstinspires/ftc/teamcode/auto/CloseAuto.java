@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -19,8 +20,6 @@ public class CloseAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private ClosePaths paths;
-
-    //robot stuff
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private Choose choose;
@@ -33,6 +32,10 @@ public class CloseAuto extends OpMode {
         OFF, RESET, START, UP
     }
     PathState pathState = PathState.START;
+    private double turnTableAngle = 47.5;
+    private boolean isMirror = false;
+    private boolean ready = false;
+    private Choose.Alliance alliance = Choose.Alliance.RED;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }
     public void autonomousPathUpdate() {
@@ -47,14 +50,14 @@ public class CloseAuto extends OpMode {
                 if(!follower.isBusy()) {
                     if(spikeMark == 3) {
                         if(waitSecs(2)) {
-                            shooter.rotateTurret(47.5);
+                            shooter.rotateTurret(turnTableAngle);
                             intake.allTheWay();//go all the way to shoot
                             resetActionTimer();
                             pathState = PathState.SHOOT_COLLECT;
                         }
                     }
                     else {
-                        shooter.rotateTurret(47.5);
+                        shooter.rotateTurret(turnTableAngle);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
@@ -147,7 +150,7 @@ public class CloseAuto extends OpMode {
 
     public void setUp(){
         shooter.setHood(0.2);
-        shooter.rotateTurret(47.5);
+        //shooter.rotateTurret(turnTableAngle);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -157,9 +160,9 @@ public class CloseAuto extends OpMode {
         actionTimer = new Timer();
 
         choose = new Choose(gamepad1, telemetry);
-        follower = Constants.createFollower(hardwareMap);
-        paths = new ClosePaths(follower);
-        follower.setStartingPose(paths.startPose);
+        //follower = Constants.createFollower(hardwareMap);
+        //paths = new ClosePaths(follower);
+        //follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
@@ -167,12 +170,14 @@ public class CloseAuto extends OpMode {
     }
 
     public void init_loop(){
-        boolean ready = choose.tripsInit();
-        maxTrips = choose.getMark();
-
-        /*if (ready){
+        if (!ready){
+            ready = choose.tripsInit();
             maxTrips = choose.getMark();
-        }*/
+        } else{
+            choose.allianceInit();
+            alliance = choose.getSelectedAlliance();
+        }
+
         telemetry.update();
     }
 
@@ -193,6 +198,15 @@ public class CloseAuto extends OpMode {
     }
 
     public void start() {
+        follower = Constants.createFollower(hardwareMap);
+        paths = new ClosePaths(follower);
+
+        isMirror = paths.bluePath(alliance);
+        follower.setStartingPose(paths.startPose);
+
+        if(isMirror) {turnTableAngle = turnTableAngle * -1; }
+        shooter.rotateTurret(turnTableAngle);
+
         runtime.reset();
         pathTimer.resetTimer();
         pathState = PathState.START;

@@ -6,7 +6,7 @@ public class Choose {
     protected Gamepad gamepad1;
     protected Telemetry telemetry;
     public enum Alliance { RED, BLUE, NONE }
-    public Alliance selectedAlliance = Alliance.BLUE;
+    public Alliance selectedAlliance = Alliance.RED;
     private boolean allianceConfirmed = false;
     public enum Auto { FAR, CLOSE, NONE }
     private Auto selectedAuto = Auto.NONE;

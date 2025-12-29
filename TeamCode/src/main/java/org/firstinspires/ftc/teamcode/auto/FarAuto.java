@@ -25,18 +25,18 @@ public class FarAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 1;
-    private Choose.Alliance alliance = Choose.Alliance.BLUE;
+    private Choose.Alliance alliance = Choose.Alliance.RED;
     private boolean once = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
         OFF, START, IN, OUT
     }
     private boolean isMirror = false;
+    private double turnTableAngle = 63;
     PathState pathState = PathState.START;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
-
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
@@ -48,7 +48,7 @@ public class FarAuto extends OpMode {
             case SHOOT:
                 if(!follower.isBusy()) {
                     if (waitSecs(1.8)){
-                        shooter.rotateTurret(-63);
+                        shooter.rotateTurret(turnTableAngle);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
@@ -123,7 +123,7 @@ public class FarAuto extends OpMode {
 
     public void setUp(){
         shooter.setHood(0.05);
-        shooter.rotateTurret(-63);
+        //shooter.rotateTurret(turnTableAngle);
     }
 
     @Override
@@ -179,6 +179,9 @@ public class FarAuto extends OpMode {
 
         isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
+
+        if (isMirror) { turnTableAngle = turnTableAngle * -1; }
+        shooter.rotateTurret(turnTableAngle);
 
         runtime.reset();
         pathTimer.resetTimer();

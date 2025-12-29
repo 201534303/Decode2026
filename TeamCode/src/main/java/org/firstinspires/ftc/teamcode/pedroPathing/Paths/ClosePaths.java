@@ -14,30 +14,43 @@ public class ClosePaths extends Paths{
     private Pose shootPose = makePos(100, 82);
     public Pose ballCollect1 = makePos(128, 82);
     public Pose reset = makePos(133, 72, 90);
+    public Pose resetMiddle = new Pose(116.135, 74.992);
+    public Pose resetMiddle2 = new Pose(116.135, 70);
     public Pose reset2 = makePos(133, 72, -90);
-
     public Pose ballCollect2 = makePos(138, 50);//135, 50
+    public Pose shootTo2Middle = new Pose(61.260700389105054, 46.964980544747085);
     public Pose ballCollect3 = makePos(130, 28);
+    public Pose ballCollect3Middle = new Pose(65.730, 26.930);
     public Pose ballCollect4 = makePos(130, 5, -90);//135, 10
     public Pose ballCollectMiddle4 = makePos(143, 20, -90);//130, 30
+    public Pose shootTo5Middle = new Pose(92, 5);
     public Pose backUp = makePos(130,25,-90);
     public Pose goUp = makePos(130,5,-90);
     public Pose out = makePos(115, 70);
 
-    public void bluePath() {
-//        if (r.a.equals(Choose.Alliance.RED)) {
-//            startPose = startPose.mirror();
-//            shootPose = shootPose.mirror();
-//            ballCollect1 = ballCollect1.mirror();
-//            reset = reset.mirror();
-//            ballCollect2 = ballCollect2.mirror();
-//            ballCollect3 = ballCollect3.mirror();
-//            ballCollect4 = ballCollect4.mirror();
-//            ballCollectMiddle4 = ballCollectMiddle4.mirror();
-//            backUp = backUp.mirror();
-//            goUp = goUp.mirror();
-//            out = out.mirror();
-//        }
+    public boolean bluePath(Choose.Alliance alliance) {
+        if (alliance == Choose.Alliance.BLUE) {
+            this.startPose = startPose.mirror();
+            this.shootPose = shootPose.mirror();
+            this.ballCollect1 = ballCollect1.mirror();
+            this.reset = reset.mirror();
+            this.resetMiddle = resetMiddle.mirror();
+            this.reset2 = reset2.mirror();
+            this.resetMiddle2 = resetMiddle2.mirror();
+            this.ballCollect2 = ballCollect2.mirror();
+            this.shootTo2Middle = shootTo2Middle.mirror();
+            this.ballCollect3 = ballCollect3.mirror();
+            this.ballCollect3Middle = ballCollect3Middle.mirror();
+            this.ballCollect4 = ballCollect4.mirror();
+            this.ballCollectMiddle4 = ballCollectMiddle4.mirror();
+            this.shootTo5Middle = shootTo5Middle.mirror();
+            this.backUp = backUp.mirror();
+            this.goUp = goUp.mirror();
+            this.out = out.mirror();
+
+            return true;
+        }
+        return false;
     }
 
     public PathChain shootToOut(){
@@ -49,10 +62,10 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain reset(){
-        return bezierCurve(ballCollect1, new Pose(116.135, 74.992), reset);
+        return bezierCurve(ballCollect1, resetMiddle, reset);
     }
     public PathChain reset2(){
-        return bezierCurve(ballCollect2, new Pose(116.135, 74.992), reset2);
+        return bezierCurve(ballCollect2, resetMiddle2, reset2);
     }
 
     public PathChain collectToShoot(){
@@ -86,11 +99,11 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain shootTo2(){
-        return bezierCurve(shootPose, new Pose(61.260700389105054, 46.964980544747085), ballCollect2);//75.114, 52.551
+        return bezierCurve(shootPose, shootTo2Middle, ballCollect2);//75.114, 52.551
     }
 
     public PathChain shootTo3(){
-        return bezierCurve(shootPose, new Pose(65.730, 26.930), ballCollect3);
+        return bezierCurve(shootPose, ballCollect3Middle, ballCollect3);
     }
 
     public PathChain shootTo4Mid(){
@@ -102,7 +115,7 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain shootTo5(){
-        return bezierCurve(shootPose, new Pose(92, 5), ballCollect4);
+        return bezierCurve(shootPose, shootTo5Middle, ballCollect4);
     }
 
     public PathChain down(){
