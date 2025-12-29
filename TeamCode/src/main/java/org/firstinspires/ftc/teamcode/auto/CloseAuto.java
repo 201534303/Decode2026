@@ -53,6 +53,15 @@ public class CloseAuto extends OpMode {
                 break;
 
             case SHOOT:
+
+                //on way to shoot
+                if(spikeMark >= 5 && follower.getPose().getY() < 12){
+                    intake.setIntakeSpeed(-1);
+                }
+                else{
+                    intake.setIntakeSpeed(0.7);
+                }
+
                 if(!follower.isBusy()) {
                     shooter.rotateTurret(turnTableAngle);
 
@@ -94,7 +103,7 @@ public class CloseAuto extends OpMode {
             case COLLECT_SHOOT:
                 if (!follower.isBusy() &&  waitSecs(1)) {
                     if (spikeMark == 1) {//for 1st one
-                        intake.setIntakeSpeed(0.5);
+                        intake.setIntakeSpeed(0.7);
                         spikeMark--;
                         follower.followPath(paths.reset(), 0.75, false);
                         resetActionTimer();
@@ -106,14 +115,14 @@ public class CloseAuto extends OpMode {
                         pathState = PathState.RESET;
                     }*/
                     else if (spikeMark <= maxTrips && spikeMark < 4){
-                        intake.setIntakeSpeed(0.5);
+                        intake.setIntakeSpeed(0.7);
                         if (spikeMark < 1){ spikeMark = 1; }
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
                         pathState = PathState.SHOOT;
                     } else if (spikeMark <= 5) {
-                        intake.setIntakePower(0);
+                        intake.setIntakeSpeed(0.7);
                         follower.followPath(paths.collectToShoot(), 0.9, true);
                         spikeMark++;
                         resetActionTimer();
