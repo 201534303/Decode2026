@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,9 +12,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "BLUE_FarAuto")
-
-public class BLUE_FarAuto extends OpMode {
+@Disabled
+public class OLDFarAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private FarPaths paths;
@@ -25,7 +24,7 @@ public class BLUE_FarAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 1;
-    private Choose.Alliance alliance = Choose.Alliance.BLUE;
+    private int maxTrips = 4;
     private boolean once = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
@@ -47,12 +46,12 @@ public class BLUE_FarAuto extends OpMode {
             case SHOOT:
                 if(!follower.isBusy()) {
                     //if (spikeMark == 1){
-                    if (waitSecs(1.8)){
-                        shooter.rotateTurret(63);
-                        intake.allTheWay();//go all the way to shoot
-                        resetActionTimer();
-                        pathState = PathState.SHOOT_COLLECT;
-                    }
+                        if (waitSecs(1.8)){
+                            shooter.rotateTurret(63);
+                            intake.allTheWay();//go all the way to shoot
+                            resetActionTimer();
+                            pathState = PathState.SHOOT_COLLECT;
+                        }
                     /*} else{
                         shooter.rotateTurret(63);
                         intake.allTheWay();//go all the way to shoot
@@ -128,7 +127,7 @@ public class BLUE_FarAuto extends OpMode {
     }
 
     public void setUp(){
-        shooter.setHood(0.5);
+        shooter.setHood(0.05);
         shooter.rotateTurret(63);
     }
 
@@ -149,8 +148,8 @@ public class BLUE_FarAuto extends OpMode {
     }
 
     public void init_loop(){
-        choose.allianceInit();
-        alliance = choose.getSelectedAlliance();
+//        choose.tripsInit();
+//        maxTrips = choose.getMark();
         telemetry.update();
     }
 
@@ -163,7 +162,7 @@ public class BLUE_FarAuto extends OpMode {
 
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
-        telemetry.addData("alliance", alliance);
+        telemetry.addData("max trips", maxTrips);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
@@ -174,7 +173,6 @@ public class BLUE_FarAuto extends OpMode {
     public void start() {
         runtime.reset();
         pathTimer.resetTimer();
-        paths.bluePath(alliance);
         pathState = PathState.START;
     }
 }

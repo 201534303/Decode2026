@@ -13,9 +13,9 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "CloseAuto")
+@Autonomous(name = "WolfpackCloseAuto")
 
-public class CloseAuto extends OpMode {
+public class WolfpackCloseAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private ClosePaths paths;
@@ -26,6 +26,7 @@ public class CloseAuto extends OpMode {
     private Choose choose;
     private ElapsedTime runtime = new ElapsedTime();
 
+    private boolean alreadyReset;
     private int spikeMark = 1;
     private int maxTrips = 4;
     public enum PathState {
@@ -86,11 +87,18 @@ public class CloseAuto extends OpMode {
                 if (!follower.isBusy() &&  waitSecs(1)) {
                     intake.setIntakeSpeed(0.5);
                     if (spikeMark == 1) {
-                        spikeMark--;
+                        alreadyReset = false;
                         follower.followPath(paths.reset(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
-                    } else if (spikeMark <= maxTrips && spikeMark < 4){
+                    } else if (spikeMark == 2) {
+                        alreadyReset = false;
+                        follower.followPath(paths.reset2(), 0.75, false);
+                        resetActionTimer();
+                        pathState = PathState.RESET;
+                    }
+
+                    else if (spikeMark <= maxTrips && spikeMark < 4){
                         if (spikeMark < 1){ spikeMark = 1; }
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
@@ -139,8 +147,8 @@ public class CloseAuto extends OpMode {
         switch (spikeMark) {
             case 1: return paths.shootTo1();
             case 2: return paths.shootTo2();
-            case 3: return paths.shootTo3();
-            case 4: return paths.shootTo4Mid();
+            //case 3: return paths.shootTo3();
+            //case 4: return paths.shootTo4Mid();
             default: return null;
         }
     }

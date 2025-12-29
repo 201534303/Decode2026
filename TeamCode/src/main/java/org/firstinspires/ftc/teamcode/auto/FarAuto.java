@@ -25,12 +25,13 @@ public class FarAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 1;
-    private int maxTrips = 4;
+    private Choose.Alliance alliance = Choose.Alliance.BLUE;
     private boolean once = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
         OFF, START, IN, OUT
     }
+    private boolean isMirror = false;
     PathState pathState = PathState.START;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -46,19 +47,12 @@ public class FarAuto extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    //if (spikeMark == 1){
-                        if (waitSecs(1.8)){
-                            shooter.rotateTurret(63);
-                            intake.allTheWay();//go all the way to shoot
-                            resetActionTimer();
-                            pathState = PathState.SHOOT_COLLECT;
-                        }
-                    /*} else{
-                        shooter.rotateTurret(63);
+                    if (waitSecs(1.8)){
+                        shooter.rotateTurret(-63);
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
-                    }*/
+                    }
                 }
                 break;
 
@@ -128,8 +122,8 @@ public class FarAuto extends OpMode {
     }
 
     public void setUp(){
-        shooter.setHood(0.5);
-        shooter.rotateTurret(63);
+        shooter.setHood(0.05);
+        shooter.rotateTurret(-63);
     }
 
     @Override
@@ -138,9 +132,6 @@ public class FarAuto extends OpMode {
         actionTimer = new Timer();
 
         choose = new Choose(gamepad1, telemetry);
-        follower = Constants.createFollower(hardwareMap);
-        paths = new FarPaths(follower);
-        follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
@@ -149,8 +140,8 @@ public class FarAuto extends OpMode {
     }
 
     public void init_loop(){
-//        choose.tripsInit();
-//        maxTrips = choose.getMark();
+        choose.allianceInit();
+        alliance = choose.getSelectedAlliance();
         telemetry.update();
     }
 
@@ -161,9 +152,20 @@ public class FarAuto extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
+        telemetry.addData("mirror", isMirror);
+        telemetry.addData("startPose", paths.startPose);
+        telemetry.addData("startPoseMirror", paths.startPose.mirror());
+        telemetry.addData("shootPose", paths.shootPose);
+        telemetry.addData("shootPoseMirror", paths.shootPose.mirror());
+        telemetry.addData("ballCollect3", paths.ballCollect3);
+        telemetry.addData("ballCollect3Mirror", paths.ballCollect3.mirror());
+        telemetry.addData("out3", paths.out3);
+        telemetry.addData("out3Mirror", paths.out3.mirror());
+        telemetry.addData("parkPose", paths.parkPose);
+        telemetry.addData("parkPoseMirror", paths.parkPose.mirror());
+
         telemetry.addData("path state", pathState);
-        telemetry.addData("spike mark", spikeMark);
-        telemetry.addData("max trips", maxTrips);
+        telemetry.addData("alliance", alliance);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
@@ -172,6 +174,12 @@ public class FarAuto extends OpMode {
     }
 
     public void start() {
+        follower = Constants.createFollower(hardwareMap);
+        paths = new FarPaths(follower);
+
+        isMirror = paths.bluePath(alliance);
+        follower.setStartingPose(paths.startPose);
+
         runtime.reset();
         pathTimer.resetTimer();
         pathState = PathState.START;

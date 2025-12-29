@@ -14,7 +14,9 @@ public class ClosePaths extends Paths{
     private Pose shootPose = makePos(100, 82);
     public Pose ballCollect1 = makePos(128, 82);
     public Pose reset = makePos(133, 72, 90);
-    public Pose ballCollect2 = makePos(135, 50);//135, 50
+    public Pose reset2 = makePos(133, 72, -90);
+
+    public Pose ballCollect2 = makePos(138, 50);//135, 50
     public Pose ballCollect3 = makePos(130, 28);
     public Pose ballCollect4 = makePos(130, 5, -90);//135, 10
     public Pose ballCollectMiddle4 = makePos(143, 20, -90);//130, 30
@@ -48,6 +50,9 @@ public class ClosePaths extends Paths{
 
     public PathChain reset(){
         return bezierCurve(ballCollect1, new Pose(116.135, 74.992), reset);
+    }
+    public PathChain reset2(){
+        return bezierCurve(ballCollect2, new Pose(116.135, 74.992), reset2);
     }
 
     public PathChain collectToShoot(){
