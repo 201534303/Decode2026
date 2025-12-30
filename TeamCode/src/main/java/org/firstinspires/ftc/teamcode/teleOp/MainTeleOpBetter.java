@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.BLUE;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.RED;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -43,8 +46,8 @@ public class MainTeleOpBetter extends OpMode {
 
     //robot
     private RobotActions robot;
-
-    private Choose.Alliance currentColor = Choose.Alliance.RED;
+    public boolean turretOn = true;
+    private Choose.Alliance currentColor = RED;
 
     @Override
     public void init() {
@@ -72,7 +75,7 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void init_loop() {
-        currentColor = Choose.Alliance.RED;
+        currentColor = RED;
         choose.allianceInit();
         currentColor = choose.getSelectedAlliance();
         telemetry.update();
@@ -81,10 +84,10 @@ public class MainTeleOpBetter extends OpMode {
     @Override
     public void start() {
         overallRuntime.reset();
-        if(currentColor == Choose.Alliance.RED){
+        if(currentColor == RED){
             follower.setPose(new Pose(115, 70, Math.PI/2));
         }
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == BLUE){
             follower.setPose(new Pose(29, 70, Math.PI/2));
         }
     }
@@ -106,6 +109,15 @@ public class MainTeleOpBetter extends OpMode {
             robot.setIMUZero(currentColor);
         }
 
+        if (gamepad1.y){
+            if (turretOn){
+                turretOn = false;
+            } else {
+                turretOn = true;
+            }
+        }
+
+
         robot.fieldCentricDrive(currentColor);
 
         /*
@@ -119,7 +131,7 @@ public class MainTeleOpBetter extends OpMode {
         --------------------------UPDATE--------------------------
          */
 
-        robot.update(currentColor);
+        robot.update(currentColor, turretOn);
         follower.update();
         telemetry.update();
     }

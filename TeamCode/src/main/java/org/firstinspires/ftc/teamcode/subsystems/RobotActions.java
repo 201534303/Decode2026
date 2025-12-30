@@ -159,11 +159,16 @@ public class RobotActions {
 
     //UPDATE
 
-    public void update(Choose.Alliance currentColor) {
+    public void update(Choose.Alliance currentColor, boolean turretOn) {
         double[] velocities = getVelocities(currentColor);
         double rVel = velocities[0];
         double tVel = velocities[0];
-        updateTurret(currentColor, tVel);
+        if (turretOn){
+            updateTurret(currentColor, tVel);
+        }
+        if (!turretOn){
+            shooter.rotateTurret(0);
+        }
         updateShooter(currentColor, rVel);
         //shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
         //shooter.setHood(DELETEBUTTHISISHOOD);
@@ -174,7 +179,7 @@ public class RobotActions {
     private void updateTurret(Choose.Alliance currentColor, double tVel){
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
-        double posY = follower.getPose().getY() + 6.7; //HEHEHEHEHEHEHE
+        double posY = follower.getPose().getY() + 9.5;
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Theta", follower.getPose().getHeading());
