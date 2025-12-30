@@ -43,7 +43,7 @@ public class ClosePaths extends Paths{
             this.ballCollect3 = makePos(2, 28,180);
             this.ballCollect3Middle = new Pose(78.27, 26.93,180);
             this.ballCollect4 = makePos(14, 8, 270);//135, 10
-            this.ballCollectMiddle4 = makePos(1, 20, 270);//130, 30
+            this.ballCollectMiddle4 = makePos(10, 20, 270);//130, 30
             this.shootTo5Middle = new Pose(52, 5,180);
             this.backUp = makePos(14,25,270);
             this.goUp = makePos(14,5,270);

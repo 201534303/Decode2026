@@ -112,13 +112,37 @@ public class RobotActions {
         intake.intakeMachine();
     }
 
-    public void updateTransfer() {
+    public void updateTransfer(Choose.Alliance currentColor) {
         Vector vel = follower.getVelocity();
         double velX = vel.getXComponent();
         double velY = vel.getYComponent();
         double total = Math.hypot(velY, velX);
+
+        double posX = follower.getPose().getX();
+        double posY = follower.getPose().getY();
+
+        double delY = 0;
+        double delX = 0;
+
+        if(currentColor == Choose.Alliance.BLUE){
+            delX = -posX;
+            delY = 144-posY;
+        }
+
+        if(currentColor == Choose.Alliance.RED){
+            delX = 144-posX;
+            delY = 144-posY;
+        }
+
+        double dist = Math.hypot(delY, delX);
+        double speedMul = 1;
+
+        if(dist > 140){
+            speedMul = 0.8;
+        }
+
         if(total < 3){
-            intake.setTransferPower(-gamepad2.left_stick_y);
+            intake.setTransferPower(-gamepad2.left_stick_y * speedMul);
         }
         else{
             intake.setTransferPower(0);
@@ -174,11 +198,6 @@ public class RobotActions {
         shooter.rotateTurret(turretAngle);
     }
 
-
-    public void shooter(double velChange, double hooodChange){ //TESTING ONLY
-        DELETEBUTTHISISVEL += velChange;
-        DELETEBUTTHISISHOOD += hooodChange;
-    }
 
     private void updateShooter(Choose.Alliance currentColor, double rVel) {
         double posX = follower.getPose().getX();

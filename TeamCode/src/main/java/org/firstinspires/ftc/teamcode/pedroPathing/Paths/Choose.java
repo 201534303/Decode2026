@@ -18,6 +18,9 @@ public class Choose {
     private boolean dpadDownPressed = false;
     private boolean aPressed = false;
 
+    private boolean wolfpack = false;
+    private boolean wolfpackConfirmed = false;
+
     public Choose(Gamepad g1, Telemetry t) {
         telemetry = t;
         gamepad1 = g1;
@@ -41,6 +44,17 @@ public class Choose {
             return false;
         } else {
             displayReadyTeleScreen();
+            return true;
+        }
+    }
+
+    public boolean wolfpackInit(){
+        if (!wolfpackConfirmed) {
+            handleWolfpackSelection();
+            displayWolfpackSelectionMenu();
+            return false;
+        } else {
+            displayReadyCloseScreen();
             return true;
         }
     }
@@ -82,6 +96,29 @@ public class Choose {
         // A button - Confirm selection
         if (gamepad1.a && !aPressed && selectedAuto != Auto.NONE) {
             autoConfirmed = true;
+            aPressed = true;
+        } else if (!gamepad1.a) {
+            aPressed = false;
+        }
+    }
+
+    private void handleWolfpackSelection() {
+        if (gamepad1.dpad_up && !dpadUpPressed) {
+            wolfpack = true;
+            dpadUpPressed = true;
+        } else if (!gamepad1.dpad_up) {
+            dpadUpPressed = false;
+        }
+
+        if (gamepad1.dpad_down && !dpadDownPressed) {
+            wolfpack = false;
+            dpadDownPressed = true;
+        } else if (!gamepad1.dpad_down) {
+            dpadDownPressed = false;
+        }
+
+        if (gamepad1.a && !aPressed && selectedAuto != Auto.NONE) {
+            wolfpackConfirmed = true;
             aPressed = true;
         } else if (!gamepad1.a) {
             aPressed = false;
@@ -152,17 +189,37 @@ public class Choose {
 
         if (selectedAuto != Auto.NONE && !autoConfirmed) {
             telemetry.addLine("");
-            telemetry.addLine("Press A to confirm and continue");
+            telemetry.addLine("Press X to confirm and continue");
         }
     }
 
     private void displayNumSelectionMenu() {
-        telemetry.addLine("---------------------------------");
-        telemetry.addLine("NUMBER OF TRIPS:");
+        telemetry.addLine("=================================");
+        telemetry.addLine("NUMBER OF TRIPS");
+        telemetry.addLine("=================================");
         telemetry.addLine("");
         telemetry.addLine("Use D-Pad Up/Down to adjust");
         telemetry.addData("Trips:", mark);
         telemetry.addLine("");
+        telemetry.addLine("---------------------------------");
+        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
+        telemetry.addLine("---------------------------------");
+
+        if (!numConfirmed) {
+            telemetry.addLine("");
+            telemetry.addLine("Press X to confirm");
+        }
+    }
+
+    private void displayWolfpackSelectionMenu() {
+        telemetry.addLine("=================================");
+        telemetry.addLine("WOLFPACK AUTO");
+        telemetry.addLine("=================================");
+        telemetry.addLine("");
+        telemetry.addLine("Use D-Pad Up/Down to adjust");
+        telemetry.addData("Wolpack:", wolfpack);
+        telemetry.addLine("");
+        telemetry.addLine("---------------------------------");
         telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
         telemetry.addLine("---------------------------------");
 
@@ -187,7 +244,7 @@ public class Choose {
 
         if (selectedAlliance != Alliance.NONE && !allianceConfirmed) {
             telemetry.addLine("");
-            telemetry.addLine("Press A to confirm selection");
+            telemetry.addLine("Press X to confirm selection");
         }
     }
 
@@ -210,6 +267,16 @@ public class Choose {
     private void displayReadyTripsScreen() {
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addData("NUMBER OF TRIPS:", mark);
+        telemetry.addLine("");
+        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
+    }
+
+    private void displayReadyCloseScreen() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
+        telemetry.addData("Alliance:", selectedAlliance);
+        telemetry.addData("Number of Trips:", mark);
+        telemetry.addData("Wolfpack:", wolfpack);
         telemetry.addLine("");
         telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
     }
@@ -240,6 +307,9 @@ public class Choose {
 
     public Alliance getSelectedAlliance() {
         return selectedAlliance;
+    }
+    public Boolean getSelectedWolfpack() {
+        return wolfpack;
     }
 
     public int getMark() {

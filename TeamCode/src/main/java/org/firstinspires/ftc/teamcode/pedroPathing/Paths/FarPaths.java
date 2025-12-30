@@ -18,17 +18,24 @@ public class FarPaths extends Paths{
     public Pose outSide = makePos(110, 20);
     public Pose ballCollectSide = makePos(125, 20);
 
-    public Pose outSideIN = makePos(110, 5);
-    public Pose ballCollectSideIN = makePos(125, 5);
+    public Pose outSideInSetup = makePos(80, 10);
+    public Pose outSideIN = makePos(110, 8);
+    public Pose ballCollectSideIN = makePos(125, 8);
     public Pose parkPose = makePos(95, 15, 90);
 
     public boolean bluePath(Choose.Alliance alliance) {
         if (alliance == Choose.Alliance.BLUE) {
-            this.startPose = makePos(64, 8,180);
-            this.shootPose = makePos(64, 18,170);
-            this.ballCollect = makePos(19, 9,180);
-            this.out = makePos(27, 10,180);
-            this.parkPose = makePos(44, 15,90);
+            this.startPose = makePos(64, 8, 180);
+            this.shootPose = makePos(64, 18, 170);
+            this.ballCollect = makePos(17.5, 9, 180);
+            this.out = makePos(27, 10, 180);
+            this.outSide = makePos(34, 20, 180);
+            this.ballCollectSide = makePos(19, 20, 180);
+            this.outSideInSetup = makePos(64, 10, 180);
+            this.outSideIN = makePos(34, 8, 180);
+            this.ballCollectSideIN = makePos(17.5, 8, 180);
+            this.parkPose = makePos(49, 15, 90);
+
             return true;
         }
         return false;
@@ -74,10 +81,16 @@ public class FarPaths extends Paths{
         return bezierLine(out, ballCollectSide);
     }
 
+    public PathChain outSideSetup() {
+        return bezierLine(shootPose, outSideInSetup);
+    }
     public PathChain OutSideIn(){
         return bezierLine(ballCollect, outSideIN);
     }
     public PathChain InSideIn(){
         return bezierLine(out, ballCollectSideIN);
+    }
+    public PathChain InSideInOther(){
+        return bezierLine(outSideInSetup, ballCollectSideIN);
     }
 }

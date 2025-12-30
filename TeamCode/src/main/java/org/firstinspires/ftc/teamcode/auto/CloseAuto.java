@@ -40,8 +40,9 @@ public class CloseAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private boolean isMirror = false;
     private boolean readyTrips = false;
+    private boolean readyAlliance = false;
     private boolean done = false;
-
+    private boolean wolfpack = false;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }//resets timer
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -185,9 +186,12 @@ public class CloseAuto extends OpMode {
         if (!readyTrips){//run trips selection
             readyTrips = choose.tripsInit();
             maxTrips = choose.getMark();
-        } else{ //run alliance selection
+        } else if (!readyAlliance){ //run alliance selection
             choose.allianceInit();
             alliance = choose.getSelectedAlliance();
+        } else{
+            choose.wolfpackInit();
+            wolfpack = choose.getSelectedWolfpack();
         }
 
         telemetry.update();
@@ -216,6 +220,7 @@ public class CloseAuto extends OpMode {
 
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
+        telemetry.addData("wolfpack", wolfpack);
         telemetry.addData("max trips", maxTrips);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());

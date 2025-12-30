@@ -82,10 +82,10 @@ public class MainTeleOpBetter extends OpMode {
     public void start() {
         overallRuntime.reset();
         if(currentColor == Choose.Alliance.RED){
-            follower.setPose(new Pose(29, 70, Math.PI));
+            follower.setPose(new Pose(115, 70, Math.PI/2));
         }
         if(currentColor == Choose.Alliance.BLUE){
-            follower.setPose(new Pose(115, 70, 0));
+            follower.setPose(new Pose(29, 70, Math.PI/2));
         }
     }
 
@@ -113,28 +113,7 @@ public class MainTeleOpBetter extends OpMode {
          */
 
         robot.updateIntake();
-        robot.updateTransfer();
-
-        //shooting
-        if(gamepad2.y){
-            robot.setShootingAuto();
-        }
-        if(gamepad2.a){
-            robot.setShootingOff();
-        }
-
-        if(gamepad1.dpadUpWasPressed()){
-            robot.shooter(5, 0);
-        }
-        if(gamepad1.dpadDownWasPressed()){
-            robot.shooter(-5, 0);
-        }
-        if(gamepad1.dpadRightWasPressed()){
-            robot.shooter(0, 0.05);
-        }
-        if(gamepad1.dpadLeftWasPressed()){
-            robot.shooter(0, -0.05);
-        }
+        robot.updateTransfer(currentColor);
 
         /*
         --------------------------UPDATE--------------------------
