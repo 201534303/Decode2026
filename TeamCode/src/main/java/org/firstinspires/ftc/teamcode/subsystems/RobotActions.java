@@ -100,7 +100,7 @@ public class RobotActions {
         if (brake > 0.9){
             drivetrain.setMotorPowers(frontLeftPower * 0.6, backLeftPower * 0.6, frontRightPower * 0.6, backRightPower * 0.6);
         } else if (superBrake > 0.9) {
-            drivetrain.setMotorPowers(frontLeftPower * 0.35, backLeftPower * 0.35, frontRightPower * 0.35, backRightPower * 0.35);
+            drivetrain.setMotorPowers(frontLeftPower * 0.25, backLeftPower * 0.25, frontRightPower * 0.25, backRightPower * 0.25);
         } else{
             drivetrain.setMotorPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
         }
@@ -174,7 +174,7 @@ public class RobotActions {
     private void updateTurret(Choose.Alliance currentColor, double tVel){
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
-        double posY = follower.getPose().getY();
+        double posY = follower.getPose().getY() + 6.7; //HEHEHEHEHEHEHE
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
         telemetry.addData("Theta", follower.getPose().getHeading());
@@ -184,12 +184,14 @@ public class RobotActions {
         double turretAngle = 0;
 
         if(currentColor == Choose.Alliance.BLUE){
-            double delX = -posX;
-            double delY = 144-posY;
+            //target (0, 144)
+            double delX = 0 - posX;
+            double delY = 144 - posY;
             turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
         }
 
         if(currentColor == Choose.Alliance.RED){
+            //target (144,144)
             double delX = 144-posX;
             double delY = 144-posY;
             turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
