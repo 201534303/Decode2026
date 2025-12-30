@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
 
 public class ClosePaths extends Paths{
@@ -16,7 +15,7 @@ public class ClosePaths extends Paths{
     public Pose ballCollect1 = makePos(130, 82);
     public Pose reset = makePos(133, 72, 90);
     public Pose resetMiddle = new Pose(116.135, 74.992);
-    public Pose resetMiddle2 = new Pose(116.135, 70);
+    public Pose resetMiddle2 = new Pose(115, 65);
     public Pose reset2 = makePos(133, 72, -90);
     public Pose ballCollect2 = makePos(140, 50);//135, 50
     public Pose shootTo2Middle = new Pose(61.260700389105054, 46.964980544747085);
@@ -36,8 +35,8 @@ public class ClosePaths extends Paths{
             this.ballCollect1 = makePos(14, 82,180);
             this.reset = makePos(11, 72, 90);
             this.resetMiddle = new Pose(27.865, 70,180);
-            this.resetMiddle2 = new Pose(27.865, 65,180);
-            this.reset2 = makePos(11, 72, 270);
+            this.resetMiddle2 = resetMiddle2.mirror();
+            this.reset2 = reset2.mirror();
             this.ballCollect2 = makePos(2, 50,180);
             this.shootTo2Middle = new Pose(83, 47,180);
             this.ballCollect3 = makePos(2, 28,180);

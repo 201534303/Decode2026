@@ -66,8 +66,7 @@ public class CloseAuto extends OpMode {
                             resetActionTimer();
                             pathState = PathState.SHOOT_COLLECT;
                         }
-                    }
-                    else {
+                    } else {
                         intake.allTheWay();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.SHOOT_COLLECT;
@@ -99,19 +98,20 @@ public class CloseAuto extends OpMode {
                 if (!follower.isBusy() &&  waitSecs(1)) {
                     if (spikeMark == 1) {//for 1st one
                         intake.setIntakeSpeed(0.7);
-                        spikeMark--;
+                        spikeMark = 0;
                         follower.followPath(paths.reset(), 0.8, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
-                    } /*else if (spikeMark == 1) {//for wolfpack auto
-                        spikeMark--;
-                        follower.followPath(paths.reset(), 0.75, false);
+                    } else if (spikeMark == 2 && wolfpack) {//for wolfpack auto
+                        spikeMark = -1;
+                        follower.followPath(paths.reset2(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.RESET;
-                    }*/
+                    }
                     else if (spikeMark <= maxTrips && spikeMark < 4){
                         intake.setIntakeSpeed(0.7);
-                        if (spikeMark < 1){ spikeMark = 1; }
+                        if (spikeMark == 0){ spikeMark = 1; }
+                        else if (spikeMark == -1){ spikeMark = 2; }
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
@@ -187,7 +187,7 @@ public class CloseAuto extends OpMode {
             readyTrips = choose.tripsInit();
             maxTrips = choose.getMark();
         } else if (!readyAlliance){ //run alliance selection
-            choose.allianceInit();
+            readyAlliance = choose.allianceInit();
             alliance = choose.getSelectedAlliance();
         } else{
             choose.wolfpackInit();

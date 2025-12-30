@@ -117,7 +117,7 @@ public class Choose {
             dpadDownPressed = false;
         }
 
-        if (gamepad1.a && !aPressed && selectedAuto != Auto.NONE) {
+        if (gamepad1.a && !aPressed) {
             wolfpackConfirmed = true;
             aPressed = true;
         } else if (!gamepad1.a) {
@@ -220,7 +220,7 @@ public class Choose {
         telemetry.addData("Wolpack:", wolfpack);
         telemetry.addLine("");
         telemetry.addLine("---------------------------------");
-        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
+        telemetry.addData("Confirmed", wolfpackConfirmed ? "YES" : "NO");
         telemetry.addLine("---------------------------------");
 
         if (!numConfirmed) {
@@ -274,11 +274,10 @@ public class Choose {
     private void displayReadyCloseScreen() {
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addLine("");
-        telemetry.addData("Alliance:", selectedAlliance);
-        telemetry.addData("Number of Trips:", mark);
-        telemetry.addData("Wolfpack:", wolfpack);
+        telemetry.addData("Alliance", selectedAlliance);
+        telemetry.addData("Number of Trips", mark);
+        telemetry.addData("Wolfpack", wolfpack);
         telemetry.addLine("");
-        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
     }
 
 
