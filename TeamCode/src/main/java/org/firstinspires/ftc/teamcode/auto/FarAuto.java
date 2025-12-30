@@ -63,7 +63,15 @@ public class FarAuto extends OpMode {
                     intake.intakeIn();
                     intake.transferOff();
 
-                    if (spikeMark < 4){
+                    if (spikeMark == 2) {
+                        follower.followPath(paths.shootToIn(), 0.75, false);
+                        resetActionTimer();
+                        pathState = PathState.OUT;
+                    } else if (spikeMark == 3) {
+                        follower.followPath(paths.shootToSide(), 0.75, false);
+                        resetActionTimer();
+                        pathState = PathState.OUT;
+                    }else if (spikeMark < 4){
                         follower.followPath(paths.shootTo(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.OUT;
@@ -89,26 +97,39 @@ public class FarAuto extends OpMode {
             case OUT:
                 if(!follower.isBusy() && waitSecs(1.5) || waitSecs(2)){
                     //intake.setIntakePower(-0.5);
-                    //if (spikeMark < )
-                    follower.followPath(paths.Out(), 0.75, true);
-                    resetActionTimer();
-                    pathState = PathState.IN;
+                    if (spikeMark == 3){
+                        follower.followPath(paths.OutSide(), 0.75, true);
+                        resetActionTimer();
+                        pathState = PathState.IN;
+                    } else if (spikeMark == 2){
+                        follower.followPath(paths.OutSideIn(), 0.75, true);
+                        resetActionTimer();
+                        pathState = PathState.IN;
+                    } else {
+                        follower.followPath(paths.Out(), 0.75, true);
+                        resetActionTimer();
+                        pathState = PathState.IN;
+                    }
                 }
                 break;
 
             case IN:
                 if(!follower.isBusy() && waitSecs(1)){
-                    //intake.setTransferPower(0.2);
                     intake.intakeIn();
-                    follower.followPath(paths.In(), 0.75, true);
-                    resetActionTimer();
-//                    if (!once){
-//                        pathState = PathState.OUT;
-//                        once = true;
-//                    } else {
-                        //intake.setTransferPower(0.3);
+                    if (spikeMark == 1){
+                        follower.followPath(paths.In(), 0.75, true);
+                        resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
-                    //}
+                    } else if (spikeMark == 2){
+                        follower.followPath(paths.InSideIn(), 0.75, true);
+                        resetActionTimer();
+                        pathState = PathState.COLLECT_SHOOT;
+                        //once = true;
+                    } else {
+                        follower.followPath(paths.InSide(), 0.75, true);
+                        resetActionTimer();
+                        pathState = PathState.COLLECT_SHOOT;
+                    }
                 }
                 break;
 
@@ -152,6 +173,7 @@ public class FarAuto extends OpMode {
         autonomousPathUpdate();//main auto code
 
         telemetry.addData("mirror", isMirror);
+        telemetry.addData("spikeMark", spikeMark);
         telemetry.addData("path state", pathState);
         telemetry.addData("alliance", alliance);
         telemetry.addData("x", follower.getPose().getX());
