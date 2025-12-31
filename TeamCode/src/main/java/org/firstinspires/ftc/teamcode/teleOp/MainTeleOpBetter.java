@@ -120,6 +120,20 @@ public class MainTeleOpBetter extends OpMode {
 
         robot.fieldCentricDrive(currentColor);
 
+        if(gamepad1.dpadLeftWasPressed()){
+            robot.DELETEBUTTHISISHOOD -= 0.05;
+        }
+        if(gamepad1.dpadRightWasPressed()){
+            robot.DELETEBUTTHISISHOOD += 0.05;
+        }
+        if(gamepad1.dpadUpWasPressed()){
+            robot.DELETEBUTTHISISVEL += 5;
+        }
+        if(gamepad1.dpadDownWasPressed()){
+            robot.DELETEBUTTHISISVEL -= 5;
+        }
+
+
         /*
         --------------------------DRIVER TWO CONTROLS--------------------------
          */

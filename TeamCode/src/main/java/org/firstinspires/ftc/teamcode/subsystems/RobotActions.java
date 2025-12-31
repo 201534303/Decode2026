@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
 public class RobotActions {
 
     //DELETELATER
-    double DELETEBUTTHISISVEL = 1610;
-    double DELETEBUTTHISISHOOD = 0.2;
+    public double DELETEBUTTHISISVEL = 1520;
+    public double DELETEBUTTHISISHOOD = 0.3;
 
     //gamepads
     Gamepad gamepad1, gamepad2;
@@ -141,6 +141,8 @@ public class RobotActions {
             speedMul = 0.8;
         }
 
+        telemetry.addData("dist", dist);
+
         if(total < 3){
             intake.setTransferPower(-gamepad2.left_stick_y * speedMul);
         }
@@ -170,18 +172,17 @@ public class RobotActions {
             shooter.rotateTurret(0);
         }
         updateShooter(currentColor, rVel);
-        //shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
-        //shooter.setHood(DELETEBUTTHISISHOOD);
-        //telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
-        //telemetry.addData("shooterHood", DELETEBUTTHISISHOOD);
     }
 
     private void updateTurret(Choose.Alliance currentColor, double tVel){
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
-        double posY = follower.getPose().getY() + 9.5;
+        double posY = follower.getPose().getY() + 5;
+        double[] cordinates = subsystemFieldXY(posX, posY, follower.getPose().getHeading());
+
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
+
         telemetry.addData("Theta", follower.getPose().getHeading());
 
         telemetry.addData("color", currentColor);
@@ -190,15 +191,15 @@ public class RobotActions {
 
         if(currentColor == Choose.Alliance.BLUE){
             //target (0, 144)
-            double delX = 0 - posX;
-            double delY = 144 - posY;
+            double delX = 0 - cordinates[0];
+            double delY = 144 - cordinates[1];
             turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
         }
 
         if(currentColor == Choose.Alliance.RED){
             //target (144,144)
-            double delX = 144-posX;
-            double delY = 144-posY;
+            double delX = 144-cordinates[0];
+            double delY = 144-cordinates[1];
             turretAngle = Math.toDegrees(Math.atan2(delY, delX)) - (heading);
         }
 
@@ -222,20 +223,33 @@ public class RobotActions {
             double delY = 144-posY;
             dist = Math.hypot(delX, delY);
         }
-        double speed = -1265 + 593*Math.log(dist);
+
+        double speed = 0;
+
+        if(dist > 120){//far zone
+            shooter.setHood(0.05);
+            speed = -1265.949 + 593.055*Math.log(dist);
+        }
+        else if(dist > 77) { //most of near zone
+            shooter.setHood(0.15);
+            speed = 0.673027*dist+1458.89853;
+        }
+        else if(dist > 72){ //getting close
+            shooter.setHood(-0.0197368*dist+1.67368);
+            speed = 0.673027*dist+1458.89853;
+        }
+        else{ //CRAZY close
+            shooter.setHood(-0.0357143*dist+2.85714);
+            speed = -0.216728*dist*dist + 36.10864*dist + 25;
+        }
+
         if(speed < 0){
             speed = 0;
         }
-        telemetry.addData("logSpeed", speed);
-        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
 
-        if(dist > 135){
-            shooter.setHood(0.05);
-        }
-        else{
-            double hoodAngle = ((135-dist)/135)*(1.5) + 0.15;
-            shooter.setHood(hoodAngle);
-        }
+        telemetry.addData("speed", speed);
+
+        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
 
         telemetry.addData("distance", dist);
 
@@ -289,4 +303,20 @@ public class RobotActions {
         telemetry.addData("tangent vel", vTangential);
         return new double[] { vRadial, vTangential };
     }
+
+    public static double[] subsystemFieldXY(double x, double y, double thetaRad) {
+        // Subsystem offset in ROBOT coordinates (inches)
+        double dx = -5.0;  // behind center
+        double dy =  0.0;  // not left/right
+
+        // Rotate offset into FIELD coordinates
+        double dxField = dx * Math.cos(thetaRad) - dy * Math.sin(thetaRad);
+        double dyField = dx * Math.sin(thetaRad) + dy * Math.cos(thetaRad);
+
+        double subX = x + dxField;
+        double subY = y + dyField;
+
+        return new double[]{subX, subY};
+    }
+
 }
