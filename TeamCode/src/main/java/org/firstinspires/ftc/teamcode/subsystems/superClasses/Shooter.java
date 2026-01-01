@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.superClasses;
 
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -20,7 +21,6 @@ public class Shooter {
 
     //runtime
     protected ElapsedTime runtime;
-
 
     public double power = 0;
     protected double idealSpeed;
@@ -146,6 +146,26 @@ public class Shooter {
 
         return correction;
     }
+
+    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF, double x, double y) {
+
+        integral += error;
+        double derivative = error - last_error;
+
+        double proportional = error * kp;
+        double integralTerm = integral * ki;
+        double derivativeTerm = derivative * kd;
+
+        // Feedforward = kF * setpoint; important for scaling feedforward
+        double feedforward = kF * setpoint;
+
+        double correction = proportional + integralTerm + derivativeTerm + feedforward;
+
+        last_error = error;
+
+        return correction;
+    }
+
 
 
 }
