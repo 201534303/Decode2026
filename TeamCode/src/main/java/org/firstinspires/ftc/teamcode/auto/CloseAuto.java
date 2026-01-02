@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,7 +10,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -23,6 +20,7 @@ public class CloseAuto extends OpMode {
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private double turnTableAngle = 47.5;
+    private double hoodHeight = 0.2;//0.4;//
 
     //AUTO
     private Follower follower;
@@ -41,6 +39,7 @@ public class CloseAuto extends OpMode {
     private boolean isMirror = false;
     private boolean readyTrips = false;
     private boolean readyAlliance = false;
+    private boolean readyWolfpack = false;
     private boolean done = false;
     private boolean wolfpack = false;
 
@@ -56,9 +55,9 @@ public class CloseAuto extends OpMode {
                 break;
 
             case SHOOT:
-
                 if(!follower.isBusy()) {
                     shooter.rotateTurret(turnTableAngle);
+                    shooter.setHood(0.48);
 
                     if(spikeMark == 3 || spikeMark == 2 || spikeMark == 1) {//if on the 3rd one
                         if(waitSecs(1.5)) {//waits 2
@@ -95,7 +94,7 @@ public class CloseAuto extends OpMode {
                 break;
 
             case COLLECT_SHOOT:
-                if (!follower.isBusy() &&  waitSecs(1)) {
+                if (!follower.isBusy() &&  waitSecs(1) || waitSecs(3)) {
                     if (spikeMark == 1) {//for 1st one
                         intake.setIntakeSpeed(0.7);
                         spikeMark = 0;
@@ -128,8 +127,10 @@ public class CloseAuto extends OpMode {
                 break;
 
             case RESET:
-                if(!follower.isBusy() /*|| paths.inBetween(110, 120,70,80)*/) {
-                    if(waitSecs(2.5)){//0.75
+                if(!follower.isBusy() || waitSecs(3)/*|| paths.inBetween(110, 120,70,80)*/) {
+                    if(waitSecs(2.5) && !wolfpack){
+                        pathState = PathState.COLLECT_SHOOT;
+                    } else if(waitSecs(3) && wolfpack){//wait more for wolfpack reset
                         pathState = PathState.COLLECT_SHOOT;
                     }
                 }
@@ -137,7 +138,7 @@ public class CloseAuto extends OpMode {
                 break;
 
             case UP:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() /*|| waitSecs(13)*/) {
                     follower.followPath(paths.shootTo4(), 0.7, true);
 //                    if(waitSecs(1)){
 //                        intake.setIntakePower(-0.7);
@@ -152,7 +153,11 @@ public class CloseAuto extends OpMode {
             case OFF:
                 if(!follower.isBusy()) {
                     done = true;
-                    follower.followPath(paths.shootToOut(), 0.8, true);
+                    if (maxTrips > 1) {
+                        follower.followPath(paths.shootToOut(), 0.8, true);
+                    } else{
+                        follower.followPath(paths.shootToOutDown(), 0.8, true);
+                    }
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
@@ -179,19 +184,25 @@ public class CloseAuto extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        shooter.setHood(0.30);
+        shooter.setHood(0.48);//0.35, 0.3
     }
 
     public void init_loop(){
-        if (!readyTrips){//run trips selection
+        telemetry.addData("servoPos", 1-shooter.servoPos());
+        shooter.setHood(0.48);//0.35, 0.3
+
+        if(!readyWolfpack){
+            readyWolfpack = choose.wolfpackInit();
+            wolfpack = choose.getSelectedWolfpack();
+            if (wolfpack){ maxTrips = 2; }
+        } else if (!readyTrips && !wolfpack){//run trips selection only if wolfpack false
             readyTrips = choose.tripsInit();
             maxTrips = choose.getMark();
-        } else if (!readyAlliance){ //run alliance selection
+        } else if(!readyAlliance) { //run alliance selection
             readyAlliance = choose.allianceInit();
             alliance = choose.getSelectedAlliance();
         } else{
-            choose.wolfpackInit();
-            wolfpack = choose.getSelectedWolfpack();
+            choose.displayReadyCloseScreen();
         }
 
         telemetry.update();
@@ -218,10 +229,12 @@ public class CloseAuto extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
+        telemetry.addData("servoPos", 1-shooter.servoPos());
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
         telemetry.addData("wolfpack", wolfpack);
         telemetry.addData("max trips", maxTrips);
+        telemetry.addData("alliance", alliance);
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());

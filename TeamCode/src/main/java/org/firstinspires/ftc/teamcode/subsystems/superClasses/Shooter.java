@@ -172,6 +172,8 @@ public class Shooter {
 
     }
 
-
+    public double servoPos(){
+        return hood.getPosition();
+    }
 
 }

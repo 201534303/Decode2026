@@ -21,7 +21,7 @@ public class FarPaths extends Paths{
     public Pose outSideInSetup = makePos(80, 10);
     public Pose outSideIN = makePos(110, 8);
     public Pose ballCollectSideIN = makePos(125, 8);
-    public Pose parkPose = makePos(95, 15, 90);
+    public Pose parkPose = makePos(75, 40, 90);
 
     public boolean bluePath(Choose.Alliance alliance) {
         if (alliance == Choose.Alliance.BLUE) {
@@ -34,7 +34,7 @@ public class FarPaths extends Paths{
             this.outSideInSetup = makePos(64, 10, 180);
             this.outSideIN = makePos(34, 8, 180);
             this.ballCollectSideIN = makePos(17.5, 8, 180);
-            this.parkPose = makePos(49, 15, 90);
+            this.parkPose = parkPose.mirror();
 
             return true;
         }

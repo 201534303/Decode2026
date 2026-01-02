@@ -21,12 +21,13 @@ public class ClosePaths extends Paths{
     public Pose shootTo2Middle = new Pose(61.260700389105054, 46.964980544747085);
     public Pose ballCollect3 = makePos(135, 28);
     public Pose ballCollect3Middle = new Pose(65.730, 26.930);
-    public Pose ballCollect4 = makePos(130, 5, -90);//135, 10
-    public Pose ballCollectMiddle4 = makePos(143, 20, -90);//130, 30
+    public Pose ballCollect4 = makePos(138, 3, -90);//135, 10
+    public Pose ballCollectMiddle4 = makePos(140, 30, -90);//143, 20
     public Pose shootTo5Middle = new Pose(92, 5);
     public Pose backUp = makePos(130,25,-90);
     public Pose goUp = makePos(130,5,-90);
     public Pose out = makePos(115, 70, 90);//park
+    public Pose outDown = makePos(130, 100, 90);//park
 
     public boolean bluePath(Choose.Alliance alliance) {
         if (alliance == Choose.Alliance.BLUE) {
@@ -41,12 +42,13 @@ public class ClosePaths extends Paths{
             this.shootTo2Middle = new Pose(83, 47,180);
             this.ballCollect3 = makePos(2, 28,180);
             this.ballCollect3Middle = new Pose(78.27, 26.93,180);
-            this.ballCollect4 = makePos(14, 8, 270);//135, 10
-            this.ballCollectMiddle4 = makePos(10, 20, 270);//130, 30
+            this.ballCollect4 = ballCollect4.mirror();  //makePos(14, 8, 270);//135, 10
+            this.ballCollectMiddle4 = ballCollectMiddle4.mirror();//makePos(10, 20, 270);//130, 30
             this.shootTo5Middle = new Pose(52, 5,180);
             this.backUp = makePos(14,25,270);
             this.goUp = makePos(14,5,270);
             this.out = makePos(29, 70,90); // park
+            this.outDown = outDown.mirror();
 
             return true;
         }
@@ -55,6 +57,10 @@ public class ClosePaths extends Paths{
 
     public PathChain shootToOut(){
         return bezierLine(shootPose, out);
+    }
+
+    public PathChain shootToOutDown(){
+        return bezierLine(shootPose, outDown);
     }
 
     public PathChain startToShoot(){

@@ -59,49 +59,6 @@ public class Choose {
         }
     }
 
-    public void init_loop() {
-        if (!autoConfirmed) {
-            handleAutoSelection();
-            displayAutoSelectionMenu();
-        } else if (!numConfirmed) {
-            handleAutoNum();
-            displayNumSelectionMenu();
-        } else if (!allianceConfirmed) {
-            handleAllianceSelection();
-            displayAllianceSelectionMenu();
-        } else {
-            displayReadyScreen();
-        }
-
-        telemetry.update();
-    }
-
-    private void handleAutoSelection() {
-        // Dpad Up - Select FAR
-        if (gamepad1.dpad_up && !dpadUpPressed) {
-            selectedAuto = Auto.FAR;
-            dpadUpPressed = true;
-        } else if (!gamepad1.dpad_up) {
-            dpadUpPressed = false;
-        }
-
-        // Dpad Down - Select CLOSE
-        if (gamepad1.dpad_down && !dpadDownPressed) {
-            selectedAuto = Auto.CLOSE;
-            dpadDownPressed = true;
-        } else if (!gamepad1.dpad_down) {
-            dpadDownPressed = false;
-        }
-
-        // A button - Confirm selection
-        if (gamepad1.a && !aPressed && selectedAuto != Auto.NONE) {
-            autoConfirmed = true;
-            aPressed = true;
-        } else if (!gamepad1.a) {
-            aPressed = false;
-        }
-    }
-
     private void handleWolfpackSelection() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
             wolfpack = true;
@@ -175,24 +132,6 @@ public class Choose {
         }
     }
 
-    private void displayAutoSelectionMenu() {
-        telemetry.addLine("STEP 1: SELECT AUTO TYPE");
-        telemetry.addLine("=================================");
-        telemetry.addLine("");
-        telemetry.addLine((selectedAuto == Auto.FAR ? ">>> FAR AUTO <<<" : "    Far Auto"));
-        telemetry.addLine((selectedAuto == Auto.CLOSE ? ">>> CLOSE AUTO <<<" : "    Close Auto"));
-        telemetry.addLine("");
-        telemetry.addLine("---------------------------------");
-        telemetry.addData("Current Selection", selectedAuto);
-        telemetry.addData("Confirmed", autoConfirmed ? "YES ✓" : "NO");
-        telemetry.addLine("---------------------------------");
-
-        if (selectedAuto != Auto.NONE && !autoConfirmed) {
-            telemetry.addLine("");
-            telemetry.addLine("Press X to confirm and continue");
-        }
-    }
-
     private void displayNumSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("NUMBER OF TRIPS");
@@ -202,6 +141,7 @@ public class Choose {
         telemetry.addData("Trips:", mark);
         telemetry.addLine("");
         telemetry.addLine("---------------------------------");
+        telemetry.addData("Current Selection", mark);
         telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
         telemetry.addLine("---------------------------------");
 
@@ -217,9 +157,10 @@ public class Choose {
         telemetry.addLine("=================================");
         telemetry.addLine("");
         telemetry.addLine("Use D-Pad Up/Down to adjust");
-        telemetry.addData("Wolpack:", wolfpack);
+        telemetry.addData("Wolfpack:", wolfpack);
         telemetry.addLine("");
         telemetry.addLine("---------------------------------");
+        telemetry.addData("Current Selection", wolfpack);
         telemetry.addData("Confirmed", wolfpackConfirmed ? "YES" : "NO");
         telemetry.addLine("---------------------------------");
 
@@ -248,15 +189,6 @@ public class Choose {
         }
     }
 
-    private void displayReadyScreen() {
-        telemetry.addLine("CONFIGURATION COMPLETE");
-        telemetry.addLine("");
-        telemetry.addData("Auto Type", selectedAuto);
-        telemetry.addData("Number of Trips", mark);
-        telemetry.addData("Alliance", selectedAlliance);
-        telemetry.addLine("");
-    }
-
     private void displayReadyTeleScreen() {
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addLine("");
@@ -266,12 +198,12 @@ public class Choose {
 
     private void displayReadyTripsScreen() {
         telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
         telemetry.addData("NUMBER OF TRIPS:", mark);
         telemetry.addLine("");
-        telemetry.addData("Confirmed", numConfirmed ? "YES" : "NO");
     }
 
-    private void displayReadyCloseScreen() {
+    public void displayReadyCloseScreen() {
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addLine("");
         telemetry.addData("Alliance", selectedAlliance);
@@ -280,37 +212,8 @@ public class Choose {
         telemetry.addLine("");
     }
 
-
-    public void startPrint() {
-        if (selectedAuto == Auto.NONE) {
-            telemetry.addLine("WARNING: No auto version selected!");
-            telemetry.addLine("Defaulting to CLOSE_12 auto");
-            selectedAuto = Auto.CLOSE;
-        }
-
-        if (selectedAlliance == Alliance.NONE) {
-            telemetry.addLine("WARNING: No alliance selected!");
-            telemetry.addLine("Defaulting to RED alliance");
-            selectedAlliance = Alliance.RED;
-        }
-
-        telemetry.addLine("");
-        telemetry.addData("Starting with Trips", mark);
-        telemetry.addData("Starting Alliance", selectedAlliance);
-        telemetry.update();
-    }
-
-    public Auto getSelectedAuto() {
-        return selectedAuto;
-    }
-
-    public Alliance getSelectedAlliance() {
-        return selectedAlliance;
-    }
-    public Boolean getSelectedWolfpack() {
-        return wolfpack;
-    }
-
+    public Alliance getSelectedAlliance() { return selectedAlliance; }
+    public Boolean getSelectedWolfpack() { return wolfpack; }
     public int getMark() {
         return mark;
     }
