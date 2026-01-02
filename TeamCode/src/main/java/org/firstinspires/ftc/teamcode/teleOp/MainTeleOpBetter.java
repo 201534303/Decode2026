@@ -94,6 +94,7 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
+        telemetry.addData("WE UPLOADED?", "true");
 
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------

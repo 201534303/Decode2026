@@ -249,7 +249,7 @@ public class RobotActions {
 
         telemetry.addData("speed", speed);
 
-        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
+        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0, posX, posY);
 
         telemetry.addData("distance", dist);
 

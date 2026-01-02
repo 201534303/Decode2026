@@ -101,10 +101,10 @@ public class TesterOpmode extends OpMode
         telemetry.addData("hood", hoodAngle);
         telemetry.addData("turret", turretAngle);
         if(gamepad1.dpadUpWasPressed()){
-            turretAngle += 0.001;
+            hoodAngle += 0.05;
         }
         if(gamepad1.dpadDownWasPressed()){
-            turretAngle -= 0.001;
+            hoodAngle -= 0.05;
         }
         if(gamepad1.dpadLeftWasPressed()){
             turretAngle = 1;

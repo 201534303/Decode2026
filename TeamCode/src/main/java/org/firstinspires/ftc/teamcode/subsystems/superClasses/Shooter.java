@@ -45,8 +45,8 @@ public class Shooter {
         shooterR.setInverted(true);
 
         //break
-        shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        //shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
+        //shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
 
         //VelocityMode
         shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
@@ -82,6 +82,11 @@ public class Shooter {
 
     public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
         double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
+        shooterR.setVelocity(speed);
+        shooterL.setVelocity(speed);
+    }
+    public void flywheelSpin(double targetVelo, double currentVelo, double kf, double x, double y){//kf is a tester varible
+        double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59, x, y);
         shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
     }
@@ -164,6 +169,7 @@ public class Shooter {
         last_error = error;
 
         return correction;
+
     }
 
 
