@@ -43,14 +43,9 @@ public class LimelightProcessor_v3Tele {
     }
 
 
-    public void updateTele(double yawIn, double shooterIn) {
+    public void updateTele() {
         //odo.update();
         //Pose2D pos = odo.getPosition();
-        double yaw = yawIn;
-        double shooterAngle = shooterIn;
-
-        stored_yaw = yaw;
-        stored_shooter = shooterAngle;
 
         LLResult result = limelight.getLatestResult();
 
@@ -73,7 +68,6 @@ public class LimelightProcessor_v3Tele {
                 double camZ = position.z;
                 double camRoll = rotation.getRoll();
                 double camPitch = rotation.getPitch();
-                double camYaw = yaw;
                 double distance = Math.sqrt(camX*camX+camZ*camZ);
                 if (camY < 0) {
                     pose.x = -camX;
@@ -84,7 +78,6 @@ public class LimelightProcessor_v3Tele {
                     pose.y = camY;
                 }
                 pose.z = camZ;
-                pose.yaw = camYaw;
                 pose.pitch = camPitch;
                 pose.roll = camRoll;
                 pose.distance = distance;
@@ -100,8 +93,9 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose() {
-        double theta = Math.abs(stored_shooter + stored_yaw + stored_tx);
+    public void getRobotPose(double yawIn, double shooterIn) {
+        double yaw = -yawIn + Math.PI/2;
+        double theta = Math.abs(stored_shooter + yawIn + shooterIn);
         double rawX = (1.5/39.3701 + pose.distance)*Math.sin(theta);
         double rawY = (1.5/39.3701 + pose.distance)*Math.cos(theta);
         pose.posX = rawX;
