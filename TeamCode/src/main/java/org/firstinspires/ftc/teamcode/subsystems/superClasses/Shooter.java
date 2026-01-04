@@ -84,11 +84,8 @@ public class Shooter {
         double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
         shooterR.setVelocity(speed);
         shooterL.setVelocity(speed);
-    }
-    public void flywheelSpin(double targetVelo, double currentVelo, double kf, double x, double y){//kf is a tester varible
-        double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59, x, y);
-        shooterR.setVelocity(speed);
-        shooterL.setVelocity(speed);
+        telemetry.addData("target velocity", Math.round(targetVelo*100)/100.0);
+        telemetry.addData("current velocity", Math.round(currentVelo*100)/100.0);
     }
 
     public void rotateTurret(double theta){
@@ -104,9 +101,9 @@ public class Shooter {
 
         //setting it
         theta = 0.48 /*center*/ + theta * (1/(71.35*2));
-        telemetry.addData("image!", "71.35*2!");
         right.setPosition(theta);
         left.setPosition(theta);
+        telemetry.addData("turret", Math.round(theta*100)/100.0);
     }
 
     public void seTurretRaw(double theta){
@@ -131,6 +128,7 @@ public class Shooter {
         }
         theta = 1-theta;
         hood.setPosition(theta);
+        telemetry.addData("hood", Math.round(theta*100)/100.0);
     }
 
     public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
@@ -150,26 +148,6 @@ public class Shooter {
         last_error = error;
 
         return correction;
-    }
-
-    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF, double x, double y) {
-
-        integral += error;
-        double derivative = error - last_error;
-
-        double proportional = error * kp;
-        double integralTerm = integral * ki;
-        double derivativeTerm = derivative * kd;
-
-        // Feedforward = kF * setpoint; important for scaling feedforward
-        double feedforward = kF * setpoint;
-
-        double correction = proportional + integralTerm + derivativeTerm + feedforward;
-
-        last_error = error;
-
-        return correction;
-
     }
 
     public double servoPos(){

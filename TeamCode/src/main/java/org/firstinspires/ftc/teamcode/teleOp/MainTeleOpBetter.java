@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -24,6 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
+import java.util.concurrent.TimeUnit;
+
 
 @TeleOp(name="Two Driver Tele", group="Iterative OpMode")
 @Config
@@ -34,6 +37,7 @@ public class MainTeleOpBetter extends OpMode {
 
     //runtime
     private ElapsedTime overallRuntime;
+    private double lastTime;
 
     //subsystems
     private Drivetrain drivetrain;
@@ -48,6 +52,10 @@ public class MainTeleOpBetter extends OpMode {
     private RobotActions robot;
     public boolean turretOn = true;
     private Choose.Alliance currentColor = RED;
+    private double x;
+    private double y;
+    private double heading;
+    private Vector vel;
 
     @Override
     public void init() {
@@ -94,7 +102,15 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("WE UPLOADED?", "true");
+        /*
+        --------------------------GRAB COORDINATES--------------------------
+         */
+        Pose robotPos = follower.getPose();
+        x = robotPos.getX();
+        y = robotPos.getY();
+        heading = robotPos.getHeading();
+
+        vel = follower.getVelocity();
 
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
@@ -107,8 +123,14 @@ public class MainTeleOpBetter extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            robot.setIMUZero(currentColor);
+            robot.setIMUZero(currentColor, x, y);
         }
+
+        //rezero position
+        if (gamepad1.dpad_down){
+            robot.setLocalizationOurSide(currentColor);
+        }
+
 
         if (gamepad1.y){
             if (turretOn){
@@ -118,21 +140,17 @@ public class MainTeleOpBetter extends OpMode {
             }
         }
 
+        if(gamepad1.xWasPressed()){
+            if(currentColor == Choose.Alliance.RED){
+                currentColor = Choose.Alliance.BLUE;
+            }
+            else{
+                currentColor = Choose.Alliance.RED;
+            }
+        }
 
-        robot.fieldCentricDrive(currentColor);
 
-        if(gamepad1.dpadLeftWasPressed()){
-            robot.DELETEBUTTHISISHOOD -= 0.05;
-        }
-        if(gamepad1.dpadRightWasPressed()){
-            robot.DELETEBUTTHISISHOOD += 0.05;
-        }
-        if(gamepad1.dpadUpWasPressed()){
-            robot.DELETEBUTTHISISVEL += 5;
-        }
-        if(gamepad1.dpadDownWasPressed()){
-            robot.DELETEBUTTHISISVEL -= 5;
-        }
+        robot.fieldCentricDrive(currentColor, heading);
 
 
         /*
@@ -140,13 +158,19 @@ public class MainTeleOpBetter extends OpMode {
          */
 
         robot.updateIntake();
-        robot.updateTransfer(currentColor);
+        robot.updateTransfer(currentColor, vel, x, y);
 
         /*
         --------------------------UPDATE--------------------------
          */
-
-        robot.update(currentColor, turretOn);
+        double nowTime = overallRuntime.time(TimeUnit.SECONDS);
+        double timeDif = nowTime - lastTime;
+        double hertz = 1.0/timeDif;
+        lastTime = nowTime;
+        telemetry.addData("alliance Color", currentColor);
+        telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
+        telemetry.addData("hertz", hertz);
+        robot.update(currentColor, turretOn, x, y, heading, vel);
         follower.update();
         telemetry.update();
     }
