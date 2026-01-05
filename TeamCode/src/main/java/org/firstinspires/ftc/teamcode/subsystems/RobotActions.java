@@ -17,8 +17,9 @@ import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
 public class RobotActions {
 
     //DELETELATER
-    public double DELETEBUTTHISISVEL = 1520;
+    public double DELETEBUTTHISISVEL = 1720;
     public double DELETEBUTTHISISHOOD = 0.3;
+    public double DELETEBUTTHISISTURRET = 0.48;
 
     //gamepads
     Gamepad gamepad1, gamepad2;
@@ -165,6 +166,20 @@ public class RobotActions {
             shooter.rotateTurret(0);
         }
         updateShooter(currentColor, rVel, x, y);
+    }
+
+    public void updateShooterTesting(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
+        double[] velocities = getVelocities(currentColor, vel, x, y);
+        double rVel = velocities[0];
+        double tVel = velocities[0];
+        //updateTurret(currentColor, tVel, x, y, heading);
+        //shooter.rotateTurret(0);
+        telemetry.addData("hood", DELETEBUTTHISISHOOD);
+        telemetry.addData("turret", DELETEBUTTHISISTURRET);
+        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
+        shooter.setHood(DELETEBUTTHISISHOOD);
+        shooter.rotateTurret(DELETEBUTTHISISTURRET);
+        shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
     }
 
     private void updateTurret(Choose.Alliance currentColor, double tVel, double posX, double posY, double h){
