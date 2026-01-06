@@ -130,21 +130,6 @@ public class MainTeleOpBetter extends OpMode {
         heading = robotPos.getHeading();
 
         vel = follower.getVelocity();
-        ll.updateTele();
-        ll.getRobotPose(follower.getPose().getHeading(), robot.angle);
-        telemetry.addData("distance", ll.pose.distance * 39.3701);
-        telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
-        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("stored_shooter",Math.toDegrees(robot.angle));
-        telemetry.addData("rawPosX", ll.pose.rawX * 39.3701);
-        telemetry.addData("rawPosY", ll.pose.rawY * 39.3701);
-        telemetry.addData("yaw", ll.pose.yaw);
-        telemetry.addData("pitch", ll.pose.pitch);
-        telemetry.addData("roll", ll.pose.roll);
-        telemetry.addData("x", ll.pose.x);
-        telemetry.addData("y",ll.pose.y);
-        telemetry.addData("z", ll.pose.z);
-        telemetry.addData("WE UPLOADED?", "true");
 
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
