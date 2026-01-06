@@ -17,8 +17,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
-            .xVelocity(76.83625517116756)
-            .yVelocity(63.33562415415846)
+            //.xVelocity(76.83625517116756)
+            //.yVelocity(63.33562415415846)
+            .xVelocity(72.79995319036048)//new
+            .yVelocity(54.70373439037894)//new
             .rightFrontMotorName("rightFrontMotor")
             .rightRearMotorName("rightBackMotor")
             .leftRearMotorName("leftBackMotor")
@@ -30,8 +32,12 @@ public class Constants {
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
             //----need to make sure this is correct---
-            .forwardPodY(-6.5)
-            .strafePodX(0)
+            //center of robot
+                //.forwardPodY(-6.5)
+                //.strafePodX(0)
+            //center relative to shooter
+            .forwardPodY(-5.5)
+            .strafePodX(-5)
             //---------------------------
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
@@ -41,8 +47,10 @@ public class Constants {
 
 
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .lateralZeroPowerAcceleration(-73.66390773672457)
-            .forwardZeroPowerAcceleration(-26.912657186607678)
+            //.lateralZeroPowerAcceleration(-73.66390773672457)
+            //.forwardZeroPowerAcceleration(-26.912657186607678)
+            .forwardZeroPowerAcceleration(-35.71563085866153)//new
+            .lateralZeroPowerAcceleration(-81.38187788469911)//new
 
             //PIDF
             .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0, 0))
