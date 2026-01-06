@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
@@ -56,9 +57,12 @@ public class MainTeleOpBetter extends OpMode {
     private double y;
     private double heading;
     private Vector vel;
+    private boolean moving = false;
+    LimelightProcessor_v3Tele ll;
 
     @Override
     public void init() {
+        ll = new LimelightProcessor_v3Tele(hardwareMap);
         //choose
         choose = new Choose(gamepad1, telemetry);
 
@@ -102,6 +106,21 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
+        ll.updateTele();
+        ll.getRobotPose(follower.getPose().getHeading(), robot.angle);
+        telemetry.addLine("------");
+        telemetry.addData("distance", ll.pose.distance * 39.3701);
+        telemetry.addData("rawX", ll.pose.rawX * 39.3701);
+        telemetry.addData("rawY", ll.pose.rawY * 39.3701);
+        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
+        telemetry.addData("stored_shooter", robot.angle);
+        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
+        telemetry.addData("heading", ll.pose.heading);
+        telemetry.addData("'true heading'", follower.getPose().getHeading());
+        telemetry.addData("x", ll.pose.x * 39.3701);
+        telemetry.addData("y", ll.pose.y * 39.3701);
+        telemetry.addData("z", ll.pose.z * 39.3701);
+        telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------
          */
