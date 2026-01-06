@@ -35,6 +35,8 @@ public class LimelightProcessor_v3Tele {
     private final double field = 144/39.3701;
     private final double halfPi = Math.PI/2;
 
+    private final double alpha = 0.25;
+
 
     public LimelightProcessor_v3Tele(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -57,6 +59,7 @@ public class LimelightProcessor_v3Tele {
                 int id = fiducial.getFiducialId();
 
                 stored_tx = Math.toRadians(fiducial.getTargetXDegrees());
+                pose.tx = stored_tx;
 
                 Pose3D camPose = fiducial.getCameraPoseTargetSpace();
                 Position position = camPose.getPosition();
@@ -93,12 +96,26 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn) {
-        double yaw = -yawIn + Math.PI/2;
-        double theta = Math.abs(stored_shooter + yawIn + shooterIn);
-        double rawX = (1.5/39.3701 + pose.distance)*Math.sin(theta);
-        double rawY = (1.5/39.3701 + pose.distance)*Math.cos(theta);
-        pose.posX = rawX;
-        pose.posY = rawY;
+    public void getRobotPose(double yawIn, double shooterIn, boolean moving) {
+        double yaw = yawIn;
+        // CHECK FOR BLUE
+        if (yaw > 90) {
+            yaw = 180 - yaw;
+        }
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn));
+        pose.theta = theta;
+        pose.heading = yaw;
+        double rawX = (1.5/39.3701 + pose.distance)*Math.cos(theta);
+        double rawY = (1.5/39.3701 + pose.distance)*Math.sin(theta);
+        if (!moving) {
+            pose.rawX = rawX * alpha + (1-alpha)*pose.rawX;
+            pose.rawY = rawY * alpha + (1-alpha)*pose.rawY;
+        }
+        else {
+            pose.rawX = rawX;
+            pose.rawY = rawY;
+        }
+
+        // UPDATE FOR FIELD COORDS
     }
 }

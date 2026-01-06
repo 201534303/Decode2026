@@ -44,7 +44,7 @@ public class MainTeleOpSingleDriver extends OpMode {
 
     public double cameraLoopCounter = 0;
 
-    LimelightProcessor_v3Tele ll;
+
 
     public final Pose homing = new Pose(72, 3, -Math.toRadians(90));
     public Pose reset = new Pose(0, 0, 0);
@@ -59,7 +59,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
         telemetry.addData("Status", "Initialized");
-        ll = new LimelightProcessor_v3Tele(hardwareMap);
 
 
 
@@ -97,16 +96,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
 
-        //ll.updateTele(follower.getPose().getHeading(), shooter.getTurrentAngle());
-        //ll.getRobotPose();
-        telemetry.addData("distance", ll.pose.distance * 39.3701);
-        telemetry.addData("posX", ll.pose.posX * 39.3701);
-        telemetry.addData("posY", ll.pose.posY * 39.3701);
-        telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
-        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("stored_shooter",Math.toDegrees(shooter.getTurrentAngle()));
-        telemetry.addData("rawPosX", ll.pose.rawX * 39.3701);
-        telemetry.addData("rawPosY", ll.pose.rawY * 39.3701);
         //dt.updateOdo();
         /*
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
@@ -165,7 +154,6 @@ public class MainTeleOpSingleDriver extends OpMode {
         telemetry.addData("heading delta", -(heading+90));
 
 
-        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
         //telemetry.addData("cornerX", 39.3701*ll.pose.cornerX);
         //telemetry.addData("cornerY", 39.3701*ll.pose.cornerY);
 

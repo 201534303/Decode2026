@@ -45,6 +45,7 @@ public class RobotActions {
 
     //variables
     private int shootingMode = 1;
+    public double angle;
 
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te){
         gamepad1 = g1;
@@ -212,6 +213,7 @@ public class RobotActions {
         }
 
         shooter.rotateTurret(turretAngle);
+        angle = turretAngle;
     }
 
 
