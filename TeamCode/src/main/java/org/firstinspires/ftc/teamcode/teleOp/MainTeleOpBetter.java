@@ -107,19 +107,14 @@ public class MainTeleOpBetter extends OpMode {
     @Override
     public void loop() {
         ll.updateTele();
-        ll.getRobotPose(follower.getPose().getHeading(), robot.angle);
+        int id = ll.pose.id;
+        ll.getRobotPose(follower.getPose().getHeading(), robot.angle, id);
         telemetry.addLine("------");
-        telemetry.addData("distance", ll.pose.distance * 39.3701);
-        telemetry.addData("rawX", ll.pose.rawX * 39.3701);
-        telemetry.addData("rawY", ll.pose.rawY * 39.3701);
+        telemetry.addData("distance", ll.pose.distance);
+        telemetry.addData("rawX", ll.pose.rawX);
+        telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
         telemetry.addData("stored_shooter", robot.angle);
-        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
-        telemetry.addData("heading", ll.pose.heading);
-        telemetry.addData("'true heading'", follower.getPose().getHeading());
-        telemetry.addData("x", ll.pose.x * 39.3701);
-        telemetry.addData("y", ll.pose.y * 39.3701);
-        telemetry.addData("z", ll.pose.z * 39.3701);
         telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------

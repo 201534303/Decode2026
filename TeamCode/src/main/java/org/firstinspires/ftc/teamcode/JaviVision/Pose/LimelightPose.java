@@ -8,7 +8,7 @@ public class LimelightPose {
     public double pitch = 0;
     public double roll = 0;
     public double distance = 0;
-    public double id = -1;
+    public int id = -1;
 
     public double theta = 0;
     public double tx = 0;

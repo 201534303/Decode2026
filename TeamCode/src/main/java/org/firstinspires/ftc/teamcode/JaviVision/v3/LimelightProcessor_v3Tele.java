@@ -21,18 +21,13 @@ public class LimelightProcessor_v3Tele {
     public final LimelightPose pose = new LimelightPose();
     public GoBildaPinpointDriver odo;
     private Limelight3A limelight;
-    private final double center = 3.6195/2; // x and y (IT'S A SQUARE DINGUS)
-
-    private final double CONSTX = 17/39.3701;
-    private final double CONSTY = 0.314325;
-
-    private final double DIAG = 0.371475;
-    private final double DIAG2 = 0.3302;
+    private final double CONSTX = 16;
+    private final double CONSTY = 13.375;
 
     private double stored_yaw;
     private double stored_shooter;
     private double stored_tx;
-    private final double field = 144/39.3701;
+    private final double field = 144;
     private final double halfPi = Math.PI/2;
 
     private final double alpha = 0.25;
@@ -71,7 +66,7 @@ public class LimelightProcessor_v3Tele {
                 double camZ = position.z;
                 double camRoll = rotation.getRoll();
                 double camPitch = rotation.getPitch();
-                double distance = Math.sqrt(camX*camX+camZ*camZ);
+                double distance = Math.sqrt(camX*camX+camZ*camZ) * 39.3701;
                 if (camY < 0) {
                     pose.x = -camX;
                     pose.y = -camY;
@@ -96,7 +91,7 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn) {
+    public void getRobotPose(double yawIn, double shooterIn, int id) {
         double yaw = yawIn;
         // CHECK FOR BLUE
         if (yaw > 90) {
@@ -105,11 +100,18 @@ public class LimelightProcessor_v3Tele {
         double theta = Math.abs(yaw + Math.toRadians(shooterIn));
         pose.theta = theta;
         pose.heading = yaw;
-        double rawX = (1.5/39.3701 + pose.distance)*Math.cos(theta);
-        double rawY = (1.5/39.3701 + pose.distance)*Math.sin(theta);
+        double rawX = (6.5 + pose.distance)*Math.cos(theta);
+        double rawY = (6.5 + pose.distance)*Math.sin(theta);
         pose.rawX = rawX;
         pose.rawY = rawY;
-
+        if (id == 20) {
+            pose.posX = pose.rawX + CONSTX - field/2;
+            pose.posY = field - pose.rawY - CONSTY;
+        }
+        else if (id == 24) {
+            pose.posX = field/2 - pose.rawX + CONSTX;
+            pose.posY = field - pose.rawY - CONSTY;
+        }
         // UPDATE FOR FIELD COORDS
     }
 }

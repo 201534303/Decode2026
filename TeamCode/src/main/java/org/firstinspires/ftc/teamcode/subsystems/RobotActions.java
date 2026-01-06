@@ -185,7 +185,6 @@ public class RobotActions {
 
     private void updateTurret(Choose.Alliance currentColor, double tVel, double posX, double posY, double h){
         double heading = Math.toDegrees(h);
-        posY = posY + 5;
         double turretAngle = 0;
 
         if(currentColor == Choose.Alliance.BLUE){
@@ -288,7 +287,7 @@ public class RobotActions {
         return new double[] { vRadial, vTangential };
     }
 
-    public static double[] subsystemFieldXY(double x, double y, double thetaRad) {
+    /*public static double[] subsystemFieldXY(double x, double y, double thetaRad) {
         // Subsystem offset in ROBOT coordinates (inches)
         double dx = -5.0;  // behind center
         double dy =  0.0;  // not left/right
@@ -302,4 +301,6 @@ public class RobotActions {
 
         return new double[]{subX, subY};
     }
+
+     */
 }

@@ -37,8 +37,6 @@ public class LimelightProcessor {
         //double error = -0.0569126 * pose.distance + 3.85921;
         double error = 0;
         pose.distance += error;
-
-        pose.id = py[7];
         pose.valid = true;
     }
 }
