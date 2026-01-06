@@ -107,7 +107,7 @@ public class MainTeleOpSingleDriver extends OpMode {
         dt.feildCentricDrive(heading);
 
         ll.updateTele();
-        ll.getRobotPose(follower.getPose().getHeading(), shooter.getTurrentAngle(), 24);
+        ll.getRobotPose(follower.getPose().getHeading(), shooter.getTurrentAngle(), 0,24);
         telemetry.addData("distance", ll.pose.distance * 39.3701);
         telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));

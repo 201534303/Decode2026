@@ -27,7 +27,7 @@ public class LimelightProcessor_v3Tele {
     private double stored_yaw;
     private double stored_shooter;
     private double stored_tx;
-    private final double field = 144;
+    private final double fieldLength = 144;
     private final double halfPi = Math.PI/2;
 
     private final double alpha = 0.25;
@@ -91,13 +91,13 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn, int id) {
+    public void getRobotPose(double yawIn, double shooterIn, double delAngle, int id) {
         double yaw = yawIn;
         // CHECK FOR BLUE
         if (yaw > 90) {
             yaw = 180 - yaw;
         }
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn));
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn) - Math.toRadians(delAngle) + stored_tx);
         pose.theta = theta;
         pose.heading = yaw;
         double rawX = (6.5 + pose.distance)*Math.cos(theta);
@@ -105,12 +105,12 @@ public class LimelightProcessor_v3Tele {
         pose.rawX = rawX;
         pose.rawY = rawY;
         if (id == 20) {
-            pose.posX = pose.rawX + CONSTX - field/2;
-            pose.posY = field - pose.rawY - CONSTY;
+            pose.posX = pose.rawX + CONSTX;
+            pose.posY = fieldLength - pose.rawY - CONSTY;
         }
         else if (id == 24) {
-            pose.posX = field/2 - pose.rawX + CONSTX;
-            pose.posY = field - pose.rawY - CONSTY;
+            pose.posX = fieldLength - pose.rawX - CONSTX;
+            pose.posY = fieldLength - pose.rawY - CONSTY;
         }
         // UPDATE FOR FIELD COORDS
     }

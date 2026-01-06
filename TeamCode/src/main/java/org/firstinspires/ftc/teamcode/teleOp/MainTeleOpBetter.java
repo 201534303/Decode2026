@@ -108,13 +108,15 @@ public class MainTeleOpBetter extends OpMode {
     public void loop() {
         ll.updateTele();
         int id = ll.pose.id;
-        ll.getRobotPose(follower.getPose().getHeading(), robot.angle, id);
+        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, robot.delAngle, id);
         telemetry.addLine("------");
         telemetry.addData("distance", ll.pose.distance);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("stored_shooter", robot.angle);
+        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
+        telemetry.addData("del Angle", robot.delAngle);
+        telemetry.addData("stored_shooter", robot.turAngle);
         telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------

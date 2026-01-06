@@ -45,7 +45,12 @@ public class RobotActions {
 
     //variables
     private int shootingMode = 1;
-    public double angle;
+    public double turAngle;
+    public double delAngle;
+    public double idealAngle;
+    private final double CONSTX = 16;
+    private final double CONSTY = 13.375;
+    private final double fieldLength = 144;
 
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te){
         gamepad1 = g1;
@@ -99,7 +104,7 @@ public class RobotActions {
         double rotedX = xMove * Math.cos(botHeadingaForMatrix) - yMove * Math.sin(botHeadingaForMatrix);
         double rotedY = xMove * Math.sin(botHeadingaForMatrix) + yMove * Math.cos(botHeadingaForMatrix);
 
-        rotedX = rotedX * 1.1;  // Counteract imperfect strafing
+        rotedX = rotedX * 1.1 ;  // Counteract imperfect strafing
 
         double frontLeftPower = (rotedY + rotedX + rot);
         double backLeftPower = (rotedY - rotedX + rot);
@@ -196,6 +201,10 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            double rawX = posX - CONSTX;
+            double rawY = posY + CONSTY - fieldLength;
+            idealAngle = Math.atan(rawY/rawX);
+            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
         if(currentColor == Choose.Alliance.RED){
@@ -209,10 +218,14 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            double rawX = posX + CONSTX - fieldLength;
+            double rawY = posY + CONSTY - fieldLength;
+            idealAngle = Math.atan(rawY/rawX);
+            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
         shooter.rotateTurret(turretAngle);
-        angle = turretAngle;
+        turAngle = turretAngle;
     }
 
 
