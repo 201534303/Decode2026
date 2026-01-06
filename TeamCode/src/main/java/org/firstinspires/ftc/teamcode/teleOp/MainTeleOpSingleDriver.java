@@ -83,8 +83,17 @@ public class MainTeleOpSingleDriver extends OpMode {
         double heading = Math.toDegrees(follower.getPose().getHeading());
         double posX = follower.getPose().getX();
         double posY = follower.getPose().getY();
-        double turretAngle = (Math.toDegrees(Math.atan((144 - posX) / (144 - (Math.abs(posY)))))) - (heading + 90);
-
+        double turretAngle = 0;
+        if (ll.pose.id == 20) { //change to "desired id"
+            double a = posX - 16;
+            double b = 130.625 - posY;
+            turretAngle = Math.toDegrees(-Math.atan(a/b) - heading);
+        }
+        if (ll.pose.id == 24) { //change to "desired id"
+            double a = 128 - posX;
+            double b = 130.625 - posY;
+            turretAngle = Math.toDegrees(Math.atan(a/b) - heading);
+        }
         if (gamepad1.share){
             follower.setPose(homing);
         }
@@ -97,16 +106,20 @@ public class MainTeleOpSingleDriver extends OpMode {
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
 
-        ll.updateTele(follower.getPose().getHeading(), shooter.getTurrentAngle());
-        ll.getRobotPose();
+        ll.updateTele();
+        ll.getRobotPose(follower.getPose().getHeading(), shooter.getTurrentAngle());
         telemetry.addData("distance", ll.pose.distance * 39.3701);
-        telemetry.addData("posX", ll.pose.posX * 39.3701);
-        telemetry.addData("posY", ll.pose.posY * 39.3701);
         telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
         telemetry.addData("stored_shooter",Math.toDegrees(shooter.getTurrentAngle()));
         telemetry.addData("rawPosX", ll.pose.rawX * 39.3701);
         telemetry.addData("rawPosY", ll.pose.rawY * 39.3701);
+        telemetry.addData("yaw", ll.pose.yaw);
+        telemetry.addData("pitch", ll.pose.pitch);
+        telemetry.addData("roll", ll.pose.roll);
+        telemetry.addData("x", ll.pose.x);
+        telemetry.addData("y",ll.pose.y);
+        telemetry.addData("z", ll.pose.z);
         //dt.updateOdo();
         /*
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {

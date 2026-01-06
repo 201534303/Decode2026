@@ -96,7 +96,7 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn, boolean moving) {
+    public void getRobotPose(double yawIn, double shooterIn) {
         double yaw = yawIn;
         // CHECK FOR BLUE
         if (yaw > 90) {
@@ -107,14 +107,8 @@ public class LimelightProcessor_v3Tele {
         pose.heading = yaw;
         double rawX = (1.5/39.3701 + pose.distance)*Math.cos(theta);
         double rawY = (1.5/39.3701 + pose.distance)*Math.sin(theta);
-        if (!moving) {
-            pose.rawX = rawX * alpha + (1-alpha)*pose.rawX;
-            pose.rawY = rawY * alpha + (1-alpha)*pose.rawY;
-        }
-        else {
-            pose.rawX = rawX;
-            pose.rawY = rawY;
-        }
+        pose.rawX = rawX;
+        pose.rawY = rawY;
 
         // UPDATE FOR FIELD COORDS
     }
