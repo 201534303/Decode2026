@@ -48,6 +48,10 @@ public class RobotActions {
     public double turAngle;
     public double delAngle;
     public double idealAngle;
+    public double rawX;
+    public double rawY;
+    public double posX;
+    public double posY;
     private final double CONSTX = 16;
     private final double CONSTY = 13.375;
     private final double fieldLength = 144;
@@ -189,6 +193,8 @@ public class RobotActions {
     }
 
     private void updateTurret(Choose.Alliance currentColor, double tVel, double posX, double posY, double h){
+        this.posX = posX;
+        this.posY = posY;
         double heading = Math.toDegrees(h);
         double turretAngle = 0;
 
@@ -201,8 +207,8 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = (turretAngle1 + turretAngle2)/2.0;
-            double rawX = posX - CONSTX;
-            double rawY = posY + CONSTY - fieldLength;
+            rawX = posX - CONSTX;
+            rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
@@ -218,8 +224,8 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = (turretAngle1 + turretAngle2)/2.0;
-            double rawX = posX + CONSTX - fieldLength;
-            double rawY = posY + CONSTY - fieldLength;
+            rawX = fieldLength - posX - CONSTX;
+            rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }

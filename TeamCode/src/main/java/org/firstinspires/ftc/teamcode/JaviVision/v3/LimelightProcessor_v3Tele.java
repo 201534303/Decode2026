@@ -97,7 +97,13 @@ public class LimelightProcessor_v3Tele {
         if (yaw > 90) {
             yaw = 180 - yaw;
         }
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn) - Math.toRadians(delAngle) + stored_tx);
+        /*if (stored_tx < 0) {
+            stored_tx += Math.toRadians(2);
+        }
+        else if (stored_tx > 0) {
+            stored_tx -= Math.toRadians(2);
+        }*/
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn) - 0.8*stored_tx);
         pose.theta = theta;
         pose.heading = yaw;
         double rawX = (6.5 + pose.distance)*Math.cos(theta);

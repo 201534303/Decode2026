@@ -116,7 +116,12 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
         telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
         telemetry.addData("del Angle", robot.delAngle);
+        telemetry.addData("ideal Angle", Math.toDegrees(robot.idealAngle));
         telemetry.addData("stored_shooter", robot.turAngle);
+        telemetry.addData("internal RawX", robot.rawX);
+        telemetry.addData("iternal RawY", robot.rawY);
+        telemetry.addData("positionX", robot.posX);
+        telemetry.addData("positionY", robot.posY);
         telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------
