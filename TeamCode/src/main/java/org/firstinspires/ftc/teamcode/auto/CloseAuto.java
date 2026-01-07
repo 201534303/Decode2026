@@ -184,12 +184,12 @@ public class CloseAuto extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        shooter.setHood(0.48);//0.35, 0.3
+        shooter.setHood(0.48);
     }
 
     public void init_loop(){
         telemetry.addData("servoPos", 1-shooter.servoPos());
-        shooter.setHood(0.48);//0.35, 0.3
+        shooter.setHood(0.48);
 
         if(!readyWolfpack){
             readyWolfpack = choose.wolfpackInit();
@@ -240,5 +240,8 @@ public class CloseAuto extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
+    }
+    public void stop(){
+
     }
 }
