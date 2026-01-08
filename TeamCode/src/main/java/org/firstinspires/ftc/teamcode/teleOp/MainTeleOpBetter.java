@@ -108,20 +108,21 @@ public class MainTeleOpBetter extends OpMode {
     public void loop() {
         ll.updateTele();
         int id = ll.pose.id;
-        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, robot.delAngle, id);
+        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, ll.pose.tx, id);
         telemetry.addLine("------");
+        telemetry.addLine("GRAPHING VALUES");
+        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
+        telemetry.addData("ideal Angle", Math.toDegrees(robot.idealAngle));
+        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
+        telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
-        telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
-        telemetry.addData("del Angle", robot.delAngle);
-        telemetry.addData("ideal Angle", Math.toDegrees(robot.idealAngle));
-        telemetry.addData("stored_shooter", robot.turAngle);
-        telemetry.addData("internal RawX", robot.rawX);
-        telemetry.addData("iternal RawY", robot.rawY);
-        telemetry.addData("positionX", robot.posX);
-        telemetry.addData("positionY", robot.posY);
+        telemetry.addLine("----------");
+        telemetry.addData("fieldX", ll.pose.posX);
+        telemetry.addData("fieldY", ll.pose.posY);
+        telemetry.addData("positionX", follower.getPose().getX());
+        telemetry.addData("positionY", follower.getPose().getY());
         telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------
@@ -144,7 +145,8 @@ public class MainTeleOpBetter extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            robot.setIMUZero(currentColor, x, y);
+            follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
+            //robot.setIMUZero(currentColor, x, y);
         }
 
         //rezero position
@@ -161,7 +163,7 @@ public class MainTeleOpBetter extends OpMode {
             }
         }
 
-        if(gamepad1.xWasPressed()){
+        if(gamepad1.xWasPressed()) {
             if(currentColor == Choose.Alliance.RED){
                 currentColor = Choose.Alliance.BLUE;
             }

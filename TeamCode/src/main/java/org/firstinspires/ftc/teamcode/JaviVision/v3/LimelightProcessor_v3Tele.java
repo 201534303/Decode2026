@@ -21,8 +21,8 @@ public class LimelightProcessor_v3Tele {
     public final LimelightPose pose = new LimelightPose();
     public GoBildaPinpointDriver odo;
     private Limelight3A limelight;
-    private final double CONSTX = 16;
-    private final double CONSTY = 13.375;
+    private final double CONSTX = 15;
+    private final double CONSTY = 15.375;
 
     private double stored_yaw;
     private double stored_shooter;
@@ -48,39 +48,46 @@ public class LimelightProcessor_v3Tele {
 
         if (result != null && result.isValid()) {
             List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
-
+            LLResultTypes.FiducialResult fiducial = null;
             if (fiducials != null && fiducials.size() > 0) {
-                LLResultTypes.FiducialResult fiducial = fiducials.get(0);
-                int id = fiducial.getFiducialId();
-
-                stored_tx = Math.toRadians(fiducial.getTargetXDegrees());
-                pose.tx = stored_tx;
-
-                Pose3D camPose = fiducial.getCameraPoseTargetSpace();
-                Position position = camPose.getPosition();
-                YawPitchRollAngles rotation = camPose.getOrientation();
-
-                // In the current FTC Limelight SDK, you access fields directly:
-                double camX = position.x;
-                double camY = position.y;
-                double camZ = position.z;
-                double camRoll = rotation.getRoll();
-                double camPitch = rotation.getPitch();
-                double distance = Math.sqrt(camX*camX+camZ*camZ) * 39.3701;
-                if (camY < 0) {
-                    pose.x = -camX;
-                    pose.y = -camY;
+                for (LLResultTypes.FiducialResult fid : fiducials) {
+                    int id = fid.getFiducialId();
+                    // making sure it doesn't see the pattern april tags
+                    if ((id == 20) || (id == 24)) {
+                        fiducial = fid;
+                        break;
+                    }
                 }
-                else {
-                    pose.x = camX;
-                    pose.y = camY;
+                if (fiducial != null) {
+                    int id = fiducial.getFiducialId();
+
+                    pose.tx =  Math.toRadians(fiducial.getTargetXDegrees());
+
+                    Pose3D camPose = fiducial.getCameraPoseTargetSpace();
+                    Position position = camPose.getPosition();
+                    YawPitchRollAngles rotation = camPose.getOrientation();
+
+                    // In the current FTC Limelight SDK, you access fields directly:
+                    double camX = position.x;
+                    double camY = position.y;
+                    double camZ = position.z;
+                    double camRoll = rotation.getRoll();
+                    double camPitch = rotation.getPitch();
+                    double distance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701;
+                    if (camY < 0) {
+                        pose.x = -camX;
+                        pose.y = -camY;
+                    } else {
+                        pose.x = camX;
+                        pose.y = camY;
+                    }
+                    pose.z = camZ;
+                    pose.pitch = camPitch;
+                    pose.roll = camRoll;
+                    pose.distance = distance + 6.5;
+                    pose.id = id;
+                    pose.valid = true;
                 }
-                pose.z = camZ;
-                pose.pitch = camPitch;
-                pose.roll = camRoll;
-                pose.distance = distance;
-                pose.id = id;
-                pose.valid = true;
             }
             else {
                 pose.valid = false;
@@ -91,19 +98,14 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn, double delAngle, int id) {
+    public void getRobotPose(double yawIn, double shooterIn, double txIn, int id) {
         double yaw = yawIn;
+        double tx = txIn;
         // CHECK FOR BLUE
         if (yaw > 90) {
             yaw = 180 - yaw;
         }
-        /*if (stored_tx < 0) {
-            stored_tx += Math.toRadians(2);
-        }
-        else if (stored_tx > 0) {
-            stored_tx -= Math.toRadians(2);
-        }*/
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn) - 0.8*stored_tx);
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn));
         pose.theta = theta;
         pose.heading = yaw;
         double rawX = (6.5 + pose.distance)*Math.cos(theta);
@@ -120,4 +122,57 @@ public class LimelightProcessor_v3Tele {
         }
         // UPDATE FOR FIELD COORDS
     }
+    /*
+    CHATGPT FUNCTINO THAT I SHOULD PUT IN ONCE I FIGURE OUT HOW LONG I CAN STAY STILL FOR
+    public void getRobotPose(double yawIn, double shooterIn, double delAngle, int id) {
+
+        double yaw = yawIn;
+
+        // Alliance normalization
+        if (yaw > 90) {
+            yaw = 180 - yaw;
+        }
+
+        // ---- TX FILTERING ----
+        filtered_tx = 0.85 * filtered_tx + 0.15 * stored_tx;
+
+        double txUsed = filtered_tx;
+
+        // Deadband small jitter
+        if (Math.abs(txUsed) < Math.toRadians(0.4)) {
+            txUsed = 0;
+        }
+
+        // ---- THETA CALC ----
+        double rawTheta = Math.abs(
+                yaw
+                        + Math.toRadians(shooterIn)
+                        - txUsed
+                        + Math.toRadians(0.8)
+        );
+
+        // Rate limit
+        double delta = rawTheta - lastTheta;
+        delta = Math.max(-Math.toRadians(1.5), Math.min(Math.toRadians(1.5), delta));
+        double theta = lastTheta + delta;
+        lastTheta = theta;
+
+        pose.theta = theta;
+        pose.heading = yaw;
+
+        double rawX = (6.5 + pose.distance) * Math.cos(theta);
+        double rawY = (6.5 + pose.distance) * Math.sin(theta);
+
+        pose.rawX = rawX;
+        pose.rawY = rawY;
+
+        if (id == 20) {
+            pose.posX = rawX + CONSTX;
+            pose.posY = fieldLength - rawY - CONSTY;
+        } else if (id == 24) {
+            pose.posX = fieldLength - rawX - CONSTX;
+            pose.posY = fieldLength - rawY - CONSTY;
+        }
+    }
+    */
 }

@@ -106,8 +106,8 @@ public class MainTeleOpSingleDriver extends OpMode {
         shooter.setTurretAngle(turretAngle);
         dt.feildCentricDrive(heading);
 
-        ll.updateTele();
-        ll.getRobotPose(follower.getPose().getHeading(), shooter.getTurrentAngle(), 0,24);
+        /*ll.updateTele();
+        ll.getRobotPose(follower.getPose().getHeading(), shooter.getTurrentAngle(),24);
         telemetry.addData("distance", ll.pose.distance * 39.3701);
         telemetry.addData("tan value", Math.toDegrees(Math.atan(ll.pose.posY/ll.pose.posX)));
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
@@ -119,7 +119,7 @@ public class MainTeleOpSingleDriver extends OpMode {
         telemetry.addData("roll", ll.pose.roll);
         telemetry.addData("x", ll.pose.x);
         telemetry.addData("y",ll.pose.y);
-        telemetry.addData("z", ll.pose.z);
+        telemetry.addData("z", ll.pose.z);*/
         //dt.updateOdo();
         /*
         if (((ll.pose.id == 20) || (ll.pose.id == 24)) && ll.pose.valid) {
