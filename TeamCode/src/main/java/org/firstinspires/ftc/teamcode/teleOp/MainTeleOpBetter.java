@@ -57,7 +57,11 @@ public class MainTeleOpBetter extends OpMode {
     private double y;
     private double heading;
     private Vector vel;
-    private boolean moving = false;
+    private double counter = 0;
+    private boolean moving;
+    private boolean rotating;
+    private boolean movingOrRotating;
+    private double storedTurAngle = 0;
     LimelightProcessor_v3Tele ll;
 
     @Override
@@ -106,9 +110,15 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
-        ll.updateTele();
+        ll.updateTele(movingOrRotating);
         int id = ll.pose.id;
-        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, ll.pose.tx, id);
+        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, ll.pose.tx, id, movingOrRotating);
+        if (10 < getRuntime() && getRuntime() <= 11) {
+            counter++;
+        }
+        else {
+            telemetry.addData("num runs in a second", counter);
+        }
         telemetry.addLine("------");
         telemetry.addLine("GRAPHING VALUES");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
@@ -196,6 +206,17 @@ public class MainTeleOpBetter extends OpMode {
         robot.update(currentColor, turretOn, x, y, heading, vel);
         follower.update();
         telemetry.update();
+        if (follower.getVelocity().getMagnitude() < 0.05) {
+            moving = false;
+        } else {
+            rotating = true;
+        }
+        if ((storedTurAngle * 0.95 < robot.turAngle && storedTurAngle * 1.05 > robot.turAngle) || (robot.turAngle * 0.95 < storedTurAngle && robot.turAngle * 1.05 > storedTurAngle)) {
+            rotating = false;
+        } else {
+            rotating = true;
+        }
+        movingOrRotating = moving || rotating;
     }
 
     @Override

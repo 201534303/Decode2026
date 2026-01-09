@@ -21,14 +21,9 @@ public class LimelightProcessor_v3Tele {
     public final LimelightPose pose = new LimelightPose();
     public GoBildaPinpointDriver odo;
     private Limelight3A limelight;
-    private final double CONSTX = 15;
-    private final double CONSTY = 15.375;
-
-    private double stored_yaw;
-    private double stored_shooter;
-    private double stored_tx;
+    private final double CONSTX = 16;
+    private final double CONSTY = 13.375;
     private final double fieldLength = 144;
-    private final double halfPi = Math.PI/2;
 
     private final double alpha = 0.25;
 
@@ -40,7 +35,7 @@ public class LimelightProcessor_v3Tele {
     }
 
 
-    public void updateTele() {
+    public void updateTele(boolean moving) {
         //odo.update();
         //Pose2D pos = odo.getPosition();
 
@@ -60,9 +55,6 @@ public class LimelightProcessor_v3Tele {
                 }
                 if (fiducial != null) {
                     int id = fiducial.getFiducialId();
-
-                    pose.tx =  Math.toRadians(fiducial.getTargetXDegrees());
-
                     Pose3D camPose = fiducial.getCameraPoseTargetSpace();
                     Position position = camPose.getPosition();
                     YawPitchRollAngles rotation = camPose.getOrientation();
@@ -84,7 +76,15 @@ public class LimelightProcessor_v3Tele {
                     pose.z = camZ;
                     pose.pitch = camPitch;
                     pose.roll = camRoll;
-                    pose.distance = distance + 6.5;
+                    double tx = Math.toRadians(fiducial.getTargetXDegrees());
+                    if (!moving) {
+                        pose.tx = alpha*pose.tx + (1-alpha)*tx;
+                        pose.distance = pose.distance*alpha + (1-alpha)*(distance+6);
+                    }
+                    else {
+                        pose.tx = tx;
+                        pose.distance = distance;
+                    }
                     pose.id = id;
                     pose.valid = true;
                 }
@@ -98,20 +98,30 @@ public class LimelightProcessor_v3Tele {
         }
     }
 
-    public void getRobotPose(double yawIn, double shooterIn, double txIn, int id) {
+    public void getRobotPose(double yawIn, double shooterIn, double txIn, int id, boolean moving) {
         double yaw = yawIn;
-        double tx = txIn;
+        double tx = 0;
         // CHECK FOR BLUE
         if (yaw > 90) {
             yaw = 180 - yaw;
         }
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn));
+        if (Math.toDegrees(txIn) > 3) {
+            tx = 0.0001 * Math.pow(Math.toDegrees(txIn), 4.53058);
+        }
+
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn) + Math.toRadians(2) -Math.toRadians(tx));
         pose.theta = theta;
         pose.heading = yaw;
-        double rawX = (6.5 + pose.distance)*Math.cos(theta);
-        double rawY = (6.5 + pose.distance)*Math.sin(theta);
-        pose.rawX = rawX;
-        pose.rawY = rawY;
+        double rawX = (pose.distance)*Math.cos(theta);
+        double rawY = (pose.distance)*Math.sin(theta);
+        if (!moving) {
+            pose.rawX = pose.rawX*alpha + (1-alpha)*rawX;
+            pose.rawY = pose.rawY*alpha + (1-alpha)*rawY;
+        }
+        else {
+            pose.rawX = rawX;
+            pose.rawY = rawY;
+        }
         if (id == 20) {
             pose.posX = pose.rawX + CONSTX;
             pose.posY = fieldLength - pose.rawY - CONSTY;
