@@ -53,18 +53,18 @@ public class Constants {
             .lateralZeroPowerAcceleration(-81.38187788469911)//new
 
             //PIDF
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.12, 0, 0, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.95, 0, 0, 0.001))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(2, 0, 0, 0.001))
             .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.019,0.0,0.00001,0.6,0.01))
-            .centripetalScaling(0.0020)
+            .centripetalScaling(0.0006)
 
             //for dual PIDF:
-            .useSecondaryTranslationalPIDF(false)//set to true for dual
-            .useSecondaryHeadingPIDF(false)//set to true for dual
-            .useSecondaryDrivePIDF(false)//set to true for dual
-            //.secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.1,0,0.01,0))
-            //.secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.1,0,0.01,0))
-            //.secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.1,0,0.01,0.6,0.01))
+            .useSecondaryTranslationalPIDF(true)//set to true for dual
+            .useSecondaryHeadingPIDF(true)//set to true for dual
+            .useSecondaryDrivePIDF(true)//set to true for dual
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.02,0.015))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.6,0,0.2,0.01))
+            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.021,0,0.000005,0.6,0.01))
 
             //need to change
             .mass(13.608);//need to actually weigh robot
@@ -74,7 +74,7 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
             100,
-            1.25,
+            1.1,
             1)
             //.setBrakingStart(double set)
             //.setBrakingStrength(double set);
