@@ -119,13 +119,16 @@ public class MainTeleOpBetter extends OpMode {
         else {
             telemetry.addData("num runs in a second", counter);
         }
+        telemetry.addData("moving", movingOrRotating);
         telemetry.addLine("------");
-        telemetry.addLine("GRAPHING VALUES");
+        telemetry.addLine("ANGLES");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("ideal Angle", Math.toDegrees(robot.idealAngle));
+        telemetry.addData("theta (no alpha)", ll.pose.x);
         telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
+        telemetry.addData("tx (no alpha", ll.pose.y);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
+        telemetry.addData("distance (no alpha)", ll.pose.z);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addLine("----------");

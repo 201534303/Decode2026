@@ -80,6 +80,8 @@ public class LimelightProcessor_v3Tele {
                     if (!moving) {
                         pose.tx = alpha*pose.tx + (1-alpha)*tx;
                         pose.distance = pose.distance*alpha + (1-alpha)*(distance+6);
+                        pose.y = tx;
+                        pose.z = distance + 6;
                     }
                     else {
                         pose.tx = tx;
@@ -109,19 +111,25 @@ public class LimelightProcessor_v3Tele {
             tx = 0.0001 * Math.pow(Math.toDegrees(txIn), 4.53058);
         }
 
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn) + Math.toRadians(2) -Math.toRadians(tx));
-        pose.theta = theta;
+        double theta = Math.abs(yaw + Math.toRadians(shooterIn) + Math.toRadians(2) - Math.toRadians(tx));
+        if (!moving) {
+            pose.theta = pose.theta * alpha + (1 - alpha) * theta;
+            pose.x = theta;
+        }
+        else {
+            pose.theta = theta;
+        }
         pose.heading = yaw;
         double rawX = (pose.distance)*Math.cos(theta);
         double rawY = (pose.distance)*Math.sin(theta);
-        if (!moving) {
+        /*if (!moving) {
             pose.rawX = pose.rawX*alpha + (1-alpha)*rawX;
             pose.rawY = pose.rawY*alpha + (1-alpha)*rawY;
         }
         else {
             pose.rawX = rawX;
             pose.rawY = rawY;
-        }
+        }*/
         if (id == 20) {
             pose.posX = pose.rawX + CONSTX;
             pose.posY = fieldLength - pose.rawY - CONSTY;
