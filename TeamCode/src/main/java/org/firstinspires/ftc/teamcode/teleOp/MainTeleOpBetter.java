@@ -124,12 +124,10 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addLine("------");
         telemetry.addLine("ANGLES");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("theta (no alpha)", ll.pose.x);
+        telemetry.addData("theta (no median)", ll.pose.heading);
         telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
-        telemetry.addData("tx (no alpha", ll.pose.y);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
-        telemetry.addData("distance (no alpha)", ll.pose.z);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addLine("----------");

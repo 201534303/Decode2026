@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LimelightProcessor_v3Tele {
@@ -28,6 +30,9 @@ public class LimelightProcessor_v3Tele {
     private final double[] txBuf = new double[MEDIAN_SIZE];
     private int txIdx = 0;
     private boolean txFilled = false;
+    private ArrayList<Double> thetaList = new ArrayList<>();
+    private ArrayList<Double> txList = new ArrayList<>();
+    private ArrayList<Double> distanceList = new ArrayList<>();
 
     public LimelightProcessor_v3Tele(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -72,28 +77,27 @@ public class LimelightProcessor_v3Tele {
 
         // Raw distance in inches
         double rawDistance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701 + 6.0;
-
-        // ================= DISTANCE EMA =================
-        if (!pose.valid) {
-            pose.distance = rawDistance; // initialize
+        if (!moving) {
+            distanceList.add(rawDistance);
+            Collections.sort(distanceList);
         } else {
-            pose.distance = DIST_ALPHA * pose.distance + (1 - DIST_ALPHA) * rawDistance;
+            distanceList.clear();
+            distanceList.add(rawDistance);
         }
+        double medianDistance = txList.get(txList.size()/2);
+        pose.distance = medianDistance;
 
         // ================= TX (MEDIAN FILTER) =================
         double rawTx = Math.toRadians(fiducial.getTargetXDegrees());
-        double txMedian = medianTx(rawTx);
-
-        // Deadband
-        if (Math.abs(txMedian) < TX_DEADBAND) txMedian = 0.0;
-
-        // Nonlinear mapping
-        if (Math.abs(Math.toDegrees(txMedian)) > NONLINEAR_THRESHOLD_DEG) {
-            double deg = Math.abs(Math.toDegrees(txMedian));
-            txMedian = Math.toRadians(0.0001 * Math.pow(deg, 4.53058));
+        if (!moving) {
+            txList.add(rawTx);
+            Collections.sort(txList);
+        } else {
+            txList.clear();
+            txList.add(rawTx);
         }
-
-        pose.tx = txMedian;
+        double medianTx = txList.get(txList.size()/2);
+        pose.tx = medianTx;
 
         // ================= ANGLES =================
         double yaw = Math.toRadians(yawDegIn);
@@ -101,22 +105,23 @@ public class LimelightProcessor_v3Tele {
 
         double shooter = Math.toRadians(shooterDegIn);
 
-        double thetaRaw = yaw + shooter + Math.toRadians(2.0) - txMedian;
+        double rawTheta = yaw + shooter + Math.toRadians(2.0) - medianTx;
 
         // Filter theta only if stationary
-        if (!pose.valid || !moving) {
-            final double THETA_ALPHA = 0.75;
-            pose.theta = THETA_ALPHA * pose.theta + (1 - THETA_ALPHA) * thetaRaw;
+        if (!moving) {
+            thetaList.add(rawTheta);
+            Collections.sort(thetaList);
         } else {
-            pose.theta = thetaRaw;
+            thetaList.clear();
+            thetaList.add(rawTheta);
         }
-
-        double theta = pose.theta;
-        pose.heading = yaw;
+        double medianTheta = thetaList.get(thetaList.size()/2);
+        pose.theta = medianTheta;
+        pose.heading = rawTheta;
 
         // ================= FIELD POSITION =================
-        pose.rawX = pose.distance * Math.cos(theta);
-        pose.rawY = pose.distance * Math.sin(theta);
+        pose.rawX = pose.distance * Math.cos(pose.theta);
+        pose.rawY = pose.distance * Math.sin(pose.theta);
 
         int id = fiducial.getFiducialId();
         if (id == 20) {
@@ -129,20 +134,5 @@ public class LimelightProcessor_v3Tele {
 
         pose.id = id;
         pose.valid = true;
-    }
-
-    // ------------------------------------------------------------
-    // MEDIAN FILTER IMPLEMENTATION
-    // ------------------------------------------------------------
-    private double medianTx(double newTx) {
-        txBuf[txIdx] = newTx;
-        txIdx = (txIdx + 1) % MEDIAN_SIZE;
-
-        if (txIdx == 0) txFilled = true;
-        if (!txFilled) return newTx; // warm-up
-
-        double[] copy = txBuf.clone();
-        Arrays.sort(copy);
-        return copy[MEDIAN_SIZE / 2];
     }
 }
