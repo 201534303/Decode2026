@@ -110,16 +110,17 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
-        ll.updateTele(movingOrRotating);
-        int id = ll.pose.id;
-        ll.getRobotPose(follower.getPose().getHeading(), robot.turAngle, ll.pose.tx, id, movingOrRotating);
+        ll.updateTele(follower.getPose().getHeading(), robot.turAngle, movingOrRotating);
         if (10 < getRuntime() && getRuntime() <= 11) {
             counter++;
         }
         else {
             telemetry.addData("num runs in a second", counter);
         }
-        telemetry.addData("moving", movingOrRotating);
+        telemetry.addData("new turret", robot.turAngle);
+        telemetry.addData("old turret", storedTurAngle);
+        telemetry.addData("rotating", rotating);
+        telemetry.addData("movingOrRotating", movingOrRotating);
         telemetry.addLine("------");
         telemetry.addLine("ANGLES");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
@@ -214,11 +215,13 @@ public class MainTeleOpBetter extends OpMode {
         } else {
             rotating = true;
         }
-        if ((storedTurAngle * 0.95 < robot.turAngle && storedTurAngle * 1.05 > robot.turAngle) || (robot.turAngle * 0.95 < storedTurAngle && robot.turAngle * 1.05 > storedTurAngle)) {
+        final double margin = Math.toRadians(2);
+        if (storedTurAngle - margin < robot.turAngle && storedTurAngle + margin > robot.turAngle) {
             rotating = false;
         } else {
             rotating = true;
         }
+        storedTurAngle = robot.turAngle;
         movingOrRotating = moving || rotating;
     }
 

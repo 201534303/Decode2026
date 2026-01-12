@@ -1,32 +1,33 @@
 package org.firstinspires.ftc.teamcode.JaviVision.v3;
 
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.robotcore.external.navigation.Position;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
-import org.firstinspires.ftc.teamcode.pinpoint.GoBildaPinpointDriver;
 
+import java.util.Arrays;
 import java.util.List;
-
 
 public class LimelightProcessor_v3Tele {
 
     public final LimelightPose pose = new LimelightPose();
-    public GoBildaPinpointDriver odo;
-    private Limelight3A limelight;
-    private final double CONSTX = 16;
-    private final double CONSTY = 13.375;
-    private final double fieldLength = 144;
+    private final Limelight3A limelight;
 
-    private final double alpha = 0.25;
+    private static final double CONSTX = 16.0;
+    private static final double CONSTY = 13.375;
+    private static final double FIELD_LENGTH = 144.0;
 
+    // ===== FILTER CONSTANTS =====
+    private static final int MEDIAN_SIZE = 5;
+    private static final double TX_DEADBAND = Math.toRadians(0.3);
+    private static final double DIST_ALPHA = 0.5;       // EMA smoothing for distance
+    private static final double NONLINEAR_THRESHOLD_DEG = 3.0;
+
+    // ===== MEDIAN FILTER STATE =====
+    private final double[] txBuf = new double[MEDIAN_SIZE];
+    private int txIdx = 0;
+    private boolean txFilled = false;
 
     public LimelightProcessor_v3Tele(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -34,163 +35,114 @@ public class LimelightProcessor_v3Tele {
         limelight.start();
     }
 
+    // ------------------------------------------------------------
+    public void updateTele(double yawDegIn, double shooterDegIn, boolean moving) {
 
-    public void updateTele(boolean moving) {
-        //odo.update();
-        //Pose2D pos = odo.getPosition();
-
+        // ================= LIMELIGHT =================
         LLResult result = limelight.getLatestResult();
-
-        if (result != null && result.isValid()) {
-            List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
-            LLResultTypes.FiducialResult fiducial = null;
-            if (fiducials != null && fiducials.size() > 0) {
-                for (LLResultTypes.FiducialResult fid : fiducials) {
-                    int id = fid.getFiducialId();
-                    // making sure it doesn't see the pattern april tags
-                    if ((id == 20) || (id == 24)) {
-                        fiducial = fid;
-                        break;
-                    }
-                }
-                if (fiducial != null) {
-                    int id = fiducial.getFiducialId();
-                    Pose3D camPose = fiducial.getCameraPoseTargetSpace();
-                    Position position = camPose.getPosition();
-                    YawPitchRollAngles rotation = camPose.getOrientation();
-
-                    // In the current FTC Limelight SDK, you access fields directly:
-                    double camX = position.x;
-                    double camY = position.y;
-                    double camZ = position.z;
-                    double camRoll = rotation.getRoll();
-                    double camPitch = rotation.getPitch();
-                    double distance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701;
-                    if (camY < 0) {
-                        pose.x = -camX;
-                        pose.y = -camY;
-                    } else {
-                        pose.x = camX;
-                        pose.y = camY;
-                    }
-                    pose.z = camZ;
-                    pose.pitch = camPitch;
-                    pose.roll = camRoll;
-                    double tx = Math.toRadians(fiducial.getTargetXDegrees());
-                    if (!moving) {
-                        pose.tx = alpha*pose.tx + (1-alpha)*tx;
-                        pose.distance = pose.distance*alpha + (1-alpha)*(distance+6);
-                        pose.y = tx;
-                        pose.z = distance + 6;
-                    }
-                    else {
-                        pose.tx = tx;
-                        pose.distance = distance;
-                    }
-                    pose.id = id;
-                    pose.valid = true;
-                }
-            }
-            else {
-                pose.valid = false;
-            }
-        }
-        else {
+        if (result == null || !result.isValid()) {
             pose.valid = false;
-        }
-    }
-
-    public void getRobotPose(double yawIn, double shooterIn, double txIn, int id, boolean moving) {
-        double yaw = yawIn;
-        double tx = 0;
-        // CHECK FOR BLUE
-        if (yaw > 90) {
-            yaw = 180 - yaw;
-        }
-        if (Math.toDegrees(txIn) > 3) {
-            tx = 0.0001 * Math.pow(Math.toDegrees(txIn), 4.53058);
+            return;
         }
 
-        double theta = Math.abs(yaw + Math.toRadians(shooterIn) + Math.toRadians(2) - Math.toRadians(tx));
-        if (!moving) {
-            pose.theta = pose.theta * alpha + (1 - alpha) * theta;
-            pose.x = theta;
+        LLResultTypes.FiducialResult fiducial = null;
+        for (LLResultTypes.FiducialResult fid : result.getFiducialResults()) {
+            int id = fid.getFiducialId();
+            if (id == 20 || id == 24) {
+                fiducial = fid;
+                break;
+            }
         }
-        else {
-            pose.theta = theta;
+
+        if (fiducial == null) {
+            pose.valid = false;
+            return;
         }
+
+        // ================= CAMERA POSE =================
+        Pose3D camPose = fiducial.getCameraPoseTargetSpace();
+        Position camPos = camPose.getPosition();
+        YawPitchRollAngles camRot = camPose.getOrientation();
+
+        double camX = camPos.x;
+        double camZ = camPos.z;
+
+        pose.pitch = camRot.getPitch();
+        pose.roll  = camRot.getRoll();
+
+        // Raw distance in inches
+        double rawDistance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701 + 6.0;
+
+        // ================= DISTANCE EMA =================
+        if (!pose.valid) {
+            pose.distance = rawDistance; // initialize
+        } else {
+            pose.distance = DIST_ALPHA * pose.distance + (1 - DIST_ALPHA) * rawDistance;
+        }
+
+        // ================= TX (MEDIAN FILTER) =================
+        double rawTx = Math.toRadians(fiducial.getTargetXDegrees());
+        double txMedian = medianTx(rawTx);
+
+        // Deadband
+        if (Math.abs(txMedian) < TX_DEADBAND) txMedian = 0.0;
+
+        // Nonlinear mapping
+        if (Math.abs(Math.toDegrees(txMedian)) > NONLINEAR_THRESHOLD_DEG) {
+            double deg = Math.abs(Math.toDegrees(txMedian));
+            txMedian = Math.toRadians(0.0001 * Math.pow(deg, 4.53058));
+        }
+
+        pose.tx = txMedian;
+
+        // ================= ANGLES =================
+        double yaw = Math.toRadians(yawDegIn);
+        if (yaw > Math.toRadians(90)) yaw = Math.toRadians(180) - yaw;
+
+        double shooter = Math.toRadians(shooterDegIn);
+
+        double thetaRaw = yaw + shooter + Math.toRadians(2.0) - txMedian;
+
+        // Filter theta only if stationary
+        if (!pose.valid || !moving) {
+            final double THETA_ALPHA = 0.75;
+            pose.theta = THETA_ALPHA * pose.theta + (1 - THETA_ALPHA) * thetaRaw;
+        } else {
+            pose.theta = thetaRaw;
+        }
+
+        double theta = pose.theta;
         pose.heading = yaw;
-        double rawX = (pose.distance)*Math.cos(theta);
-        double rawY = (pose.distance)*Math.sin(theta);
-        /*if (!moving) {
-            pose.rawX = pose.rawX*alpha + (1-alpha)*rawX;
-            pose.rawY = pose.rawY*alpha + (1-alpha)*rawY;
-        }
-        else {
-            pose.rawX = rawX;
-            pose.rawY = rawY;
-        }*/
+
+        // ================= FIELD POSITION =================
+        pose.rawX = pose.distance * Math.cos(theta);
+        pose.rawY = pose.distance * Math.sin(theta);
+
+        int id = fiducial.getFiducialId();
         if (id == 20) {
             pose.posX = pose.rawX + CONSTX;
-            pose.posY = fieldLength - pose.rawY - CONSTY;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
+        } else { // id == 24
+            pose.posX = FIELD_LENGTH - pose.rawX - CONSTX;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
-        else if (id == 24) {
-            pose.posX = fieldLength - pose.rawX - CONSTX;
-            pose.posY = fieldLength - pose.rawY - CONSTY;
-        }
-        // UPDATE FOR FIELD COORDS
+
+        pose.id = id;
+        pose.valid = true;
     }
-    /*
-    CHATGPT FUNCTINO THAT I SHOULD PUT IN ONCE I FIGURE OUT HOW LONG I CAN STAY STILL FOR
-    public void getRobotPose(double yawIn, double shooterIn, double delAngle, int id) {
 
-        double yaw = yawIn;
+    // ------------------------------------------------------------
+    // MEDIAN FILTER IMPLEMENTATION
+    // ------------------------------------------------------------
+    private double medianTx(double newTx) {
+        txBuf[txIdx] = newTx;
+        txIdx = (txIdx + 1) % MEDIAN_SIZE;
 
-        // Alliance normalization
-        if (yaw > 90) {
-            yaw = 180 - yaw;
-        }
+        if (txIdx == 0) txFilled = true;
+        if (!txFilled) return newTx; // warm-up
 
-        // ---- TX FILTERING ----
-        filtered_tx = 0.85 * filtered_tx + 0.15 * stored_tx;
-
-        double txUsed = filtered_tx;
-
-        // Deadband small jitter
-        if (Math.abs(txUsed) < Math.toRadians(0.4)) {
-            txUsed = 0;
-        }
-
-        // ---- THETA CALC ----
-        double rawTheta = Math.abs(
-                yaw
-                        + Math.toRadians(shooterIn)
-                        - txUsed
-                        + Math.toRadians(0.8)
-        );
-
-        // Rate limit
-        double delta = rawTheta - lastTheta;
-        delta = Math.max(-Math.toRadians(1.5), Math.min(Math.toRadians(1.5), delta));
-        double theta = lastTheta + delta;
-        lastTheta = theta;
-
-        pose.theta = theta;
-        pose.heading = yaw;
-
-        double rawX = (6.5 + pose.distance) * Math.cos(theta);
-        double rawY = (6.5 + pose.distance) * Math.sin(theta);
-
-        pose.rawX = rawX;
-        pose.rawY = rawY;
-
-        if (id == 20) {
-            pose.posX = rawX + CONSTX;
-            pose.posY = fieldLength - rawY - CONSTY;
-        } else if (id == 24) {
-            pose.posX = fieldLength - rawX - CONSTX;
-            pose.posY = fieldLength - rawY - CONSTY;
-        }
+        double[] copy = txBuf.clone();
+        Arrays.sort(copy);
+        return copy[MEDIAN_SIZE / 2];
     }
-    */
 }
