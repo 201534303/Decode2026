@@ -111,21 +111,17 @@ public class MainTeleOpBetter extends OpMode {
     @Override
     public void loop() {
         ll.updateTele(follower.getPose().getHeading(), robot.turAngle, movingOrRotating);
-        if (10 < getRuntime() && getRuntime() <= 11) {
-            counter++;
-        }
-        else {
-            telemetry.addData("num runs in a second", counter);
-        }
-        telemetry.addData("new turret", robot.turAngle);
-        telemetry.addData("old turret", storedTurAngle);
-        telemetry.addData("rotating", rotating);
-        telemetry.addData("movingOrRotating", movingOrRotating);
         telemetry.addLine("------");
-        telemetry.addLine("ANGLES");
+        telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("theta (no median)", ll.pose.heading);
-        telemetry.addData("tx", Math.toDegrees(ll.pose.tx));
+        telemetry.addData("theta (no median)", Math.toDegrees(ll.pose.heading));
+        telemetry.addData("ideal angle", Math.toDegrees(robot.idealAngle));
+        telemetry.addData("diff", Math.toDegrees(ll.pose.theta - robot.idealAngle));
+        telemetry.addData("heading", Math.toDegrees(follower.getHeading()));
+        telemetry.addData("shooter", robot.turAngle);
+        telemetry.addData("raw tx", ll.pose.tx);
+        telemetry.addData("tx", ll.pose.x);
+        telemetry.addData("yaw",ll.pose.yaw);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
         telemetry.addData("rawX", ll.pose.rawX);
@@ -157,13 +153,22 @@ public class MainTeleOpBetter extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
-            //robot.setIMUZero(currentColor, x, y);
+
+            robot.setIMUZero(currentColor, x, y);
         }
 
         //rezero position
         if (gamepad1.dpad_down){
             robot.setLocalizationOurSide(currentColor);
+        }
+        if (gamepad1.dpad_up) {
+            if (counter > 5) {
+                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
+                counter = 0;
+            }
+        }
+        else {
+            counter++;
         }
 
 

@@ -175,7 +175,7 @@ public class RobotActions {
         if (!turretOn){
             shooter.rotateTurret(0);
         }
-        //updateShooter(currentColor, rVel, x, y);
+        updateShooter(currentColor, rVel, x, y);
     }
 
     public void updateShooterTesting(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {

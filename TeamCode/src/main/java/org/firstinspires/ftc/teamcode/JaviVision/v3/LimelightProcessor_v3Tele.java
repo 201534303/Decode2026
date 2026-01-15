@@ -16,8 +16,8 @@ public class LimelightProcessor_v3Tele {
     public final LimelightPose pose = new LimelightPose();
     private final Limelight3A limelight;
 
-    private static final double CONSTX = 16.0;
-    private static final double CONSTY = 13.375;
+    private static final double CONSTX = 17.0;
+    private static final double CONSTY = 14.375;
     private static final double FIELD_LENGTH = 144.0;
 
     // ===== FILTER CONSTANTS =====
@@ -84,11 +84,16 @@ public class LimelightProcessor_v3Tele {
             distanceList.clear();
             distanceList.add(rawDistance);
         }
-        double medianDistance = txList.get(txList.size()/2);
+        double medianDistance = 0;
+        if (!distanceList.isEmpty()) {
+            medianDistance = distanceList.get(distanceList.size() / 2);
+        }
+
         pose.distance = medianDistance;
 
         // ================= TX (MEDIAN FILTER) =================
-        double rawTx = Math.toRadians(fiducial.getTargetXDegrees());
+        double rawTx = fiducial.getTargetXDegrees();
+
         if (!moving) {
             txList.add(rawTx);
             Collections.sort(txList);
@@ -96,17 +101,27 @@ public class LimelightProcessor_v3Tele {
             txList.clear();
             txList.add(rawTx);
         }
-        double medianTx = txList.get(txList.size()/2);
+        double medianTx = 0;
+        if (txList.size() > 0) {
+            medianTx = txList.get(txList.size()/2);
+        }
         pose.tx = medianTx;
+        if (medianTx < 0) {
+            medianTx = -0.0001 * Math.pow(Math.abs(medianTx), 2.53058);
+        }
+        else {
+            medianTx = 0.0001 * Math.pow(Math.abs(medianTx), 2.53058);
+        }
 
         // ================= ANGLES =================
-        double yaw = Math.toRadians(yawDegIn);
-        if (yaw > Math.toRadians(90)) yaw = Math.toRadians(180) - yaw;
+        double yaw = yawDegIn;
+        if (pose.id == 20) { yaw = Math.toRadians(180) - yaw; }
 
         double shooter = Math.toRadians(shooterDegIn);
+        if (pose.id == 20) shooter = -shooter;
 
-        double rawTheta = yaw + shooter + Math.toRadians(2.0) - medianTx;
-
+        double rawTheta = yaw + shooter + Math.toRadians(2.0) - Math.toRadians(medianTx);
+        pose.x = medianTx;
         // Filter theta only if stationary
         if (!moving) {
             thetaList.add(rawTheta);
@@ -115,7 +130,10 @@ public class LimelightProcessor_v3Tele {
             thetaList.clear();
             thetaList.add(rawTheta);
         }
-        double medianTheta = thetaList.get(thetaList.size()/2);
+        double medianTheta = 0;
+        if (thetaList.size() > 0) {
+            medianTheta = thetaList.get(thetaList.size() / 2);
+        }
         pose.theta = medianTheta;
         pose.heading = rawTheta;
 
