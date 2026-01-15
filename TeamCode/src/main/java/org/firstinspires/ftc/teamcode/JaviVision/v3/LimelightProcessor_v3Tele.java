@@ -121,7 +121,7 @@ public class LimelightProcessor_v3Tele {
         if (pose.id == 20) shooter = -shooter;
 
         double rawTheta = yaw + shooter + Math.toRadians(2.0) - Math.toRadians(medianTx);
-        pose.x = medianTx;
+        pose.roll = medianTx;
         // Filter theta only if stationary
         if (!moving) {
             thetaList.add(rawTheta);
