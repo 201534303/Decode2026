@@ -121,11 +121,11 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("shooter", robot.turAngle);
         telemetry.addData("raw tx", ll.pose.tx);
         telemetry.addData("tx", ll.pose.roll);
-        telemetry.addData("yaw",ll.pose.yaw);
+        telemetry.addData("yaw",Math.toDegrees(ll.pose.yaw));
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
-        telemetry.addData("3D April tag x", ll.pose.x);
-        telemetry.addData("3D april tag y", ll.pose.z);
+        telemetry.addData("3D April tag x", 39.3701*ll.pose.x);
+        telemetry.addData("3D april tag y", 39.3701*ll.pose.z);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addLine("----------");

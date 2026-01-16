@@ -71,6 +71,10 @@ public class LimelightProcessor_v3Tele {
 
         double camX = camPos.x;
         double camZ = camPos.z;
+        double camYaw = camRot.getYaw();
+        pose.x = camX;
+        pose.z = camZ;
+        pose.yaw = camYaw;
 
         pose.pitch = camRot.getPitch();
         pose.roll  = camRot.getRoll();
@@ -94,7 +98,7 @@ public class LimelightProcessor_v3Tele {
         // ================= TX (MEDIAN FILTER) =================
         double rawTx = fiducial.getTargetXDegrees();
 
-        if (!moving) {
+        /*if (!moving) {
             txList.add(rawTx);
             Collections.sort(txList);
         } else {
@@ -104,14 +108,22 @@ public class LimelightProcessor_v3Tele {
         double medianTx = 0;
         if (txList.size() > 0) {
             medianTx = txList.get(txList.size()/2);
-        }
-        pose.tx = medianTx;
-        if (medianTx < 0) {
-            medianTx = -0.0001 * Math.pow(Math.abs(medianTx), 2.53058);
+        }*/
+        double tx = 0;
+        if (rawTx < 0) {
+            tx = -0.85*Math.pow(-rawTx, 1.04);
         }
         else {
-            medianTx = 0.0001 * Math.pow(Math.abs(medianTx), 2.53058);
+            tx = 0.85*Math.pow(rawTx, 1.04);
         }
+        if (pose.id == 20) {
+            tx *= -1;
+            tx -= 2;
+        }
+        else if (pose.id == 24) {
+            tx += 1;
+        }
+        pose.tx = tx;
 
         // ================= ANGLES =================
         double yaw = yawDegIn;
@@ -120,8 +132,7 @@ public class LimelightProcessor_v3Tele {
         double shooter = Math.toRadians(shooterDegIn);
         if (pose.id == 20) shooter = -shooter;
 
-        double rawTheta = yaw + shooter + Math.toRadians(2.0) - Math.toRadians(medianTx);
-        pose.roll = medianTx;
+        double rawTheta = yaw + shooter - Math.toRadians(tx);
         // Filter theta only if stationary
         if (!moving) {
             thetaList.add(rawTheta);
@@ -140,7 +151,6 @@ public class LimelightProcessor_v3Tele {
         // ================= FIELD POSITION =================
         pose.rawX = pose.distance * Math.cos(pose.theta);
         pose.rawY = pose.distance * Math.sin(pose.theta);
-
         int id = fiducial.getFiducialId();
         if (id == 20) {
             pose.posX = pose.rawX + CONSTX;
