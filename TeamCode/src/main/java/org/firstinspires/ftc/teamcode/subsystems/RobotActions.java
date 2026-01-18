@@ -128,6 +128,11 @@ public class RobotActions {
         intake.setIntPower(-gamepad2.right_stick_y + 0.1);
         intake.intakeIn();
         intake.intakeMachine();
+        if (intake.haveBall()){
+            intake.yesBallLight();
+        } else {
+            intake.noBallLight();
+        }
     }
 
     public void updateTransfer(Choose.Alliance currentColor, Vector vel, double posX, double posY) {
@@ -175,7 +180,7 @@ public class RobotActions {
         if (!turretOn){
             shooter.rotateTurret(0);
         }
-        updateShooter(currentColor, rVel, x, y);
+        //updateShooter(currentColor, rVel, x, y);
     }
 
     public void updateShooterTesting(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {

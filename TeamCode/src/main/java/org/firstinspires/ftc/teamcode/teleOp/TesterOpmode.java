@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -58,21 +59,18 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 @TeleOp(name="testeropmode", group="Iterative OpMode")
 public class TesterOpmode extends OpMode
 {
-    private ElapsedTime runtime = new ElapsedTime();
-    // Declare OpMode members.
-    AnalogInput axonWire;
-    CRServo turret;
-    Shooter shooter;
-    double turretAngle = 0.48;
-    double hoodAngle = 0;
+
+    DigitalChannel right, left;
+
+
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        telemetry.addData("Status", "Initialized");
-        shooter = new Shooter(hardwareMap, telemetry, runtime);
+        right = hardwareMap.get(DigitalChannel.class, "distRight");
+        left = hardwareMap.get(DigitalChannel.class, "distLeft");
 
     }
 
@@ -96,23 +94,11 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-        shooter.seTurretRaw(turretAngle);
-        shooter.setHood(hoodAngle);
-        telemetry.addData("hood", hoodAngle);
-        telemetry.addData("turret", turretAngle);
-        if(gamepad1.dpadUpWasPressed()){
-            hoodAngle += 0.05;
-        }
-        if(gamepad1.dpadDownWasPressed()){
-            hoodAngle -= 0.05;
-        }
-        if(gamepad1.dpadLeftWasPressed()){
-            turretAngle = 1;
-        }
-        if(gamepad1.dpadRightWasPressed()){
-            turretAngle = 0;
-        }
 
+        telemetry.addData("readRight", right.getState());
+        telemetry.addData("readLeft", left.getState());
+
+        telemetry.update();
 
     }
 
