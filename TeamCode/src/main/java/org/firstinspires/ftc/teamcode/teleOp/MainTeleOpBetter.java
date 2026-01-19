@@ -166,6 +166,7 @@ public class MainTeleOpBetter extends OpMode {
         if (gamepad1.dpad_up) {
             if (counter > 5) {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
+                gamepad1.rumble(500);
                 counter = 0;
             }
         }

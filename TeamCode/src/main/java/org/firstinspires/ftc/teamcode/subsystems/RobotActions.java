@@ -130,6 +130,7 @@ public class RobotActions {
         intake.intakeMachine();
         if (intake.haveBall()){
             intake.yesBallLight();
+            gamepad2.rumble(500);
         } else {
             intake.noBallLight();
         }
@@ -180,7 +181,7 @@ public class RobotActions {
         if (!turretOn){
             shooter.rotateTurret(0);
         }
-        //updateShooter(currentColor, rVel, x, y);
+        updateShooter(currentColor, rVel, x, y);
     }
 
     public void updateShooterTesting(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {

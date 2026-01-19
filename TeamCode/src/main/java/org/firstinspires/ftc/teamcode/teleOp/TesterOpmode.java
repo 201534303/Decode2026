@@ -37,9 +37,11 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 /*
@@ -59,18 +61,14 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 @TeleOp(name="testeropmode", group="Iterative OpMode")
 public class TesterOpmode extends OpMode
 {
-
-    DigitalChannel right, left;
-
-
+    Servo hood;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        right = hardwareMap.get(DigitalChannel.class, "distRight");
-        left = hardwareMap.get(DigitalChannel.class, "distLeft");
+        hood = hardwareMap.get(Servo.class, "hood");
 
     }
 
@@ -79,6 +77,7 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void init_loop() {
+
     }
 
     /*
@@ -94,10 +93,7 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-
-        telemetry.addData("readRight", right.getState());
-        telemetry.addData("readLeft", left.getState());
-
+        hood.setPosition(0);
         telemetry.update();
 
     }
