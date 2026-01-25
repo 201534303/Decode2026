@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -12,7 +11,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
-import org.firstinspires.ftc.teamcode.teleOp.MainTeleOpBetter;
 
 public class RobotActions {
 

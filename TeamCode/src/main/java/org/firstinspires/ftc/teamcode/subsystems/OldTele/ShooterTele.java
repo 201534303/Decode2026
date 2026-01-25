@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.OldTele;
 
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.CLOSE;
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.FAR;
-import static org.firstinspires.ftc.teamcode.subsystems.ShooterTele.shooterState.OFF;
+import static org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele.shooterState.CLOSE;
+import static org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele.shooterState.FAR;
+import static org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele.shooterState.OFF;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;

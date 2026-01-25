@@ -1,7 +1,8 @@
-package org.firstinspires.ftc.teamcode.subsystems;
+package org.firstinspires.ftc.teamcode.subsystems.OldTele;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
@@ -10,8 +11,8 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 public class IntakeTele extends Intake {
     protected Gamepad gamepad1, gamepad2;
 
-    public IntakeTele(HardwareMap hardwareMap, Gamepad g1, Gamepad g2, Telemetry t) {
-        super(hardwareMap, t);
+    public IntakeTele(HardwareMap hardwareMap, Gamepad g1, Gamepad g2, Telemetry t, ElapsedTime e) {
+        super(hardwareMap, t, e);
         gamepad1 = g1;
         gamepad2 = g2;
     }

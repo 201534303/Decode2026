@@ -137,7 +137,7 @@ public class CloseAuto extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
-        intake = new IntakeAuto(hardwareMap, telemetry);
+        intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
         drivetrain = new DrivetrainAuto(hardwareMap, telemetry);
     }

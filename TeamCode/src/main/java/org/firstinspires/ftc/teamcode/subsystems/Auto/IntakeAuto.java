@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems.Auto;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 
 public class IntakeAuto extends Intake {
-    public IntakeAuto(HardwareMap hardwareMap, Telemetry t) {
-        super(hardwareMap, t);
+    public IntakeAuto(HardwareMap hardwareMap, Telemetry t, ElapsedTime e) {
+        super(hardwareMap, t, e);
     }
 
     @Override

@@ -181,7 +181,7 @@ public class CloseAuto extends OpMode {
         actionTimer = new Timer();
 
         choose = new Choose(gamepad1, telemetry);
-        intake = new IntakeAuto(hardwareMap, telemetry);
+        intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
         shooter.setHood(0.48);

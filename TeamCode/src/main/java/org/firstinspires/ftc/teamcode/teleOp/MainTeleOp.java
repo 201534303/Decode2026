@@ -11,9 +11,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
+import org.firstinspires.ftc.teamcode.subsystems.OldTele.DrivetrainTele;
+import org.firstinspires.ftc.teamcode.subsystems.OldTele.IntakeTele;
+import org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele;
 
 @TeleOp(name="mainTeleOp", group="Iterative OpMode")
 @Config
@@ -42,7 +42,7 @@ public class MainTeleOp extends OpMode {
         follower = Constants.createFollower(hardwareMap);
 
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
-        intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry);
+        intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
         shooter = new ShooterTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);
 
 

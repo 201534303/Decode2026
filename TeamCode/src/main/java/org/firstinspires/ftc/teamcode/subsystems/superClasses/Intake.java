@@ -4,15 +4,24 @@ import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.inta
 import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OFF;
 import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OUT;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.concurrent.TimeUnit;
+
 public class Intake {
+
+    protected ElapsedTime timer;
+    protected double timeOld;
+    protected double direction = 1;
+
     protected DcMotorEx intake, transfer;
     DigitalChannel right,left;
     Servo taillight;
@@ -21,7 +30,9 @@ public class Intake {
     protected Telemetry telemetry;
     protected Intake.intakeState intakeState = OFF;
 
-    public Intake(HardwareMap hardwareMap, Telemetry t){
+    public Intake(HardwareMap hardwareMap, Telemetry t, ElapsedTime e){
+
+        timer = e;
         intake = hardwareMap.get(DcMotorEx.class, "intake");
         transfer = hardwareMap.get(DcMotorEx.class, "transfer");
         right = hardwareMap.get(DigitalChannel.class, "distRight");
@@ -54,6 +65,8 @@ public class Intake {
         transfer.setPower(tSpeed);
     }
 
+
+    //Not used
     public void setIntakePower(double power){
         telemetry.addData("We are setting intake", power);
         iSpeed = power;

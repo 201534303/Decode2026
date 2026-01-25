@@ -161,7 +161,7 @@ public class OLDCloseAuto extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         paths = new ClosePaths(follower);
         follower.setStartingPose(paths.startPose);
-        intake = new IntakeAuto(hardwareMap, telemetry);
+        intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
         setUp();

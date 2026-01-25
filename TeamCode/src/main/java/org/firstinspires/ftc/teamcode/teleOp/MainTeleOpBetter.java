@@ -3,25 +3,18 @@ package org.firstinspires.ftc.teamcode.teleOp;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.BLUE;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.RED;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.subsystems.DrivetrainTele;
-import org.firstinspires.ftc.teamcode.subsystems.IntakeTele;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
-import org.firstinspires.ftc.teamcode.subsystems.ShooterTele;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
@@ -79,7 +72,7 @@ public class MainTeleOpBetter extends OpMode {
 
         //subsystems
         drivetrain = new Drivetrain(hardwareMap, telemetry);
-        intake = new Intake(hardwareMap, telemetry);
+        intake = new Intake(hardwareMap, telemetry, overallRuntime);
         shooter = new Shooter(hardwareMap, telemetry, overallRuntime);
 
         //telemetry
