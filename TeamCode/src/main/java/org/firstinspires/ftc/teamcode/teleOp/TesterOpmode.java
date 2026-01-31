@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.teleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -50,14 +51,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name="testeropmode", group="Iterative OpMode")
 public class TesterOpmode extends OpMode
 {
-    Servo hood;
+    CRServo hangRight, hangLeft;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        hood = hardwareMap.get(Servo.class, "hood");
+        hangLeft = hardwareMap.get(CRServo.class, "hangLeft");
+        hangRight = hardwareMap.get(CRServo.class, "hangRight");
 
     }
 
@@ -82,8 +84,8 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-        hood.setPosition(0);
-        telemetry.update();
+        hangLeft.setPower(-1);
+        hangRight.setPower(1);
 
     }
 
