@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 public class CloseAuto_12 extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
-    private ClosePaths paths;
+    private OLDClosePaths paths;
 
     //robot stuff
     private IntakeAuto intake;
@@ -149,7 +149,7 @@ public class CloseAuto_12 extends OpMode {
         actionTimer = new Timer();
 
         follower = Constants.createFollower(hardwareMap);
-        paths = new ClosePaths(follower);
+        paths = new OLDClosePaths(follower);
         follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);

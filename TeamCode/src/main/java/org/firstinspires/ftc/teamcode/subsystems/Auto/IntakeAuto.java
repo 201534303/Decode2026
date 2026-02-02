@@ -19,6 +19,12 @@ public class IntakeAuto extends Intake {
     @Override
     public void intakeOff(){ intake.setPower(0); }
 
+    public void off(){
+        intake.setPower(0);
+        transfer.setPower(0);
+    }
+
+
     @Override
     public void setTransferPower(double power){
         transfer.setPower(power);

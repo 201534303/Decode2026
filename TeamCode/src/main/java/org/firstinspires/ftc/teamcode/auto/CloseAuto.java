@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -24,7 +24,7 @@ public class CloseAuto extends OpMode {
 
     //AUTO
     private Follower follower;
-    private ClosePaths paths;
+    private OLDClosePaths paths;
     private Choose choose;
     private Timer actionTimer;
     private int spikeMark = 1;
@@ -210,7 +210,7 @@ public class CloseAuto extends OpMode {
 
     public void start() {
         follower = Constants.createFollower(hardwareMap);
-        paths = new ClosePaths(follower);
+        paths = new OLDClosePaths(follower);
 
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue
         follower.setStartingPose(paths.startPose);//sets up the starting pose
