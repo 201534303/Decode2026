@@ -63,6 +63,7 @@ public class SelfeeCloseAuto extends OpMode {
             case TO_SHOOT:
                 if(!follower.isBusy()){
                     follower.followPath(paths.collectToShoot(), 0.8, true);
+                    resetActionTimer();
                     pathState = PathState.SHOOT;
                 }
                 break;
@@ -86,6 +87,8 @@ public class SelfeeCloseAuto extends OpMode {
                 if (!follower.isBusy()  && waitSecs(0.75)){
                     spikeMark += 1;
                     if (spikeMark == 5) {
+                        follower.followPath(paths.shootToPark(), 0.8, true);
+                        resetActionTimer();
                         pathState = PathState.PARK;
                         break;
                     }
@@ -104,8 +107,8 @@ public class SelfeeCloseAuto extends OpMode {
                     done = true;
                     shooter.rotateTurret(0);
                     intake.off();
-                    follower.followPath(paths.shootToPark(), 0.8, true);
-                    pathState = PathState.END;
+                    //resetActionTimer();
+                    //pathState = PathState.END;
                 }
                 break;
 
@@ -125,16 +128,8 @@ public class SelfeeCloseAuto extends OpMode {
     }
 
     public void init_loop(){
-        telemetry.addData("servoPos", 1-shooter.servoPos());
-        shooter.setHood(hoodHeight);
-
-        if(!readyAlliance) { //run alliance selection
-            readyAlliance = choose.allianceInit();
-            alliance = choose.getSelectedAlliance();
-        } else{
-            choose.displayReadyCloseScreen();
-        }
-
+        readyAlliance = choose.allianceInit();
+        alliance = choose.getSelectedAlliance();
         telemetry.update();
     }
 
@@ -160,6 +155,7 @@ public class SelfeeCloseAuto extends OpMode {
         autonomousPathUpdate();//main auto code
 
         telemetry.addData("servoPos", 1-shooter.servoPos());
+        telemetry.addData("mirror", isMirror);
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
         telemetry.addData("alliance", alliance);

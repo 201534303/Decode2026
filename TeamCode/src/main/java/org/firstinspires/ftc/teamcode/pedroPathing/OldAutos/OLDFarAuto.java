@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDFarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 public class OLDFarAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
-    private FarPaths paths;
+    private OLDFarPaths paths;
 
     private IntakeAuto intake;
     private ShooterAuto shooter;
@@ -138,7 +138,7 @@ public class OLDFarAuto extends OpMode {
 
         choose = new Choose(gamepad1, telemetry);
         follower = Constants.createFollower(hardwareMap);
-        paths = new FarPaths(follower);
+        paths = new OLDFarPaths(follower);
         follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);

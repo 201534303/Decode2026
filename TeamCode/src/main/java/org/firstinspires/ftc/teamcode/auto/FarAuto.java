@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDFarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 public class FarAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
-    private FarPaths paths;
+    private OLDFarPaths paths;
 
     private IntakeAuto intake;
     private ShooterAuto shooter;
@@ -194,7 +194,7 @@ public class FarAuto extends OpMode {
 
     public void start() {
         follower = Constants.createFollower(hardwareMap);
-        paths = new FarPaths(follower);
+        paths = new OLDFarPaths(follower);
 
         isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
