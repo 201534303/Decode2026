@@ -1,11 +1,13 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+package org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-public class OLDClosePaths extends Paths{
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Paths;
+
+public class OLDClosePaths extends Paths {
     public OLDClosePaths(Follower follower) {
         this.follower = follower;
     }
@@ -29,8 +31,8 @@ public class OLDClosePaths extends Paths{
     public Pose out = makePos(115, 70, 90);//park
     public Pose outDown = makePos(130, 100, 90);//park
 
-    public boolean bluePath(Choose.Alliance alliance) {
-        if (alliance == Choose.Alliance.BLUE) {
+    public boolean bluePath(OLDChoose.Alliance alliance) {
+        if (alliance == OLDChoose.Alliance.BLUE) {
             this.startPose = makePos(19, 128, 232);
             this.shootPose = makePos(44, 82,180);
             this.ballCollect1 = makePos(14, 82,180);

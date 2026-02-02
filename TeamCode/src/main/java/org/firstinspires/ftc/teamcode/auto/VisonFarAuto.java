@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
@@ -21,11 +21,11 @@ public class VisonFarAuto extends OpMode {
 
     private IntakeAuto intake;
     private ShooterAuto shooter;
-    private Choose choose;
+    private OLDChoose choose;
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 0;
-    private Choose.Alliance alliance = Choose.Alliance.RED;
+    private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
     private boolean done = false;
 
     public enum PathState {
@@ -105,7 +105,7 @@ public class VisonFarAuto extends OpMode {
     public void init() {
         actionTimer = new Timer();
 
-        choose = new Choose(gamepad1, telemetry);
+        choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 

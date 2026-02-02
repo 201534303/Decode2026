@@ -5,6 +5,8 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+
 public class FarPaths extends Paths{
     public FarPaths(Follower follower){
         this.follower = follower;
@@ -18,8 +20,8 @@ public class FarPaths extends Paths{
     public Pose ballCollect2 = makePos(133, 9);
     public Pose park = makePos(87, 30, 90);
 
-    public boolean bluePath(Choose.Alliance alliance) {
-        if (alliance == Choose.Alliance.BLUE) {
+    public boolean bluePath(OLDChoose.Alliance alliance) {
+        if (alliance == OLDChoose.Alliance.BLUE) {
 
             return true;
         }

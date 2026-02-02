@@ -38,8 +38,8 @@ public class SammyTesting extends OpMode {
         double s5 = g / s4;
         return x * s5;
 
-        //delta h hight of
-        //x horizantal direct distance to the goal 
+        //delta h height of
+        //x horizontal direct distance to the goal
     }
 
     @Override

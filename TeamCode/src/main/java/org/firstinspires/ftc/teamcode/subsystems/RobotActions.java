@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
@@ -68,8 +68,8 @@ public class RobotActions {
     public void setLocalizationBack() {
         follower.setPose(HOMING);
     }
-    public void setLocalizationOurSide(Choose.Alliance currentColor) {
-        if (currentColor == Choose.Alliance.RED){
+    public void setLocalizationOurSide(OLDChoose.Alliance currentColor) {
+        if (currentColor == OLDChoose.Alliance.RED){
             follower.setPose(HOMINGRED);
         }
         else{
@@ -78,16 +78,16 @@ public class RobotActions {
     }
 
 
-    public void setIMUZero(Choose.Alliance currentColor, double x, double y) {
-        if(currentColor == Choose.Alliance.RED){
+    public void setIMUZero(OLDChoose.Alliance currentColor, double x, double y) {
+        if(currentColor == OLDChoose.Alliance.RED){
             follower.setPose(new Pose(x, y, 0));
         }
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == OLDChoose.Alliance.BLUE){
             follower.setPose(new Pose(x, y, Math.PI));
         }
     }
 
-    public void fieldCentricDrive(Choose.Alliance currentColor, double botHeadingaForMatrix){
+    public void fieldCentricDrive(OLDChoose.Alliance currentColor, double botHeadingaForMatrix){
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
         double rot = gamepad1.left_stick_x;
@@ -97,7 +97,7 @@ public class RobotActions {
 
         // Rotate the movement direction counter to the bot's rotation
 
-        if (currentColor == Choose.Alliance.BLUE) {
+        if (currentColor == OLDChoose.Alliance.BLUE) {
             // Flip the field coordinate system 180 degrees
             botHeadingaForMatrix += Math.PI;
         }
@@ -134,7 +134,7 @@ public class RobotActions {
         }
     }
 
-    public void updateTransfer(Choose.Alliance currentColor, Vector vel, double posX, double posY) {
+    public void updateTransfer(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY) {
         double velX = vel.getXComponent();
         double velY = vel.getYComponent();
         double total = Math.hypot(velY, velX);
@@ -142,12 +142,12 @@ public class RobotActions {
         double delY = 0;
         double delX = 0;
 
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == OLDChoose.Alliance.BLUE){
             delX = -posX;
             delY = 144-posY;
         }
 
-        if(currentColor == Choose.Alliance.RED){
+        if(currentColor == OLDChoose.Alliance.RED){
             delX = 144-posX;
             delY = 144-posY;
         }
@@ -169,7 +169,7 @@ public class RobotActions {
 
     //UPDATE
 
-    public void update(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
+    public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
         double[] velocities = getVelocities(currentColor, vel, x, y);
         double rVel = velocities[0];
         double tVel = velocities[0];
@@ -182,7 +182,7 @@ public class RobotActions {
         updateShooter(currentColor, rVel, x, y);
     }
 
-    public void updateShooterTesting(Choose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
+    public void updateShooterTesting(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
         double[] velocities = getVelocities(currentColor, vel, x, y);
         double rVel = velocities[0];
         double tVel = velocities[0];
@@ -196,13 +196,13 @@ public class RobotActions {
         shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
     }
 
-    private void updateTurret(Choose.Alliance currentColor, double tVel, double posX, double posY, double h){
+    private void updateTurret(OLDChoose.Alliance currentColor, double tVel, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
         double heading = Math.toDegrees(h);
         double turretAngle = 0;
 
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == OLDChoose.Alliance.BLUE){
             //targets (0, 124), (20, 144)
             double delX1 = 0 - posX;
             double delY1 = 124 - posY;
@@ -217,7 +217,7 @@ public class RobotActions {
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
-        if(currentColor == Choose.Alliance.RED){
+        if(currentColor == OLDChoose.Alliance.RED){
             //targets (144, 124), (124, 144)
             //X = 7.7
             //y = 4.5
@@ -239,15 +239,15 @@ public class RobotActions {
     }
 
 
-    private void updateShooter(Choose.Alliance currentColor, double rVel, double posX, double posY) {
+    private void updateShooter(OLDChoose.Alliance currentColor, double rVel, double posX, double posY) {
         double dist = 0;
 
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == OLDChoose.Alliance.BLUE){
             double delX = -posX;
             double delY = 144-posY;
             dist = Math.hypot(delX, delY);
         }
-        if(currentColor == Choose.Alliance.RED){
+        if(currentColor == OLDChoose.Alliance.RED){
             double delX = 144-posX;
             double delY = 144-posY;
             dist = Math.hypot(delX, delY);
@@ -279,19 +279,19 @@ public class RobotActions {
         shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
     }
 
-    private double[] getVelocities(Choose.Alliance currentColor, Vector vel, double posX, double posY) {
+    private double[] getVelocities(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY) {
         double velX = vel.getXComponent();
         double velY = vel.getYComponent();
 
         double delX = 0;
         double delY = 0;
 
-        if(currentColor == Choose.Alliance.BLUE){
+        if(currentColor == OLDChoose.Alliance.BLUE){
             delX = -posX;
             delY = 144-posY;
         }
 
-        if(currentColor == Choose.Alliance.RED){
+        if(currentColor == OLDChoose.Alliance.RED){
             delX = 144-posX;
             delY = 144-posY;
         }

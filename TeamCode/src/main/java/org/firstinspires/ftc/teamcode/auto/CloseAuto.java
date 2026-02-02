@@ -8,12 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "CloseAuto")
+@Autonomous(name = "OLDCloseAuto")
 
 public class CloseAuto extends OpMode {
     //ROBOT
@@ -25,7 +25,7 @@ public class CloseAuto extends OpMode {
     //AUTO
     private Follower follower;
     private OLDClosePaths paths;
-    private Choose choose;
+    private OLDChoose choose;
     private Timer actionTimer;
     private int spikeMark = 1;
     private int maxTrips = 4;
@@ -34,7 +34,7 @@ public class CloseAuto extends OpMode {
         OFF, RESET, START, UP
     }
     PathState pathState = PathState.START;
-    private Choose.Alliance alliance = Choose.Alliance.RED;
+    private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
     private ElapsedTime runtime = new ElapsedTime();
     private boolean isMirror = false;
     private boolean readyTrips = false;
@@ -180,7 +180,7 @@ public class CloseAuto extends OpMode {
     public void init() {
         actionTimer = new Timer();
 
-        choose = new Choose(gamepad1, telemetry);
+        choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 

@@ -8,13 +8,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "CloseAuto")
+@Autonomous(name = "SelfeeCloseAuto")
 
 public class SelfeeCloseAuto extends OpMode {
     //ROBOT
@@ -26,14 +25,14 @@ public class SelfeeCloseAuto extends OpMode {
     //AUTO
     private Follower follower;
     private ClosePaths paths;
-    private Choose choose;
+    private OLDChoose choose;
     private Timer actionTimer;
     private int spikeMark = 0;
     public enum PathState {
        START, TO_SHOOT, SHOOT, INTAKE, PARK, END
     }
     PathState pathState = PathState.START;
-    private Choose.Alliance alliance = Choose.Alliance.RED;
+    private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
     private ElapsedTime runtime = new ElapsedTime();
     private boolean isMirror = false;
     private boolean readyAlliance = false;
@@ -120,7 +119,7 @@ public class SelfeeCloseAuto extends OpMode {
     public void init() {
         actionTimer = new Timer();
 
-        choose = new Choose(gamepad1, telemetry);
+        choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 

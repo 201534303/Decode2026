@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleOp;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.BLUE;
-import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Alliance.RED;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.BLUE;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.RED;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class MainTeleOpBetter extends OpMode {
 
     //choose
-    private Choose choose;
+    private OLDChoose choose;
 
     //runtime
     private ElapsedTime overallRuntime;
@@ -45,7 +45,7 @@ public class MainTeleOpBetter extends OpMode {
     //robot
     private RobotActions robot;
     public boolean turretOn = true;
-    private Choose.Alliance currentColor = RED;
+    private OLDChoose.Alliance currentColor = RED;
     private double x;
     private double y;
     private double heading;
@@ -61,7 +61,7 @@ public class MainTeleOpBetter extends OpMode {
     public void init() {
         ll = new LimelightProcessor_v3Tele(hardwareMap);
         //choose
-        choose = new Choose(gamepad1, telemetry);
+        choose = new OLDChoose(gamepad1, telemetry);
 
 
         //localization
@@ -177,11 +177,11 @@ public class MainTeleOpBetter extends OpMode {
         }
 
         if(gamepad1.xWasPressed()) {
-            if(currentColor == Choose.Alliance.RED){
-                currentColor = Choose.Alliance.BLUE;
+            if(currentColor == OLDChoose.Alliance.RED){
+                currentColor = OLDChoose.Alliance.BLUE;
             }
             else{
-                currentColor = Choose.Alliance.RED;
+                currentColor = OLDChoose.Alliance.RED;
             }
         }
 
