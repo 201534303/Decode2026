@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 @Autonomous(name = "FarAuto")
 
-public class VisonFarAuto extends OpMode {
+public class FarAuto extends OpMode {
     private Follower follower;
     private Timer actionTimer;
     private FarPaths paths;
@@ -29,7 +29,7 @@ public class VisonFarAuto extends OpMode {
     private boolean done = false;
 
     public enum PathState {
-        START, TO_SHOOT, SHOOT, INTAKE, PARK, END
+        START, TO_SHOOT, SHOOT, INTAKE, PARK
     }
     private boolean isMirror = false;
     private double turnTableAngle = 56;
@@ -94,9 +94,6 @@ public class VisonFarAuto extends OpMode {
                     intake.transferOff();
                     shooter.rotateTurret(0);
                 }
-                break;
-
-            case END:
                 break;
         }
     }

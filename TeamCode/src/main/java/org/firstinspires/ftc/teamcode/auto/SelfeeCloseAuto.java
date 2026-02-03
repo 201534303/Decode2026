@@ -29,7 +29,7 @@ public class SelfeeCloseAuto extends OpMode {
     private Timer actionTimer;
     private int spikeMark = 0;
     public enum PathState {
-       START, TO_SHOOT, SHOOT, INTAKE, PARK, END
+       START, TO_SHOOT, SHOOT, INTAKE, PARK, TEST
     }
     PathState pathState = PathState.START;
     private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
@@ -56,7 +56,17 @@ public class SelfeeCloseAuto extends OpMode {
             case START:
                 follower.followPath(paths.fistToShoot(), 0.8, true);
                 resetActionTimer();
-                pathState = PathState.SHOOT;
+                pathState = PathState.TEST;
+                break;
+
+            case TEST:
+                if(!follower.isBusy()){
+                    intake.intakeIn();
+                    if(intake.haveBall() || waitSecs(15)){
+                        follower.followPath(paths.collectToShoot(), 0.8, true);
+                        pathState = PathState.PARK;
+                    }
+                }
                 break;
 
             case TO_SHOOT:
@@ -71,8 +81,12 @@ public class SelfeeCloseAuto extends OpMode {
                 shooter.rotateTurret(turnTableAngle);
                 shooter.setHood(hoodHeight);
 
-                if(spikeMark == 0 && waitSecs(0.5)){
+                if(spikeMark == 0 && waitSecs(1)){
                     intake.allTheWay();
+                    if(waitSecs(1)) {
+                        resetActionTimer();
+                        pathState = PathState.INTAKE;
+                    }
                 } else if(!follower.isBusy()) {
                     if(waitSecs(1.5)) {
                         intake.allTheWay();//run intake + transfer all the way to shoot
@@ -97,7 +111,9 @@ public class SelfeeCloseAuto extends OpMode {
                     intake.transferOff();
                     follower.followPath(collectPath, 0.8, true);
                     resetActionTimer();
-                    pathState = PathState.TO_SHOOT;
+                    if (intake.haveBall() || waitSecs(3)) {
+                        pathState = PathState.TO_SHOOT;
+                    }
                 }
                 break;
 
@@ -106,12 +122,7 @@ public class SelfeeCloseAuto extends OpMode {
                     done = true;
                     shooter.rotateTurret(0);
                     intake.off();
-                    //resetActionTimer();
-                    //pathState = PathState.END;
                 }
-                break;
-
-            case END:
                 break;
         }
     }
@@ -143,7 +154,7 @@ public class SelfeeCloseAuto extends OpMode {
         shooter.rotateTurret(turnTableAngle);//rotates the turntable
 
         runtime.reset();//resets overall timer
-        actionTimer.resetTimer();//resets path timer
+        //actionTimer.resetTimer();//resets path timer
         pathState = PathState.START;//sets the path state
     }
 
@@ -153,6 +164,7 @@ public class SelfeeCloseAuto extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
+        telemetry.addData("actionTimer", actionTimer.getElapsedTimeSeconds());
         telemetry.addData("servoPos", 1-shooter.servoPos());
         telemetry.addData("mirror", isMirror);
         telemetry.addData("path state", pathState);

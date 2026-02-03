@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+package org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -6,7 +6,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-abstract class Paths {
+abstract class Paths2 {
     public Follower follower;
 
     public static Pose makePos(double x, double y, double degrees){
