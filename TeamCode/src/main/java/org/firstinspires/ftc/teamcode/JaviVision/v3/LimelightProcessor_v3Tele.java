@@ -80,48 +80,19 @@ public class LimelightProcessor_v3Tele {
         pose.roll  = camRot.getRoll();
 
         // Raw distance in inches
-        double rawDistance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701 + 6.0;
-        if (!moving) {
-            distanceList.add(rawDistance);
-            Collections.sort(distanceList);
-        } else {
-            distanceList.clear();
-            distanceList.add(rawDistance);
-        }
-        double medianDistance = 0;
-        if (!distanceList.isEmpty()) {
-            medianDistance = distanceList.get(distanceList.size() / 2);
-        }
-
-        pose.distance = medianDistance;
+        double rawDistance = Math.sqrt(camX * camX + camZ * camZ) * 39.3701;
+        pose.distance = rawDistance;
 
         // ================= TX (MEDIAN FILTER) =================
         double rawTx = fiducial.getTargetXDegrees();
-
-        /*if (!moving) {
-            txList.add(rawTx);
-            Collections.sort(txList);
-        } else {
-            txList.clear();
-            txList.add(rawTx);
-        }
-        double medianTx = 0;
-        if (txList.size() > 0) {
-            medianTx = txList.get(txList.size()/2);
-        }*/
-        double tx = 0;
-        if (rawTx < 0) {
-            tx = -0.85*Math.pow(-rawTx, 1.04);
-        }
-        else {
-            tx = 0.85*Math.pow(rawTx, 1.04);
-        }
+        double tx = rawTx;
+        pose.roll = rawTx;
         if (pose.id == 20) {
+            tx = 1.03*rawTx;
             tx *= -1;
-            tx -= 2;
         }
         else if (pose.id == 24) {
-            tx += 1;
+            tx = 1.07*rawTx - 2.4;
         }
         pose.tx = tx;
 
@@ -129,28 +100,20 @@ public class LimelightProcessor_v3Tele {
         double yaw = yawDegIn;
         if (pose.id == 20) { yaw = Math.toRadians(180) - yaw; }
 
-        double shooter = Math.toRadians(shooterDegIn);
-        if (pose.id == 20) shooter = -shooter;
-
-        double rawTheta = yaw + shooter - Math.toRadians(tx);
-        // Filter theta only if stationary
-        if (!moving) {
-            thetaList.add(rawTheta);
-            Collections.sort(thetaList);
-        } else {
-            thetaList.clear();
-            thetaList.add(rawTheta);
-        }
-        double medianTheta = 0;
-        if (thetaList.size() > 0) {
-            medianTheta = thetaList.get(thetaList.size() / 2);
-        }
-        pose.theta = medianTheta;
+        double rawTheta = yaw - Math.toRadians(tx);
+        pose.theta = rawTheta;
         pose.heading = rawTheta;
 
         // ================= FIELD POSITION =================
         pose.rawX = pose.distance * Math.cos(pose.theta);
         pose.rawY = pose.distance * Math.sin(pose.theta);
+
+        double dx = 10*Math.cos(Math.toRadians(yaw));
+        double dy = 10*Math.sin(Math.toRadians(yaw));
+
+        pose.rawX += dx;
+        pose.rawY += dy;
+
         int id = fiducial.getFiducialId();
         if (id == 20) {
             pose.posX = pose.rawX + CONSTX;

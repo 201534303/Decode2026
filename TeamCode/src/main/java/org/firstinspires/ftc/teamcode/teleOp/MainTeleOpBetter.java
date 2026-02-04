@@ -107,25 +107,17 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addLine("------");
         telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
-        telemetry.addData("theta (no median)", Math.toDegrees(ll.pose.heading));
-        telemetry.addData("ideal angle", Math.toDegrees(robot.idealAngle));
-        telemetry.addData("diff", Math.toDegrees(ll.pose.theta - robot.idealAngle));
         telemetry.addData("heading", Math.toDegrees(follower.getHeading()));
-        telemetry.addData("shooter", robot.turAngle);
-        telemetry.addData("raw tx", ll.pose.tx);
-        telemetry.addData("tx", ll.pose.roll);
-        telemetry.addData("yaw",Math.toDegrees(ll.pose.yaw));
+        telemetry.addData("raw tx", ll.pose.roll);
+        telemetry.addData("tx", ll.pose.tx);
+        telemetry.addData("id", ll.pose.id);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
-        telemetry.addData("3D April tag x", 39.3701*ll.pose.x);
-        telemetry.addData("3D april tag y", 39.3701*ll.pose.z);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addLine("----------");
         telemetry.addData("fieldX", ll.pose.posX);
         telemetry.addData("fieldY", ll.pose.posY);
-        telemetry.addData("positionX", follower.getPose().getX());
-        telemetry.addData("positionY", follower.getPose().getY());
         telemetry.addLine("------");
         /*
         --------------------------GRAB COORDINATES--------------------------
