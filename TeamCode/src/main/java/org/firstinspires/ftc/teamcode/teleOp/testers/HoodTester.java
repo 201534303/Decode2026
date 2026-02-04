@@ -27,11 +27,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode.teleOp.testers;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 /*
@@ -48,18 +49,19 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="testeropmode", group="Iterative OpMode")
-public class TesterOpmode extends OpMode
+@TeleOp(name="Hood Tester", group="Iterative OpMode")
+@Config
+@Disabled
+public class HoodTester extends OpMode
 {
-    CRServo hangRight, hangLeft;
-
+    Servo hood;
+    public static double pos;
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-        hangLeft = hardwareMap.get(CRServo.class, "hangLeft");
-        hangRight = hardwareMap.get(CRServo.class, "hangRight");
+        hood = hardwareMap.get(Servo.class, "hood");
 
     }
 
@@ -84,9 +86,7 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-        hangLeft.setPower(-1);
-        hangRight.setPower(1);
-
+        hood.setPosition(pos);
     }
 
     /*

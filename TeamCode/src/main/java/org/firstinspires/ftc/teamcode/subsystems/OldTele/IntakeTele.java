@@ -28,7 +28,7 @@ public class IntakeTele extends Intake {
         //}
         intakeMachine();
         telemetry.addData("IntakeCurent", intake.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("transferCurent", transfer.getCurrent(CurrentUnit.AMPS));
+        //telemetry.addData("transferCurent", transfer.getCurrent(CurrentUnit.AMPS));
     }
 
     public void updateSingle(){
@@ -42,7 +42,7 @@ public class IntakeTele extends Intake {
         //}
         intakeMachine();
         telemetry.addData("IntakeCurent", intake.getCurrent(CurrentUnit.AMPS));
-        telemetry.addData("transferCurent", transfer.getCurrent(CurrentUnit.AMPS));
+        //telemetry.addData("transferCurent", transfer.getCurrent(CurrentUnit.AMPS));
     }
 
 

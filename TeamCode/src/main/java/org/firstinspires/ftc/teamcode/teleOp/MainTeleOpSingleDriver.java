@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele;
 
 @TeleOp(name="Single Driver Tele", group="Iterative OpMode")
 @Config
+@Disabled
 public class MainTeleOpSingleDriver extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -24,6 +26,7 @@ public class MainTeleOpSingleDriver extends OpMode {
     private IntakeTele intake;
     private Follower follower;
     double aimPower;
+
 
     ShooterTele shooter;
     private Telemetry dash;
