@@ -256,11 +256,11 @@ public class RobotActions {
         double speed = 0;
 
         if(dist > 120){//far zone
-            shooter.setHood(0.1);
+            shooter.setHood(0.15);
             speed = -1252.949 + 593.055*Math.log(dist);
         }
         else if(dist > 77) { //most of near zone
-            shooter.setHood(0.25);
+            shooter.setHood(0.30);
             speed = 0.723027*dist+1458.89853;
         }
         else if(dist > 72){ //getting close
