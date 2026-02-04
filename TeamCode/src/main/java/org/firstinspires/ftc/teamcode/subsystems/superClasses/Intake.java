@@ -4,6 +4,8 @@ import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.inta
 import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OFF;
 import static org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake.intakeState.OUT;
 
+import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -22,24 +24,29 @@ public class Intake {
     protected double timeOld;
     protected double direction = 1;
 
-    protected DcMotorEx intake, transfer;
+    protected DcMotorEx intake;
+    MotorEx transfer;
     DigitalChannel right,left;
     Servo taillight;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
     protected Telemetry telemetry;
     protected Intake.intakeState intakeState = OFF;
+    double last_error = 0;
+    double integral = 0;
 
     public Intake(HardwareMap hardwareMap, Telemetry t, ElapsedTime e){
 
         timer = e;
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        transfer = hardwareMap.get(DcMotorEx.class, "transfer");
+        transfer = new MotorEx(hardwareMap, "transfer");
         right = hardwareMap.get(DigitalChannel.class, "distRight");
         left = hardwareMap.get(DigitalChannel.class, "distLeft");
         taillight = hardwareMap.get(Servo.class, "taillight");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        //transfer.setRunMode(MotorEx.RunMode.VelocityControl);
+
         telemetry = t;
     }
 
@@ -59,10 +66,22 @@ public class Intake {
         intakeState = OFF;
     }
 
+
+
+    public double getTransferVel(){
+        return transfer.getVelocity();
+    }
     public void setTransferPower(double power){
-        telemetry.addData("We are settin transfer", power);
-        tSpeed = power * 0.7;
-        transfer.setPower(tSpeed);
+        transfer.setRunMode(MotorEx.RunMode.RawPower);
+        transfer.set(power);
+    }
+
+    public void setTransferVelPID(double vel, double currentVelo, double stickInput, double tuner){
+        telemetry.addData("We are settin transfer vel", vel);
+        transfer.setRunMode(MotorEx.RunMode.VelocityControl);
+        double speed = PIDF(vel-currentVelo, vel, 0.15,0,0,1.08);
+        //1.15
+        transfer.setVelocity(speed);
     }
 
 
@@ -70,7 +89,7 @@ public class Intake {
     public void setIntakePower(double power){
         telemetry.addData("We are setting intake", power);
         iSpeed = power;
-        transfer.setPower(iSpeed);
+        //transfer.setPower(iSpeed);
     }
 
 
@@ -101,6 +120,26 @@ public class Intake {
     }
     public void yesBallLight(){
         taillight.setPosition(0.5);
+    }
+
+
+    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
+
+        integral += error;
+        double derivative = error - last_error;
+
+        double proportional = error * kp;
+        double integralTerm = integral * ki;
+        double derivativeTerm = derivative * kd;
+
+        // Feedforward = kF * setpoint; important for scaling feedforward
+        double feedforward = kF * setpoint;
+
+        double correction = proportional + integralTerm + derivativeTerm + feedforward;
+
+        last_error = error;
+
+        return correction;
     }
 
 }

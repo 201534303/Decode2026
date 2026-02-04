@@ -21,13 +21,14 @@ public class IntakeAuto extends Intake {
 
     public void off(){
         intake.setPower(0);
-        transfer.setPower(0);
+        setTransferVelPID(0, getTransferVel(),0,0);
     }
 
 
     @Override
     public void setTransferPower(double power){
-        transfer.setPower(power);
+        //transfer.setPower(power);
+        setTransferVelPID(power * 2200, getTransferVel(),0,0);
     }
 
     public void allTheWay(){
@@ -48,8 +49,8 @@ public class IntakeAuto extends Intake {
         setTransferPower(0);
     }
 
-    public double transferAmps(){
-        return transfer.getCurrent(CurrentUnit.AMPS);
-    }
+    //public double transferAmps(){
+        //return transfer.getCurrent(CurrentUnit.AMPS);
+    //}
 
 }

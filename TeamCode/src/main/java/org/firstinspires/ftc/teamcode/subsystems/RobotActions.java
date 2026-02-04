@@ -156,14 +156,14 @@ public class RobotActions {
         double speedMul = 1;
 
         if(dist > 140){
-            speedMul = 0.8;
+            speedMul = 0.7;
         }
 
         if(total < 3){
-            intake.setTransferPower(-gamepad2.left_stick_y * speedMul);
+            intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
         }
         else{
-            intake.setTransferPower(0);
+            intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
         }
     }
 
@@ -256,7 +256,7 @@ public class RobotActions {
         double speed = 0;
 
         if(dist > 120){//far zone
-            shooter.setHood(0.05);
+            shooter.setHood(0.1);
             speed = -1252.949 + 593.055*Math.log(dist);
         }
         else if(dist > 77) { //most of near zone
