@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Choices.NONE;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -7,37 +9,39 @@ public class Choose {
     protected Telemetry telemetry;
     private boolean confirmed = false;
     public enum Choices {
-        RED, BLUE
+        RED, BLUE, NONE
     }
+
+    public Choices alliance = NONE;
 
     public Choose(Gamepad g1, Telemetry t) {
         telemetry = t;
         gamepad1 = g1;
     }
 
-    /*private void displayAllianceSelectionMenu() {
+    private void displaySelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("SELECT ALLIANCE");
         telemetry.addLine("=================================");
         telemetry.addLine("");
-        telemetry.addLine((selectedAlliance == Alliance.RED ? ">>> RED ALLIANCE <<<" : "    Red Alliance"));
-        telemetry.addLine((selectedAlliance == Alliance.BLUE ? ">>> BLUE ALLIANCE <<<" : "    Blue Alliance"));
+        telemetry.addLine((alliance == Choices.RED ? ">>> RED ALLIANCE <<<" : "    Red Alliance"));
+        telemetry.addLine((alliance == Choices.BLUE ? ">>> BLUE ALLIANCE <<<" : "    Blue Alliance"));
         telemetry.addLine("");
         telemetry.addLine("---------------------------------");
-        telemetry.addData("Current Selection", selectedAlliance);
-        telemetry.addData("Confirmed", allianceConfirmed ? "YES ✓" : "NO");
+        telemetry.addData("Current Selection", alliance);
+        telemetry.addData("Confirmed", confirmed ? "YES ✓" : "NO");
         telemetry.addLine("---------------------------------");
 
-        if (selectedAlliance != Alliance.NONE && !allianceConfirmed) {
+        if (alliance != Choices.NONE && !confirmed) {
             telemetry.addLine("");
             telemetry.addLine("Press X to confirm selection");
         }
-    }*/
+    }
 
     public void displayReady(Choices choices){
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addLine("");
-        telemetry.addData("Alliance", choices);
+        telemetry.addData(choicePrint(choices), choices);
         telemetry.addLine("");
     }
     private String choicePrint(Choices choice){
