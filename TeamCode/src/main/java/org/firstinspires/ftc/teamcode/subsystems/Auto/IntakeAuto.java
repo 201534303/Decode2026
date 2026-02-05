@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.Auto;
 
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,14 +22,7 @@ public class IntakeAuto extends Intake {
 
     public void off(){
         intake.setPower(0);
-        setTransferVelPID(0, getTransferVel(),0,0);
-    }
-
-
-    @Override
-    public void setTransferPower(double power){
-        //transfer.setPower(power);
-        setTransferVelPID(power * 2200, getTransferVel(),0,0);
+        transfer.setVelocity(0);
     }
 
     public void allTheWay(){
@@ -41,16 +35,26 @@ public class IntakeAuto extends Intake {
         setTransferPower(0.65);
     }
 
+    public void setTransferVelPID(double vel, double currentVelo, double stickInput, double tuner){
+        telemetry.addData("We are settin transfer vel", vel);
+        transfer.setRunMode(MotorEx.RunMode.VelocityControl);
+        double speed = PIDF(vel-currentVelo, vel, 0.15,0,0,1.08);
+        //1.15
+        transfer.setVelocity(speed);
+    }
+
+
+    public void setTransferPower(double power){
+        //transfer.setPower(power);
+        setTransferVelPID(power * 2200, getTransferVel(),0,0);
+    }
+
     public void setIntakeSpeed(double power){
         intake.setPower(power);
     }
 
     public void transferOff(){
-        setTransferPower(0);
+        transfer.setRunMode(MotorEx.RunMode.RawPower);
+        transfer.set(0);
     }
-
-    //public double transferAmps(){
-        //return transfer.getCurrent(CurrentUnit.AMPS);
-    //}
-
 }

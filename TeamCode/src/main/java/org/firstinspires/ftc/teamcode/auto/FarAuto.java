@@ -29,11 +29,12 @@ public class FarAuto extends OpMode {
     private boolean done = false;
 
     public enum PathState {
-        START, TO_SHOOT, SHOOT, INTAKE, PARK
+        START, TO_SHOOT, SHOOT, INTAKE, PARK,
+        OUT, IN
     }
     private boolean isMirror = false;
-    private double turnTableAngle = 56;
-    private double hoodHeight = 0.05;
+    private double turnTableAngle = 63;
+    private double hoodHeight = 0.2;
 
     PathState pathState = PathState.START;
 
@@ -76,14 +77,40 @@ public class FarAuto extends OpMode {
                         follower.followPath(paths.shootTo1(), 0.75, false);
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark < 4){
+                    } else if (spikeMark < 5){
                         follower.followPath(paths.shootTo2(), 0.75, false);
                         resetActionTimer();
-                        pathState = PathState.TO_SHOOT;
+                        if (!intake.haveBall()) {
+                            pathState = PathState.OUT;
+                        } else {
+                            pathState = PathState.TO_SHOOT;
+                        }
                     } else {
                         done = false;
                         follower.followPath(paths.shootToPark(), 0.75, false);
                         pathState = PathState.PARK; }
+                }
+                break;
+
+            case OUT:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.out(), 0.75, false);
+                    if (!intake.haveBall()) {
+                        pathState = PathState.IN;
+                    } else {
+                        pathState = PathState.TO_SHOOT;
+                    }
+                }
+                break;
+
+            case IN:
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.in(), 0.75, false);
+                    if (!intake.haveBall() && waitSecs(2)) {
+                        pathState = PathState.TO_SHOOT;
+                    } else if (intake.haveBall()) {
+                        pathState = PathState.TO_SHOOT;
+                    }
                 }
                 break;
 
@@ -142,7 +169,7 @@ public class FarAuto extends OpMode {
         isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
 
-        if (isMirror) { turnTableAngle = -58; }
+        if (isMirror) { turnTableAngle = -63; }
         shooter.rotateTurret(turnTableAngle);
 
         runtime.reset();

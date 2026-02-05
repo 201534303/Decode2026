@@ -13,12 +13,14 @@ public class FarPaths extends Paths{
     }
 
     public Pose startPose = makePos(87, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(134, 35);
+    public Pose ballCollect1 = makePos(130, 35);
     public Pose ballCollect1Mid1 = new Pose(86.53307392996108, 40.95914396887157);
     public Pose ballCollect1Mid2 = new Pose(110.5603112840467, 34.48832684824902);
     public Pose shootPose = makePos(87, 8);
     public Pose ballCollect2 = makePos(133, 9);
-    public Pose park = makePos(87, 30, 90);
+    public Pose out = makePos(123, 9);
+
+    public Pose park = makePos(95, 9, 0);
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
@@ -50,4 +52,13 @@ public class FarPaths extends Paths{
     public PathChain shootToPark(){
         return bezierLine(shootPose, park);
     }
+
+    public PathChain out(){
+        return bezierLine(ballCollect2, out);
+    }
+    public PathChain in(){
+        return bezierLine(out, ballCollect2);
+    }
+
+
 }

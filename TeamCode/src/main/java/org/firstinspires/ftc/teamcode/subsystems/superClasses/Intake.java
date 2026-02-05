@@ -25,7 +25,7 @@ public class Intake {
     protected double direction = 1;
 
     protected DcMotorEx intake;
-    MotorEx transfer;
+    protected MotorEx transfer;
     DigitalChannel right,left;
     Servo taillight;
     protected double iSpeed = 0;
