@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.JaviVision.Pose;
+package org.firstinspires.ftc.teamcode.JaviVision.Position.Pose;
 
 public class LimelightPose {
     public double x = 0;

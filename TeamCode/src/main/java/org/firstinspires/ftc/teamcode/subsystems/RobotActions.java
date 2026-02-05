@@ -256,7 +256,7 @@ public class RobotActions {
         double speed = 0;
 
         if(dist > 120){//far zone
-            shooter.setHood(0.15);
+            shooter.setHood(0.05);
             speed = -1252.949 + 593.055*Math.log(dist);
         }
         else if(dist > 77) { //most of near zone

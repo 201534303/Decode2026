@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.JaviVision.v1;
+package org.firstinspires.ftc.teamcode.JaviVision.Position.oldCode.v1;
 
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -8,9 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.JaviVision.v1.LimelightProcessor;
 
 @Autonomous()
 @Disabled

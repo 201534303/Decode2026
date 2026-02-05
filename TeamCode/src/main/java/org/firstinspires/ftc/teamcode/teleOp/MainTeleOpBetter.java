@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.JaviVision.v3.LimelightProcessor_v3Tele;
+import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -111,8 +111,11 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("raw tx", ll.pose.roll);
         telemetry.addData("tx", ll.pose.tx);
         telemetry.addData("id", ll.pose.id);
+        telemetry.addData("yaw", Math.toDegrees(ll.pose.yaw));
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
+        telemetry.addData("dx",ll.pose.posX2);
+        telemetry.addData("dy", ll.pose.posY2);
         telemetry.addData("rawX", ll.pose.rawX);
         telemetry.addData("rawY", ll.pose.rawY);
         telemetry.addLine("----------");
