@@ -92,10 +92,10 @@ public class Shooter {
         theta = normalizeDeg(theta);
 
         //hard stops
-        if (theta > 63){
+        if (theta > 75){
             theta = 63;
         }
-        if (theta < -63){
+        if (theta < -75){
             theta = -63;
         }
 
