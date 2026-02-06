@@ -16,11 +16,11 @@ public class FarPaths extends Paths{
     public Pose ballCollect1 = makePos(130, 35);
     public Pose ballCollect1Mid1 = new Pose(86.53307392996108, 40.95914396887157);
     public Pose ballCollect1Mid2 = new Pose(110.5603112840467, 34.48832684824902);
-    public Pose shootPose = makePos(87, 8);
+    public Pose shootPose = makePos(95, 12);
     public Pose ballCollect2 = makePos(133, 9);
     public Pose out = makePos(123, 9);
 
-    public Pose park = makePos(95, 9, 0);
+    public Pose park = makePos(102, 14, 0);
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
