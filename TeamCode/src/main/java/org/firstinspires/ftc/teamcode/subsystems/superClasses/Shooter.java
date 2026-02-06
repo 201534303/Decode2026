@@ -92,10 +92,10 @@ public class Shooter {
         theta = normalizeDeg(theta);
 
         //hard stops
-        if (theta > 63){
+        if (theta > 75){
             theta = 63;
         }
-        if (theta < -63){
+        if (theta < -75){
             theta = -63;
         }
 
@@ -123,9 +123,6 @@ public class Shooter {
 
 
     public void setHood(double theta) {
-        if(theta < 0.05){
-            theta = 0.05;
-        }
         theta = 1-theta;
         hood.setPosition(theta);
         telemetry.addData("hood", Math.round(theta*100)/100.0);

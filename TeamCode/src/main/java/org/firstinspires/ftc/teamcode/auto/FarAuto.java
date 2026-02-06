@@ -33,7 +33,7 @@ public class FarAuto extends OpMode {
         OUT, IN
     }
     private boolean isMirror = false;
-    private double turnTableAngle = 63;
+    private double turnTableAngle = 70;
     private double hoodHeight = 0.2;
 
     PathState pathState = PathState.START;
@@ -134,6 +134,7 @@ public class FarAuto extends OpMode {
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
         shooter.setHood(hoodHeight);
+        //shooter.rotateTurret(75);
         resetActionTimer();
     }
 
@@ -169,7 +170,7 @@ public class FarAuto extends OpMode {
         isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
 
-        if (isMirror) { turnTableAngle = -63; }
+        if (isMirror) { turnTableAngle = -75; }
         shooter.rotateTurret(turnTableAngle);
 
         runtime.reset();
