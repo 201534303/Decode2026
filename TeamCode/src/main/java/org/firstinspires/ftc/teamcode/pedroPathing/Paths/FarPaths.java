@@ -13,6 +13,8 @@ public class FarPaths extends Paths{
     }
 
     public Pose startPose = makePos(87, 8); // Start Pose of our robot
+
+    // spike mark ball collection
     public Pose ballCollect1 = makePos(130, 35);
     public Pose ballCollect1Mid1 = new Pose(86.53307392996108, 40.95914396887157);
     public Pose ballCollect1Mid2 = new Pose(110.5603112840467, 34.48832684824902);

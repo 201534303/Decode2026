@@ -43,13 +43,15 @@ public class FarAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                shooter.rotateTurret(turnTableAngle);
+                //shooter.rotateTurret(turnTableAngle);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
                 break;
 
             case TO_SHOOT:
-                if(!follower.isBusy()){
+                shooter.rotateTurret(turnTableAngle);
+
+                if(!follower.isBusy() || waitSecs(2)){
                     follower.followPath(paths.collectToShoot(), 0.8, true);
                     resetActionTimer();
                     pathState = PathState.SHOOT;
@@ -58,8 +60,8 @@ public class FarAuto extends OpMode {
 
             case SHOOT:
                 if(!follower.isBusy()) {
-                    shooter.rotateTurret(turnTableAngle);
-                    if (waitSecs(2)){
+                    //shooter.rotateTurret(turnTableAngle);
+                    if (waitSecs(1.5)){
                         intake.allTheWaySlow();//go all the way to shoot
                         resetActionTimer();
                         pathState = PathState.INTAKE;
@@ -74,11 +76,11 @@ public class FarAuto extends OpMode {
                     intake.transferOff();
 
                     if (spikeMark == 1) {
-                        follower.followPath(paths.shootTo1(), 0.75, false);
+                        follower.followPath(paths.shootTo1(), 0.8, false);
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
                     } else if (spikeMark < 5){
-                        follower.followPath(paths.shootTo2(), 0.75, false);
+                        follower.followPath(paths.shootTo2(), 0.8, false);
                         resetActionTimer();
                         if (!intake.haveBall()) {
                             pathState = PathState.OUT;
@@ -93,8 +95,8 @@ public class FarAuto extends OpMode {
                 break;
 
             case OUT:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.out(), 0.75, false);
+                if (!follower.isBusy() || waitSecs(1)) {
+                    follower.followPath(paths.out(), 0.8, false);
                     if (!intake.haveBall()) {
                         pathState = PathState.IN;
                     } else {
@@ -104,8 +106,8 @@ public class FarAuto extends OpMode {
                 break;
 
             case IN:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.in(), 0.75, false);
+                if (!follower.isBusy() || waitSecs(1)) {
+                    follower.followPath(paths.in(), 0.8, false);
                     if (!intake.haveBall() && waitSecs(2)) {
                         pathState = PathState.TO_SHOOT;
                     } else if (intake.haveBall()) {
@@ -116,6 +118,7 @@ public class FarAuto extends OpMode {
 
             case PARK:
                 if(!follower.isBusy()) {
+                    done = true;
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
@@ -171,7 +174,7 @@ public class FarAuto extends OpMode {
         follower.setStartingPose(paths.startPose);
 
         if (isMirror) { turnTableAngle = -75; }
-        shooter.rotateTurret(turnTableAngle);
+        shooter.rotateTurret(68);
 
         runtime.reset();
         pathState = PathState.START;
