@@ -15,22 +15,14 @@ public class BallDetection {
 
     public BallDetection(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(1);
+        limelight.pipelineSwitch(0);
         limelight.start();
     }
 
     // ------------------------------------------------------------
     public double[] update() {
-        double[] empty = {1};
-        double[] inputs = {1, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0,};
-        limelight.updatePythonInputs(inputs);
-
         // ================= LIMELIGHT =================
         LLResult result = limelight.getLatestResult();
-        if (result == null || !result.isValid()) {
-            pose.valid = false;
-            return empty;
-        }
         return result.getPythonOutput();
     }
 }
