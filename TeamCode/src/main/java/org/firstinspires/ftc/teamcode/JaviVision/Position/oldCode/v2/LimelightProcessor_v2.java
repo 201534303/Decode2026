@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.JaviVision.v2;
+package org.firstinspires.ftc.teamcode.JaviVision.Position.oldCode.v2;
 
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
+import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 
 import java.util.List;
 

@@ -1,15 +1,12 @@
-package org.firstinspires.ftc.teamcode.JaviVision.v3;
+package org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3;
 
 import com.qualcomm.hardware.limelightvision.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.JaviVision.Pose.LimelightPose;
+import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class LimelightProcessor_v3Tele {
 
@@ -108,9 +105,12 @@ public class LimelightProcessor_v3Tele {
         pose.rawX = pose.distance * Math.cos(pose.theta);
         pose.rawY = pose.distance * Math.sin(pose.theta);
 
-        double dx = 10*Math.cos(Math.toRadians(yaw));
-        double dy = 10*Math.sin(Math.toRadians(yaw));
+        pose.yaw = yaw;
+        double dx = 10*Math.cos(yaw);
+        double dy = 10*Math.sin(yaw);
 
+        pose.posX2 = dx;
+        pose.posY2 = dy;
         pose.rawX += dx;
         pose.rawY += dy;
 
