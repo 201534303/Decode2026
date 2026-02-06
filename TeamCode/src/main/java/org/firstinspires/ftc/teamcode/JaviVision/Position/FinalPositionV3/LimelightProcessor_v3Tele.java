@@ -85,7 +85,7 @@ public class LimelightProcessor_v3Tele {
         double tx = rawTx;
         pose.roll = rawTx;
         if (pose.id == 20) {
-            tx = 1.03*rawTx;
+            tx = 1.03*rawTx + 1;
             tx *= -1;
         }
         else if (pose.id == 24) {
