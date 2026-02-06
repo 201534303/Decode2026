@@ -35,26 +35,11 @@ public class IntakeAuto extends Intake {
         setTransferPower(0.65);
     }
 
-    public void setTransferVelPID(double vel, double currentVelo, double stickInput, double tuner){
-        telemetry.addData("We are settin transfer vel", vel);
-        transfer.setRunMode(MotorEx.RunMode.VelocityControl);
-        double speed = PIDF(vel-currentVelo, vel, 0.15,0,0,1.08);
-        //1.15
-        transfer.setVelocity(speed);
-    }
-
-
-    public void setTransferPower(double power){
-        //transfer.setPower(power);
-        setTransferVelPID(power * 2200, getTransferVel(),0,0);
-    }
-
     public void setIntakeSpeed(double power){
         intake.setPower(power);
     }
 
     public void transferOff(){
-        transfer.setRunMode(MotorEx.RunMode.RawPower);
-        transfer.set(0);
+        setTransferPower(0);
     }
 }
