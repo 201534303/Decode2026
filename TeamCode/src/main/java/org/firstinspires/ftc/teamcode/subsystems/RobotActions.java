@@ -260,17 +260,21 @@ public class RobotActions {
             speed = -1252.949 + 593.005*Math.log(dist);
             //593.005
         }
-        else if(dist > 77) { //most of near zone
+        else if(dist > 85) { //most of near zone
             shooter.setHood(0.35);
             speed = 0.723027*dist+1458.89853;
         }
-        else if(dist > 72){ //getting close
-            shooter.setHood(-0.0197368*dist+1.75368);
-            speed = 0.673027*dist+1458.89853;
+        else if(dist > 76){ //getting close
+            //shooter.setHood(-0.0197368*dist+1.75368);
+            shooter.setHood(0.5);
+
+            //1.75368
+            speed = 0.673027*dist+1445.89853;
         }
         else{ //CRAZY close
-            shooter.setHood(-0.0357143*dist+2.85714);
-            speed = -0.216728*dist*dist + 36.10864*dist + 25;
+            //shooter.setHood(-0.0357143*dist+2.85714);
+            shooter.setHood(1);
+            speed = -0.216728*dist*dist + 36.10864*dist - 0;
         }
 
         if(speed < 0){
