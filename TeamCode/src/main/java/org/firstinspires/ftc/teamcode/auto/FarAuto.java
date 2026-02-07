@@ -42,6 +42,7 @@ public class FarAuto extends OpMode {
     private boolean isMirror = false;
     private double turnTableAngle = 68;
     private double hoodHeight = 0.3;
+    private boolean pathJustStarted = false;
     double x;
     double y;
 
@@ -65,67 +66,65 @@ public class FarAuto extends OpMode {
                             follower.followPath(paths.shootTo12(), 0.8, true);
                             count = 0;
 
-                            if (!intake.haveBall()) {
-                                if(!follower.isBusy() || waitSecs(6)) {
-                                    resetActionTimer();
-                                    pathState = PathState.OUT;
-                                }
-                            } else {
-                                resetActionTimer();
-                                pathState = PathState.TO_SHOOT;
-                            }
+                            resetActionTimer();
+                            pathState = PathState.WAIT;
                         } else {
                             if (x == 0 && y == 0) {
-                                resetActionTimer();
                                 count += 1;
-                                pathState = PathState.DETECT;
+                                resetActionTimer();
                             } else {
                                 follower.followPath(paths.to(x, y), 0.8, true);
-                                if (!intake.haveBall()) {
-                                    if(!follower.isBusy() || waitSecs(6)) {
-                                        resetActionTimer();
-                                        pathState = PathState.OUT;
-                                    }
-                                } else {
-                                    resetActionTimer();
-                                    pathState = PathState.TO_SHOOT;
-                                }
+                                resetActionTimer();
+                                pathState = PathState.WAIT;
                             }
                         }
                     //}
                 }
                 break;
 
+            case WAIT:
+                intake.intakeIn();
+
+                if (!follower.isBusy() || waitSecs(6)) {
+                    if (!intake.haveBall()) {
+                        resetActionTimer();
+                        pathState = PathState.OUT;
+                    } else {
+                        resetActionTimer();
+                        pathState = PathState.TO_SHOOT;
+                    }
+                }
+                break;
+
             case TO_SHOOT:
                 shooter.rotateTurret(turnTableAngle);
 
-                if(spikeMark == 1){
-                    if (!follower.isBusy() || waitSecs(5)) {
-                        follower.followPath(paths.collectToShoot(), 0.9, true);
-                        resetActionTimer();
-                        pathState = PathState.SHOOT;
-                    }
-                } else if(spikeMark == 2){
-                    if (!follower.isBusy() || waitSecs(5)) {
+                if(!follower.isBusy()) {
+                    if (spikeMark == 1) {
+                        if (waitSecs(5)) {
+                            follower.followPath(paths.collectToShoot(), 0.9, true);
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    } else if (spikeMark == 2) {
+                        if (waitSecs(5)) {
+                            follower.followPath(paths.collectToShoot2(), 0.9, true);
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    } else if (waitSecs(2)) {
                         follower.followPath(paths.collectToShoot2(), 0.9, true);
                         resetActionTimer();
                         pathState = PathState.SHOOT;
                     }
-                } else if(!follower.isBusy() || waitSecs(2)){
-                    follower.followPath(paths.collectToShoot2(), 0.9, true);
-                    resetActionTimer();
-                    pathState = PathState.SHOOT;
                 }
                 break;
 
             case SHOOT:
-                if(!follower.isBusy()) {
-                    //shooter.rotateTurret(turnTableAngle);
-                    if (waitSecs(1)){
-                        intake.allTheWaySlow();//go all the way to shoot
-                        resetActionTimer();
-                        pathState = PathState.INTAKE;
-                    }
+                if ( !follower.isBusy() && waitSecs(1)) {
+                    intake.allTheWaySlow();//go all the way to shoot
+                    resetActionTimer();
+                    pathState = PathState.INTAKE;
                 }
                 break;
 
@@ -141,14 +140,10 @@ public class FarAuto extends OpMode {
                         pathState = PathState.TO_SHOOT;
                     } else if (spikeMark == 2) {
                         follower.followPath(paths.shootTo2(), 0.8, false);
-                        if (!intake.haveBall()) {
-                            resetActionTimer();
-                            pathState = PathState.OUT;
-                        } else {
-                            resetActionTimer();
-                            pathState = PathState.TO_SHOOT;
-                        }
+                        resetActionTimer();
+                        pathState = PathState.TO_SHOOT;
                     } else if (spikeMark < 5 && spikeMark > 2){
+                        count = 0;
                         resetActionTimer();
                         pathState = PathState.DETECT;
                     } else if (spikeMark >= 6){
@@ -160,7 +155,7 @@ public class FarAuto extends OpMode {
                 break;
 
             case OUT:
-                if (!follower.isBusy() || waitSecs(1)) {
+                if (!follower.isBusy()) {
                     follower.followPath(paths.out(), 0.8, false);
                     if (!intake.haveBall()) {
                         resetActionTimer();
@@ -173,7 +168,7 @@ public class FarAuto extends OpMode {
                 break;
 
             case IN:
-                if (!follower.isBusy() || waitSecs(0.75)) {
+                if (!follower.isBusy()) {
                     follower.followPath(paths.in(), 0.8, false);
                     if (!intake.haveBall() && waitSecs(1)) {
                         resetActionTimer();

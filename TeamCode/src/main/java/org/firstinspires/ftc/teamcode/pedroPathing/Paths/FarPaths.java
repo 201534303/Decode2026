@@ -43,7 +43,6 @@ public class FarPaths extends Paths{
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose))
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
-                .setTValueConstraint(.98)
                 .build();
     }
 
@@ -52,7 +51,6 @@ public class FarPaths extends Paths{
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose2))
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose2.getHeading())
-                .setTValueConstraint(.98)
                 .build();
     }
 
@@ -67,7 +65,7 @@ public class FarPaths extends Paths{
         }
 
         if (newY < 9){ newY = 9; }
-        if (newX > 130){ newX = 130; }
+        //if (newX > 130){ newX = 130; }
 
         final Pose ballCollect = new Pose(newX, newY);
         return follower.pathBuilder()
@@ -99,7 +97,7 @@ public class FarPaths extends Paths{
     }
 
     public PathChain shootTo2(){ return bezierLine(shootPose, ballCollect2); }
-    public PathChain shootToPark(){ return bezierLine(shootPose, park); }
+    public PathChain shootToPark(){ return bezierLine(shootPose2, park); }
 
     public PathChain outSet(){ return bezierLine(ballCollect2, out); }
 
@@ -121,8 +119,4 @@ public class FarPaths extends Paths{
         inOut1 = new Pose(inOut1.getX(), inOut1.getY());
         return bezierLine(inOut2, inOut1);
     }
-
-
-
-
 }
