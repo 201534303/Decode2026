@@ -169,9 +169,9 @@ public class RobotActions {
 
     //UPDATE
 
-    public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
+    public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
         double[] velocities = getVelocities(currentColor, vel, x, y);
-        double rVel = velocities[0];
+        //double rVel = velocities[0];
         double tVel = velocities[0];
         if (turretOn){
             updateTurret(currentColor, tVel, x, y, heading);
@@ -256,12 +256,12 @@ public class RobotActions {
         double speed = 0;
 
         if(dist > 120){//far zone
-            shooter.setHood(0.1);
+            shooter.setHood(0.18);
             speed = -1252.949 + 593.055*Math.log(dist);
             //593.005
         }
         else if(dist > 77) { //most of near zone
-            shooter.setHood(0.30);
+            shooter.setHood(0.35);
             speed = 0.723027*dist+1458.89853;
         }
         else if(dist > 72){ //getting close
@@ -277,7 +277,7 @@ public class RobotActions {
             speed = 0;
         }
 
-        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
+        shooter.flywheelSpin(speed, shooter.getMotorVel(), rVel);
     }
 
     private double[] getVelocities(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY) {

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.teleOp;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.BLUE;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.RED;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
@@ -56,6 +58,9 @@ public class MainTeleOpBetter extends OpMode {
     private boolean movingOrRotating;
     private double storedTurAngle = 0;
     LimelightProcessor_v3Tele ll;
+    private Telemetry dash;
+    public static double kf = 12;
+
 
     @Override
     public void init() {
@@ -80,6 +85,8 @@ public class MainTeleOpBetter extends OpMode {
 
         //robot
         robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry);
+        FtcDashboard dashboard = FtcDashboard.getInstance();
+        dash = dashboard.getTelemetry();
     }
 
     @Override
@@ -201,9 +208,11 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
         telemetry.addData("hertz", hertz);
-        robot.update(currentColor, turretOn, x, y, heading, vel);
+        dash.addData("current vel", shooter.getMotorVel());
+        robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
         telemetry.update();
+        dash.update();
         if (follower.getVelocity().getMagnitude() < 0.05) {
             moving = false;
         } else {
