@@ -179,7 +179,7 @@ public class RobotActions {
         if (!turretOn){
             shooter.rotateTurret(0);
         }
-        updateShooter(currentColor, rVel, x, y);
+        updateShooter(currentColor, rVel, x, y, rVel);
     }
 
     public void updateShooterTesting(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
@@ -239,7 +239,7 @@ public class RobotActions {
     }
 
 
-    private void updateShooter(OLDChoose.Alliance currentColor, double rVel, double posX, double posY) {
+    private void updateShooter(OLDChoose.Alliance currentColor, double rVel, double posX, double posY, double regTest) {
         double dist = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){
@@ -256,8 +256,8 @@ public class RobotActions {
         double speed = 0;
 
         if(dist > 120){//far zone
-            shooter.setHood(0.18);
-            speed = -1252.949 + 593.055*Math.log(dist);
+            shooter.setHood(0.225);
+            speed = -1252.949 + 593.005*Math.log(dist);
             //593.005
         }
         else if(dist > 77) { //most of near zone

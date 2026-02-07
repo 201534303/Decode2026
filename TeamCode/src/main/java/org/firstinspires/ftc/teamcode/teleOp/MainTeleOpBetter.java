@@ -59,7 +59,7 @@ public class MainTeleOpBetter extends OpMode {
     private double storedTurAngle = 0;
     LimelightProcessor_v3Tele ll;
     private Telemetry dash;
-    public static double kf = 12;
+    public static double kf = 0.59;
 
 
     @Override

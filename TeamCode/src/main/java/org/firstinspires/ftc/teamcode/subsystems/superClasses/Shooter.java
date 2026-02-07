@@ -58,7 +58,7 @@ public class Shooter {
 
     public double getMotorVel(){
         //in ticks/sec - gobilda bare is 28 tps
-        return shooterL.getVelocity();
+        return (shooterL.getVelocity() + shooterR.getVelocity())/2;
     }
 
     public double getMotorRPM(){
@@ -81,12 +81,19 @@ public class Shooter {
     }
 
     public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
-        double speed = PIDF(targetVelo-currentVelo, targetVelo, 13.5,0,0.12,0.59);
+        //double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.12,0.59);
+        shooterR.setVeloCoefficients(12, 0, 0.12);
+        shooterL.setVeloCoefficients(12, 0, 0.12);
+        shooterR.setFeedforwardCoefficients(0, 2.4, 0);
+        shooterL.setFeedforwardCoefficients(0, 2.4, 0);
         //12, 0.59 13
-        shooterR.setVelocity(speed);
-        shooterL.setVelocity(speed);
+        shooterR.setVelocity(targetVelo);
+        shooterL.setVelocity(targetVelo);
         telemetry.addData("target velocity", Math.round(targetVelo*100)/100.0);
         telemetry.addData("current velocity", Math.round(currentVelo*100)/100.0);
+        //telemetry.addData("current velocityR", shooterR.getVelocity());
+        //telemetry.addData("current velocityL", shooterL.getVelocity());
+
     }
 
     public void rotateTurret(double theta){
