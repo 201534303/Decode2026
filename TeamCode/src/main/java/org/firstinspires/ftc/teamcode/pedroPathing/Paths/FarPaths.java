@@ -26,10 +26,20 @@ public class FarPaths extends Paths{
     private Pose outGet;
     private Pose ballCollectVision;
     private Pose ballCollectOut;
+    OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
 
-    public boolean bluePath(OLDChoose.Alliance alliance) {
-        if (alliance == OLDChoose.Alliance.BLUE) {
-
+    public boolean bluePath(OLDChoose.Alliance getAlliance) {
+        if (getAlliance == OLDChoose.Alliance.BLUE) {
+            this.alliance = getAlliance;
+            startPose = startPose.mirror();
+            ballCollect1 = ballCollect1.mirror();
+            ballCollect1Out = ballCollect1Out.mirror();
+            ballCollect1Mid = ballCollect1Mid.mirror();
+            shootPose = shootPose.mirror();
+            shootPose2 = shootPose2.mirror();
+            ballCollect2 = ballCollect2.mirror();
+            out = out.mirror();
+            park = park.mirror();
             return true;
         }
         return false;
