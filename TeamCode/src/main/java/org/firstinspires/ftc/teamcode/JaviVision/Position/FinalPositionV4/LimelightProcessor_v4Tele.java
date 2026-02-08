@@ -29,6 +29,7 @@ public class LimelightProcessor_v4Tele {
     // ------------------------------------------------------------
     public void updateTele(double imuYawDeg, double x, boolean y) {
 
+        limelight.updateRobotOrientation(imuYawDeg);
         LLResult result = limelight.getLatestResult();
         if (result == null || !result.isValid()) {
             pose.valid = false;
@@ -49,10 +50,6 @@ public class LimelightProcessor_v4Tele {
 
         // --- Orientation ---
         YawPitchRollAngles rot = botPose.getOrientation();
-        double mtYawRad = Math.toRadians(rot.getYaw());
-
-        // --- Optional: IMU fusion (recommended) ---
-        double imuYawRad = Math.toRadians(imuYawDeg);
 
         // Use MT2 yaw only when robot is stable
         pose.yaw = pose.heading;
