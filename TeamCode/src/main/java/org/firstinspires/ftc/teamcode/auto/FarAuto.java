@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,8 +16,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "FarAuto")
-
+//@Autonomous(name = "FarAuto")
+@Disabled
 public class FarAuto extends OpMode {
     private Follower follower;
     private Timer actionTimer;
@@ -73,7 +74,7 @@ public class FarAuto extends OpMode {
                                 count += 1;
                                 resetActionTimer();
                             } else {
-                                follower.followPath(paths.to(x, y), 0.8, true);
+                                //follower.followPath(paths.to(x, y), 0.8, true);
                                 resetActionTimer();
                                 pathState = PathState.WAIT;
                             }
@@ -156,7 +157,7 @@ public class FarAuto extends OpMode {
 
             case OUT:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.out(), 0.8, false);
+                    follower.followPath(paths.outSet(), 0.8, false);
                     if (!intake.haveBall()) {
                         resetActionTimer();
                         pathState = PathState.IN;
@@ -169,7 +170,7 @@ public class FarAuto extends OpMode {
 
             case IN:
                 if (!follower.isBusy()) {
-                    follower.followPath(paths.in(), 0.8, false);
+                    follower.followPath(paths.inSet(), 0.8, false);
                     if (!intake.haveBall() && waitSecs(1)) {
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;

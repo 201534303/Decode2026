@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 @Disabled
+//@Autonomous(name = "OOOLLLD Far")
 public class OLDFarAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
