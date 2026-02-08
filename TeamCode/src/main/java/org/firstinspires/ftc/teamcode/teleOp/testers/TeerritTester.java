@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleOp;
+package org.firstinspires.ftc.teamcode.teleOp.testers;
 
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.BLUE;
 import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.RED;
@@ -25,9 +25,9 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import java.util.concurrent.TimeUnit;
 
 
-@TeleOp(name="Two Driver Tele", group="Iterative OpMode")
+@TeleOp(name="TeerritTester", group="Iterative OpMode")
 @Config
-public class MainTeleOpBetter extends OpMode {
+public class TeerritTester extends OpMode {
 
     //choose
     private OLDChoose choose;
@@ -61,8 +61,6 @@ public class MainTeleOpBetter extends OpMode {
     LimelightProcessor_v3Tele ll;
     private Telemetry dash;
     public static double kf = 0.59;
-
-    double mul = 1.0;
 
 
     @Override
@@ -190,6 +188,19 @@ public class MainTeleOpBetter extends OpMode {
             }
         }
 
+        if(gamepad2.dpadUpWasPressed()){
+            turretAngle -= 0.05;
+        }
+        if(gamepad2.dpadDownWasPressed()){
+            turretAngle += 0.05;
+        }
+        if(gamepad2.dpadLeftWasPressed()){
+            turretAngle -= 0.005;
+        }
+        if(gamepad2.dpadRightWasPressed()){
+            turretAngle += 0.005;
+        }
+
 
         robot.fieldCentricDrive(currentColor, heading);
 
@@ -200,14 +211,6 @@ public class MainTeleOpBetter extends OpMode {
 
         robot.updateIntake();
         robot.updateTransfer(currentColor, vel, x, y);
-
-        if(gamepad2.dpadUpWasPressed()){
-            mul -= 0.05;
-        }
-        if(gamepad2.dpadDownWasPressed()){
-            mul += 0.05;
-        }
-
 
         /*
         --------------------------UPDATE--------------------------
@@ -220,8 +223,9 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
         telemetry.addData("hertz", hertz);
         dash.addData("current vel", shooter.getMotorVel());
-        telemetry.addData("mul", mul);
-        robot.updateTurretTest(currentColor, turretOn, x, y, heading, vel, kf, mul);
+        shooter.seTurretRaw(turretAngle);
+        telemetry.addData("turret", turretAngle);
+        robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
         telemetry.update();
         dash.update();
