@@ -113,6 +113,23 @@ public class Shooter {
         left.setPosition(theta);
         telemetry.addData("turret", Math.round(theta*100)/100.0);
     }
+    public void rotateTurretOld(double theta){
+        theta = normalizeDeg(theta);
+
+        //hard stops
+        if (theta > 75){
+            theta = 75;
+        }
+        if (theta < -75){
+            theta = -75;
+        }
+
+        //setting it
+        theta = 0.48 /*center*/ + theta * (1/(71.35*2));
+        right.setPosition(theta);
+        left.setPosition(theta);
+        telemetry.addData("turret", Math.round(theta*100)/100.0);
+    }
 
     public void rotateTurret(double theta, double mul){
         theta = normalizeDeg(theta);

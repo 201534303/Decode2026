@@ -19,9 +19,9 @@ public class SelfeeCloseAuto extends OpMode {
     //ROBOT
     private IntakeAuto intake;
     private ShooterAuto shooter;
-    private double turnTableAngle = 47.5;
+    private double turnTableAngle = 55;
     private double hoodHeight = 0.6;//0.4;//
-    private int targetV = 1300;
+    private int targetV = 1200;
     private double x = 0.0;
 
     //AUTO
@@ -40,6 +40,7 @@ public class SelfeeCloseAuto extends OpMode {
     private boolean isMirror = false;
     private boolean readyAlliance = false;
     private boolean done = false;
+    private boolean ready = false;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }//resets timer
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -59,26 +60,22 @@ public class SelfeeCloseAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                follower.followPath(paths.fistToShoot(), 0.8, true);
                 resetActionTimer();
                 pathState = PathState.SHOOT;
                 break;
 
-            case TEST:
-                intake.intakeIn();
-                break;
-
             case TO_SHOOT:
-                if(!follower.isBusy() || waitSecs(3)){
-                    if(spikeMark == 5){
-                        if (intake.haveBall() || waitSecs(1)){
-                            follower.followPath(paths.collectToShoot(), 0.9, true);
+                if(!follower.isBusy()){
+                    if (spikeMark == 1) {
+                        if (intake.haveBall() || waitSecs(2)) {
+                            follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
-                    } else if (spikeMark == 1){
-                        if (intake.haveBall() || waitSecs(2) ) {
-                            follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
+                    }
+                    if(spikeMark == 5){
+                        if (intake.haveBall() || waitSecs(1)){
+                            follower.followPath(paths.collectToShoot(), 0.9, true);
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
@@ -94,13 +91,31 @@ public class SelfeeCloseAuto extends OpMode {
                 break;
 
             case SHOOT:
-                shooter.rotateTurret(turnTableAngle);
-                shooter.setHood(hoodHeight);
+                if(waitSecs(1.25) && !ready){
+                    ready = true;
+                }
 
-                if(!follower.isBusy() && waitSecs(1)) {
-                    intake.allTheWay();//run intake + transfer all the way to shoot
+                if(waitSecs(0.25) && ready){
+                    intake.allTheWay();
+                    targetV += 500;
                     resetActionTimer();
-                    pathState = PathState.INTAKE;
+                }
+
+                if(!follower.isBusy()) {
+                    //shooter.rotateTurret(turnTableAngle);
+                    shooter.setHood(hoodHeight);
+
+                    if(spikeMark == 0){
+                        follower.followPath(paths.fistToShoot(), 0.9, true);
+
+                        if (follower.atParametricEnd()){
+                            resetActionTimer();
+                            pathState = PathState.INTAKE;
+                        }
+                    }
+//                    intake.allTheWay();//run intake + transfer all the way to shoot
+//                    resetActionTimer();
+//                    pathState = PathState.INTAKE;
                 }
                 break;
 
@@ -111,7 +126,6 @@ public class SelfeeCloseAuto extends OpMode {
 
                     spikeMark += 1;
                     if (spikeMark == 6) {
-                        //follower.followPath(paths.shootToPark(), 0.8, true);
                         follower.followPath(paths.toStart(), 0.8, true);
 
                         resetActionTimer();
@@ -124,7 +138,6 @@ public class SelfeeCloseAuto extends OpMode {
 
                     if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4){
                         resetActionTimer();
-                        //pathState = PathState.TO_SHOOT;
                         pathState = PathState.OUT;
                     } else {
                         resetActionTimer();
@@ -189,7 +202,8 @@ public class SelfeeCloseAuto extends OpMode {
         follower.setStartingPose(paths.startPose);//sets up the starting pose
 
         if(isMirror) {turnTableAngle = -43; }//if it's mirrored turn the turntable
-        shooter.rotateTurret(turnTableAngle);//rotates the turntable
+        //shooter.rotateTurret(turnTableAngle);//rotates the turntable
+        shooter.rotateTurret(70);
 
         runtime.reset();//resets overall timer
         //actionTimer.resetTimer();//resets path timer
