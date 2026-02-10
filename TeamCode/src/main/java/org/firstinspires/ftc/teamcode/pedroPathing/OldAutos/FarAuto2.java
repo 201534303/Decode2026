@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 //@Autonomous(name = "FarAuto")
 @Disabled
-public class FarAuto extends OpMode {
+public class FarAuto2 extends OpMode {
     private Follower follower;
     private Timer actionTimer;
     private FarPaths paths;
