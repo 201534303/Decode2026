@@ -92,13 +92,7 @@ public class FarAutoAttempt2 extends OpMode {
                             resetActionTimer();
                             pathState = PathState.INTAKE;
                         }
-                    } else if (spikeMark == 2) {
-                        if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            spikeMark += 1;
-                            pathState = PathState.DETECT;
-                        }
-                    } else if (spikeMark == 3) {
+                    } else if (spikeMark == 2 || spikeMark == 3) {
                         if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
                             resetActionTimer();
                             spikeMark += 1;
@@ -328,7 +322,7 @@ public class FarAutoAttempt2 extends OpMode {
                             pathState = PathState.SHOOT;
                         } else if (follower.isRobotStuck()){
                             if(stuckRun == 0) {
-                                follower.followPath(paths.unstuck(), 0.8, false);
+                                follower.followPath(paths.unstuck(), 0.8, false);//test this
                                 stuckRun += 1;
                             }
                             if(follower.atParametricEnd()){
