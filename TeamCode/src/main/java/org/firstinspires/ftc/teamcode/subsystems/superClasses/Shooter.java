@@ -29,6 +29,7 @@ public class Shooter {
     protected Servo hood;
     Servo right, left;
     AnalogInput leftEnc;
+    private double thetaT;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r){
         //init servos and motors
@@ -99,23 +100,7 @@ public class Shooter {
     public void rotateTurret(double theta){
         theta = normalizeDeg(theta);
 
-        //hard stops
-        if (theta > 75){
-            theta = 75;
-        }
-        if (theta < -75){
-            theta = -75;
-        }
-
-        //setting it
-        theta = 0.48 /*center*/ + theta * (1.0*1.74/(360.0));
-        right.setPosition(theta);
-        left.setPosition(theta);
-        telemetry.addData("turret", Math.round(theta*100)/100.0);
-    }
-
-    public void rotateTurret(double theta, double mul){
-        theta = normalizeDeg(theta);
+        thetaT = theta;
 
         //hard stops
         if (theta > 75){
@@ -126,12 +111,11 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.48 /*center*/ + theta * (.0048333) * mul;
+        theta = 0.48 /*center*/ + theta * (.0048333) * 1.3;
         right.setPosition(theta);
         left.setPosition(theta);
         telemetry.addData("turret", Math.round(theta*100)/100.0);
     }
-
 
     public void seTurretRaw(double theta){
         right.setPosition(theta);
@@ -176,6 +160,9 @@ public class Shooter {
 
     public double servoPos(){
         return hood.getPosition();
+    }
+    public double getTurret(){
+        return thetaT;
     }
 
 }
