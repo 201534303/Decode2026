@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 
@@ -35,6 +36,7 @@ public class RobotActions {
 
     //localization
     private Follower follower;
+    private Lights light;
 
     //constants
     private final Pose HOMING = new Pose(72, 3, Math.toRadians(90));
@@ -54,7 +56,7 @@ public class RobotActions {
     private final double CONSTY = 13.375;
     private final double fieldLength = 144;
 
-    public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te){
+    public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
         gamepad1 = g1;
         gamepad2 = g2;
         drivetrain = dt;
@@ -63,6 +65,7 @@ public class RobotActions {
         follower = fo;
         overallRuntime = ru;
         telemetry = te;
+        light = li;
     }
 
     public void setLocalizationBack() {
@@ -127,10 +130,7 @@ public class RobotActions {
         intake.intakeIn();
         intake.intakeMachine();
         if (intake.haveBall()){
-            intake.yesBallLight();
             gamepad2.rumble(500);
-        } else {
-            intake.noBallLight();
         }
     }
 
@@ -247,7 +247,7 @@ public class RobotActions {
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
-        shooter.rotateTurret(turretAngle, mul);
+        shooter.rotateTurret(turretAngle);
         turAngle = turretAngle;
     }
 
@@ -372,21 +372,4 @@ public class RobotActions {
 
         return new double[] { vRadial, vTangential };
     }
-
-    /*public static double[] subsystemFieldXY(double x, double y, double thetaRad) {
-        // Subsystem offset in ROBOT coordinates (inches)
-        double dx = -5.0;  // behind center
-        double dy =  0.0;  // not left/right
-
-        // Rotate offset into FIELD coordinates
-        double dxField = dx * Math.cos(thetaRad) - dy * Math.sin(thetaRad);
-        double dyField = dx * Math.sin(thetaRad) + dy * Math.cos(thetaRad);
-
-        double subX = x + dxField;
-        double subY = y + dyField;
-
-        return new double[]{subX, subY};
-    }
-
-     */
 }

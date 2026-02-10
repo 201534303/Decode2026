@@ -27,7 +27,6 @@ public class Intake {
     protected DcMotorEx intake;
     protected MotorEx transfer;
     DigitalChannel right,left;
-    Servo taillight;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
     protected Telemetry telemetry;
@@ -42,7 +41,6 @@ public class Intake {
         transfer = new MotorEx(hardwareMap, "transfer");
         right = hardwareMap.get(DigitalChannel.class, "distRight");
         left = hardwareMap.get(DigitalChannel.class, "distLeft");
-        taillight = hardwareMap.get(Servo.class, "taillight");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         //transfer.setRunMode(MotorEx.RunMode.VelocityControl);
@@ -113,13 +111,6 @@ public class Intake {
 
     public boolean haveBall(){
         return right.getState() || left.getState() == true;
-    }
-
-    public void noBallLight(){
-        taillight.setPosition(0.3);
-    }
-    public void yesBallLight(){
-        taillight.setPosition(0.5);
     }
 
 

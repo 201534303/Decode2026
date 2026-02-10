@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 import java.util.concurrent.TimeUnit;
@@ -40,7 +41,7 @@ public class MainTeleOpBetter extends OpMode {
     private Drivetrain drivetrain;
     private Intake intake;
     private Shooter shooter;
-    private double turretAngle = 0.48;
+    private Lights light;
 
     //localization
     private Follower follower;
@@ -62,9 +63,6 @@ public class MainTeleOpBetter extends OpMode {
     private Telemetry dash;
     public static double kf = 0.59;
 
-    double mul = 1.0;
-
-
     @Override
     public void init() {
         ll = new LimelightProcessor_v3Tele(hardwareMap);
@@ -82,12 +80,13 @@ public class MainTeleOpBetter extends OpMode {
         drivetrain = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, overallRuntime);
         shooter = new Shooter(hardwareMap, telemetry, overallRuntime);
+        light = new Lights(hardwareMap, overallRuntime, telemetry);
 
         //telemetry
         telemetry.addData("Status", "Initialized");
 
         //robot
-        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry);
+        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, light);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
     }
@@ -166,6 +165,7 @@ public class MainTeleOpBetter extends OpMode {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
                 gamepad1.rumble(500);
                 counter = 0;
+                light.scheduleRelocalizeReminder(new double[]{0.80, 0.23, 0.80, 0.1}, 500, 30000, 2000);
             }
         }
         else {
@@ -201,13 +201,6 @@ public class MainTeleOpBetter extends OpMode {
         robot.updateIntake();
         robot.updateTransfer(currentColor, vel, x, y);
 
-        if(gamepad2.dpadUpWasPressed()){
-            mul -= 0.05;
-        }
-        if(gamepad2.dpadDownWasPressed()){
-            mul += 0.05;
-        }
-
 
         /*
         --------------------------UPDATE--------------------------
@@ -220,11 +213,48 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
         telemetry.addData("hertz", hertz);
         dash.addData("current vel", shooter.getMotorVel());
-        telemetry.addData("mul", mul);
-        robot.updateTurretTest(currentColor, turretOn, x, y, heading, vel, kf, mul);
+        robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
+
+        if(currentColor == OLDChoose.Alliance.BLUE){
+            x = -x;
+            y = 144-y;
+        }
+
+        if(currentColor == OLDChoose.Alliance.RED){
+            x = 144-y;
+            y = 144-y;
+        }
+
+        double dist = Math.hypot(x, y);
+
+        if(intake.haveBall()){
+            if(dist < 65){
+                light.setIndicatorLight(new double[]{0.50, 0.65}, 700);
+            }
+            else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
+                light.setIndicatorLight(new double[]{0.50, 0.38}, 700);
+            }
+            else{
+                light.setIndicatorLight(new double[]{0.50}, 700);
+            }
+        }
+        else {
+            if(dist < 65){
+                light.setIndicatorLight(new double[]{0.28, 0.60}, 700);
+            }
+            else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
+                light.setIndicatorLight(new double[]{0.28, 0.38}, 700);
+            }
+            else{
+                light.setIndicatorLight(new double[]{0.28}, 700);
+            }
+        }
+
+        light.update();
         telemetry.update();
         dash.update();
+
         if (follower.getVelocity().getMagnitude() < 0.05) {
             moving = false;
         } else {
