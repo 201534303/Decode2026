@@ -13,7 +13,7 @@ public class ClosePaths extends Paths{
     }
 
     public Pose startPose = makePos(118, 132, -54); // Start Pose of our robot.
-    public Pose shootPose = makePos(90, 85);
+    public Pose shootPose = makePos(90, 95);
     public Pose ballCollect1 = makePos(130, 63);
     public Pose ballCollectMid1 = new Pose(100, 55);
     public Pose ballCollectMid2 = new Pose(118, 64);
