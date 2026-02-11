@@ -165,7 +165,7 @@ public class MainTeleOpBetter extends OpMode {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
                 gamepad1.rumble(500);
                 counter = 0;
-                light.scheduleRelocalizeReminder(new double[]{0.80, 0.23, 0.80, 0.1}, 500, 30000, 2000);
+                light.setIndicatorLightAdvance(new double[]{0.80, 0.23, 0.80, 0.1}, 500, 30000, 2000);
             }
         }
         else {

@@ -11,28 +11,20 @@ import java.util.Arrays;
 public class Lights {
     private final Servo indicatorLight;
     private final ElapsedTime timer;
-    @SuppressWarnings("unused")
     private final Telemetry telemetry;
-
-    // ---------- Base pattern ----------
-    private double[] baseColors = {0.28};
-    private double baseStepMs = 700;
-
+    private double[] baseColors = {0};
+    private double baseStepMs = 1000; // time between changing colors
     private int baseIndex = 0;
-    private double baseLastStepMs = 0;
 
-    // ---------- Override (advance reminder) ----------
-    private double[] advColors = {0.28, 0.60};
-    private double advStepMs = 300;
+    private double[] advColors = {0};
+    private double advStepMs = 1000;// time between changing colors
 
-    private boolean advArmed = false;     // scheduled but not yet active
-    private boolean advActive = false;    // currently overriding
-    private double advArmTimeMs = 0;      // when scheduled
     private double advDelayMs = 30000;    // wait before starting
     private double advDurationMs = 2000;  // how long it runs once it starts
+    private double advTime = 0;
 
     private int advIndex = 0;
-    private double advLastStepMs = 0;
+    private double lastTime = 0;
 
     public Lights(HardwareMap hardwareMap, ElapsedTime t, Telemetry te) {
         indicatorLight = hardwareMap.get(Servo.class, "taillight");
@@ -40,84 +32,53 @@ public class Lights {
         telemetry = te;
 
         double now = timer.milliseconds();
-        baseLastStepMs = now;
-        advLastStepMs = now;
+        lastTime = now;
     }
 
-    // Set the normal / always-running pattern
     public void setIndicatorLight(double[] colors, double stepMs) {
-        if (colors == null || colors.length == 0) return;
         if (!Arrays.equals(baseColors, colors) || baseStepMs != stepMs) {
             baseColors = colors;
             baseStepMs = stepMs;
             baseIndex = 0;
-            baseLastStepMs = timer.milliseconds();
+            lastTime = timer.milliseconds();
         }
     }
 
-    /**
-     * Schedule a reminder override:
-     * after delayMs, run the adv pattern for durationMs, then return to base.
-     * Calling again RESTARTS the schedule cleanly.
-     */
-    public void scheduleRelocalizeReminder(double[] colors, double stepMs, double delayMs, double durationMs) {
+    public void setIndicatorLightAdvance(double[] colors, double stepMs, double delayMs, double durationMs){
         if (colors == null || colors.length == 0) return;
-
         advColors = colors;
-        advStepMs = stepMs;
-        advDelayMs = delayMs;
-        advDurationMs = durationMs;
 
-        // Re-arm cleanly every time
-        advArmed = true;
-        advActive = false;
-        advArmTimeMs = timer.milliseconds();
+        advStepMs = stepMs; //how long it takes to switch between colors
+        advDelayMs = delayMs; //
+        advDurationMs = durationMs; //how long it runs
 
-        advIndex = 0;
-        advLastStepMs = advArmTimeMs;
+        advTime = timer.milliseconds();
+
     }
 
-    public void cancelReminder() {
-        advArmed = false;
-        advActive = false;
-    }
 
     public void update() {
         double now = timer.milliseconds();
 
-        // Manage reminder state
-        if (advArmed) {
-            double sinceArm = now - advArmTimeMs;
+        double[] use = {0.0};
+        double useTime = 0.0;
 
-            // Start override after delay
-            if (!advActive && sinceArm >= advDelayMs) {
-                advActive = true;
-                advIndex = 0;
-                advLastStepMs = now;
-            }
-
-            // Stop override after duration
-            if (advActive && sinceArm >= advDelayMs + advDurationMs) {
-                advActive = false;
-                advArmed = false; // one-shot
-            }
+        if(advTime > advDelayMs && advTime  < advDelayMs + advDurationMs) {
+            use = advColors;
+            useTime = advStepMs;
+        }
+        else{
+            use = baseColors;
+            useTime = baseStepMs;
         }
 
-        // Choose which pattern to show
-        if (advActive) {
-            // step adv
-            if (advStepMs > 0 && now - advLastStepMs >= advStepMs) {
-                advLastStepMs = now;
-                advIndex = (advIndex + 1) % advColors.length;
-            }
-            indicatorLight.setPosition(advColors[advIndex]);
-        } else {
-            // step base
-            if (baseStepMs > 0 && now - baseLastStepMs >= baseStepMs) {
-                baseLastStepMs = now;
-                baseIndex = (baseIndex + 1) % baseColors.length;
-            }
-            indicatorLight.setPosition(baseColors[baseIndex]);
+        if(now - lastTime > useTime){
+            baseIndex ++;
         }
+        if(baseIndex >= use.length) {
+            baseIndex = 0;
+        }
+
+        indicatorLight.setPosition(use[baseIndex]);
     }
 }
