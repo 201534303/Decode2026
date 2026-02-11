@@ -112,7 +112,7 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.48 /*center*/ + theta * (1.0*1.74/(360.0));
+        theta = 0.48 /*center*/ + theta * (1.0*1.74/(360.0) * 1.3);
         right.setPosition(theta);
         left.setPosition(theta);
         telemetry.addData("turret", Math.round(theta*100)/100.0);

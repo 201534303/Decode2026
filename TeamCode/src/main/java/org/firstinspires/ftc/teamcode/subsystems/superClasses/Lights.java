@@ -63,9 +63,10 @@ public class Lights {
         double[] use = {0.0};
         double useTime = 0.0;
 
-        if(advTime > advDelayMs && advTime  < advDelayMs + advDurationMs) {
+        if(now - advTime > advDelayMs && now - advTime  < advDelayMs + advDurationMs) {
             use = advColors;
             useTime = advStepMs;
+            telemetry.addData("going?", "true");
         }
         else{
             use = baseColors;
@@ -74,6 +75,7 @@ public class Lights {
 
         if(now - lastTime > useTime){
             baseIndex ++;
+            lastTime = now;
         }
         if(baseIndex >= use.length) {
             baseIndex = 0;
