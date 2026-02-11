@@ -112,6 +112,7 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
+
         ll.updateTele(follower.getPose().getHeading(), robot.turAngle, movingOrRotating);
         telemetry.addLine("------");
         telemetry.addLine("angles");
@@ -141,6 +142,18 @@ public class MainTeleOpBetter extends OpMode {
 
         vel = follower.getVelocity();
 
+        if (vel.getMagnitude() < 0.5) {
+            moving = false;
+        } else {
+            rotating = true;
+        }
+        final double margin = Math.toRadians(2);
+        if (storedTurAngle - margin < robot.turAngle && storedTurAngle + margin > robot.turAngle) {
+            rotating = false;
+        } else {
+            rotating = true;
+        }
+
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
          */
@@ -160,12 +173,11 @@ public class MainTeleOpBetter extends OpMode {
         if (gamepad1.dpad_down){
             robot.setLocalizationOurSide(currentColor);
         }
-        if (gamepad1.dpad_up && ll.pose.valid) {
+        if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
             if (counter > 5) {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
                 gamepad1.rumble(500);
                 counter = 0;
-                light.setIndicatorLightAdvance(new double[]{0.80, 0.23, 0.80, 0.1}, 500, 30000, 2000);
             }
         }
         else {
@@ -230,10 +242,10 @@ public class MainTeleOpBetter extends OpMode {
 
         if(intake.haveBall()){
             if(dist < 65){
-                light.setIndicatorLight(new double[]{0.50, 0.65}, 700);
+                light.setIndicatorLight(new double[]{0.50, 0.65}, 500);
             }
             else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
-                light.setIndicatorLight(new double[]{0.50, 0.38}, 700);
+                light.setIndicatorLight(new double[]{0.50, 0.38}, 500);
             }
             else{
                 light.setIndicatorLight(new double[]{0.50}, 700);
@@ -241,10 +253,10 @@ public class MainTeleOpBetter extends OpMode {
         }
         else {
             if(dist < 65){
-                light.setIndicatorLight(new double[]{0.28, 0.60}, 700);
+                light.setIndicatorLight(new double[]{0.28, 0.60}, 500);
             }
             else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
-                light.setIndicatorLight(new double[]{0.28, 0.38}, 700);
+                light.setIndicatorLight(new double[]{0.28, 0.38}, 500);
             }
             else{
                 light.setIndicatorLight(new double[]{0.28}, 700);
@@ -255,17 +267,6 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.update();
         dash.update();
 
-        if (follower.getVelocity().getMagnitude() < 0.05) {
-            moving = false;
-        } else {
-            rotating = true;
-        }
-        final double margin = Math.toRadians(2);
-        if (storedTurAngle - margin < robot.turAngle && storedTurAngle + margin > robot.turAngle) {
-            rotating = false;
-        } else {
-            rotating = true;
-        }
         storedTurAngle = robot.turAngle;
         movingOrRotating = moving || rotating;
     }
