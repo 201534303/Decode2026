@@ -159,11 +159,12 @@ public class RobotActions {
             speedMul = 0.7;
         }
 
-        if(total < 3){
+        if(total < 3 && Math.abs(gamepad2.left_stick_y) > 0.05){
             intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
         }
         else{
-            intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
+            //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
+            intake.setTransferPower(0);
         }
     }
 

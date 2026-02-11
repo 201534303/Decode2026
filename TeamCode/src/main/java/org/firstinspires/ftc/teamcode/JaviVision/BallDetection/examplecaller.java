@@ -23,7 +23,8 @@ public class examplecaller extends OpMode {
         dash = dashboard.getTelemetry();
     }
     public void loop() {// <-- This refreshes pose
-        double[] results = ll.update();
+        // if you change the update functino type you have to change pipeline too!
+        double[] results = ll.updateBall();
         for (double result: results) {
             if (result != 0) {
                 if (result%2==0) {

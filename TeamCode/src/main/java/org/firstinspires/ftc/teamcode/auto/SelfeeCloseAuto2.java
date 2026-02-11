@@ -81,30 +81,20 @@ public class SelfeeCloseAuto2 extends OpMode {
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
-                    } if (spikeMark == 2) {
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
                         follower.followPath(paths.selfeeToShoot(), 0.9, true);
+                        if (follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    } else if(spikeMark == 5){
+                        follower.followPath(paths._2ToShoot(), 0.9, true);
                         if (follower.atParametricEnd()) {
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
                     }
                 }
-//                    } else if (spikeMark == 2 /*&& spikeMark <= 5*/) {
-//                        shooter.setHood(hoodHeight);
-//                        shooter.rotateTurret(turnTableAngle);
-//
-//                        if(!ran) {
-//                            follower.followPath(paths.collectToShoot(), 0.9, true);
-//                            ran = true;
-//                        }
-//                        if(follower.atParametricEnd()) {
-//                            ran = false;
-//                            resetActionTimer();
-//                            pathState = PathState.SHOOT;
-//                        }
-//                    }
-//
-//                }
                 break;
 
             case SHOOT:
@@ -143,7 +133,21 @@ public class SelfeeCloseAuto2 extends OpMode {
                             resetActionTimer();
                             pathState = PathState.OUT;
                         }
+                    } else if (spikeMark == 4){
+                        follower.followPath(paths.shootTo2(), 0.8, true);
 
+                        if (follower.atParametricEnd()) {
+                            spikeMark += 1;
+                            resetActionTimer();
+                            pathState = PathState.TO_SHOOT;
+                        }
+                    } else if (spikeMark == 5){
+                        follower.followPath(paths.shootToPark(), 0.8, true);
+
+                        if (follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.PARK;
+                        }
                     }
                 }
                 break;
