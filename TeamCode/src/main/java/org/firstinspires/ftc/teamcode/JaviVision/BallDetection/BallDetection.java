@@ -22,7 +22,17 @@ public class BallDetection {
     // ------------------------------------------------------------
     public double[] update() {
         // ================= LIMELIGHT =================
+<<<<<<< Updated upstream
         double[] inputs = {2, 0, 0, 0, 255, 255, 255, 0};
+=======
+        double[] purple = {173, 109, 0, 8, 255, 107};
+        double purpleH = 100000 + purple[0]*1000 + purple[3];
+        double purpleS = 100000 + purple[1]*1000 + purple[4];
+        double purpleV = 100000 + purple[2]*1000 + purple[5];
+        double[] green = {};
+        double[] inputs = {2, purpleH, purpleS, purpleV, 1, 0, 0, 0};
+        //                 P, Hmin, Smin, Vmin, Hmax, Smax, vmax, 0
+>>>>>>> Stashed changes
         limelight.updatePythonInputs(inputs);
         LLResult result = limelight.getLatestResult();
         return result.getPythonOutput();
