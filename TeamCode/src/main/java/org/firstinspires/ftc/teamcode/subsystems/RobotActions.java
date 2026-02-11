@@ -164,7 +164,7 @@ public class RobotActions {
         }
         else{
             //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
-            intake.setTransferPower(0);
+            intake.setTransferPower(0.1);
         }
     }
 
