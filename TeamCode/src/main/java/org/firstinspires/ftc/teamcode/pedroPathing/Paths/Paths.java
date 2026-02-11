@@ -29,6 +29,13 @@ abstract class Paths {
                 .build();
     }
 
+    public PathChain bezierCurve(Pose pos1, Pose pos2, Pose pos3, Pose pos4, Pose pose5) {
+        return follower.pathBuilder()
+                .addPath(new BezierCurve(pos1, pos2, pos3, pos4, pose5))
+                .setLinearHeadingInterpolation(pos1.getHeading(), pos3.getHeading())
+                .build();
+    }
+
     public PathChain bezierLine(Pose pos1, Pose pos2){
         return follower.pathBuilder()
                 .addPath(new BezierLine(pos1, pos2))

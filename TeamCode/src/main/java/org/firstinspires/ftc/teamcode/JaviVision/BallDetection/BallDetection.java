@@ -22,6 +22,8 @@ public class BallDetection {
     // ------------------------------------------------------------
     public double[] update() {
         // ================= LIMELIGHT =================
+        double[] inputs = {2, 0, 0, 0, 255, 255, 255, 0};
+        limelight.updatePythonInputs(inputs);
         LLResult result = limelight.getLatestResult();
         return result.getPythonOutput();
     }

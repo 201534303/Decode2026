@@ -100,9 +100,9 @@ public class Shooter {
     public void rotateTurret(double theta){
         theta = normalizeDeg(theta);
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
         thetaT = theta;
-=======
+//=======
         //hard stops
         if (theta > 75){
             theta = 75;
@@ -137,7 +137,7 @@ public class Shooter {
 
     public void rotateTurret(double theta, double mul){
         theta = normalizeDeg(theta);
->>>>>>> ae7eab2f851095a124e4807c045d8b67a59546e8
+//>>>>>>> ae7eab2f851095a124e4807c045d8b67a59546e8
 
         //hard stops
         if (theta > 75){
