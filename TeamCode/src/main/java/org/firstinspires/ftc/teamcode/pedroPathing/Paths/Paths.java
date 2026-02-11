@@ -25,14 +25,14 @@ abstract class Paths {
     public PathChain bezierCurve(Pose pos1, Pose pos2, Pose pos3, Pose pos4) {
         return follower.pathBuilder()
                 .addPath(new BezierCurve(pos1, pos2, pos3, pos4))
-                .setLinearHeadingInterpolation(pos1.getHeading(), pos3.getHeading())
+                .setLinearHeadingInterpolation(pos1.getHeading(), pos4.getHeading())
                 .build();
     }
 
     public PathChain bezierCurve(Pose pos1, Pose pos2, Pose pos3, Pose pos4, Pose pose5) {
         return follower.pathBuilder()
                 .addPath(new BezierCurve(pos1, pos2, pos3, pos4, pose5))
-                .setLinearHeadingInterpolation(pos1.getHeading(), pos3.getHeading())
+                .setLinearHeadingInterpolation(pos1.getHeading(), pose5.getHeading())
                 .build();
     }
 

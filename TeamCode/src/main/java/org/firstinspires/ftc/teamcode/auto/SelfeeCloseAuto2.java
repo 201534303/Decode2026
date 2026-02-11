@@ -4,18 +4,18 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Disabled
-public class SelfeeCloseAuto extends OpMode {
+@Autonomous(name = "SelfeeCloseAuto")
+
+public class SelfeeCloseAuto2 extends OpMode {
     //ROBOT
     private IntakeAuto intake;
     private ShooterAuto shooter;
@@ -31,7 +31,7 @@ public class SelfeeCloseAuto extends OpMode {
     private Timer actionTimer;
     private int spikeMark = 0;
     public enum PathState {
-       START, TO_SHOOT, SHOOT, INTAKE, PARK,
+       START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT,
         OUT, IN
     }
     PathState pathState = PathState.START;
@@ -46,115 +46,105 @@ public class SelfeeCloseAuto extends OpMode {
     public void resetActionTimer(){ actionTimer.resetTimer(); }//resets timer
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
 
-    private  PathChain getCollectPath(int spikeMark){
-        switch (spikeMark) {
-            case 0: return paths.shootTo1();
-            case 1:
-            case 2:
-            case 3:
-                return paths.shootToSelfee();
-            case 4: return paths.shootTo2();
-            default: return null;
-        }
-    }
-
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
                 resetActionTimer();
-                pathState = PathState.SHOOT;
+                pathState = PathState.FIRST_SHOOT;
                 break;
 
-            case TO_SHOOT:
-                if(!follower.isBusy()){
-                    if (spikeMark == 1) {
-                        follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
-                        if(follower.atParametricEnd()) {
-                            resetActionTimer();
-                            pathState = PathState.SHOOT;
-                        }
-                    } else if (spikeMark == 2 /*&& spikeMark <= 5*/) {
-                        shooter.setHood(hoodHeight);
-                        shooter.rotateTurret(turnTableAngle);
-
-                        if(!ran) {
-                            follower.followPath(paths.collectToShoot(), 0.9, true);
-                            ran = true;
-                        }
-                        if(follower.atParametricEnd()) {
-                            ran = false;
-                            resetActionTimer();
-                            pathState = PathState.SHOOT;
-                        }
-                    }
-
+            case FIRST_SHOOT:
+                if (waitSecs(0.75) && !ready) {
+                    ready = true;
                 }
-                break;
-
-            case SHOOT:
-                if(spikeMark == 0) {
-                    if (waitSecs(0.75) && !ready) {
-                        ready = true;
-                    }
-
-                    if (waitSecs(0.25) && ready) {
-                        intake.allTheWay();
-                        targetV += 500;
-                        resetActionTimer();
-                    }
+                if (waitSecs(0.25) && ready) {
+                    intake.allTheWay();
+                    targetV += 500;
+                    resetActionTimer();
                 }
 
                 if(!follower.isBusy()) {
-                    if(spikeMark == 0){
-                        follower.followPath(paths.fistToShoot(), 0.9, true);
+                    follower.followPath(paths.fistToShoot(), 0.9, true);
 
-                        if (follower.atParametricEnd()){
+                    if (follower.atParametricEnd()) {
+                        resetActionTimer();
+                        pathState = PathState.INTAKE;
+                    }
+                }
+                break;
+
+            case TO_SHOOT:
+                if(!follower.isBusy()) {
+                    if (spikeMark == 1) {
+                        follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
+                        if (follower.atParametricEnd()) {
                             resetActionTimer();
-                            pathState = PathState.INTAKE;
+                            pathState = PathState.SHOOT;
+                        }
+                    } if (spikeMark == 2) {
+                        follower.followPath(paths.selfeeToShoot(), 0.9, true);
+                        if (follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
                         }
                     }
-                    else if (spikeMark == 1){
-                        intake.allTheWay();
-                        if(waitSecs(1)){
-                            pathState = PathState.INTAKE;
-                        }
+                }
+//                    } else if (spikeMark == 2 /*&& spikeMark <= 5*/) {
+//                        shooter.setHood(hoodHeight);
+//                        shooter.rotateTurret(turnTableAngle);
+//
+//                        if(!ran) {
+//                            follower.followPath(paths.collectToShoot(), 0.9, true);
+//                            ran = true;
+//                        }
+//                        if(follower.atParametricEnd()) {
+//                            ran = false;
+//                            resetActionTimer();
+//                            pathState = PathState.SHOOT;
+//                        }
+//                    }
+//
+//                }
+                break;
+
+            case SHOOT:
+                if(!follower.isBusy()) {
+                    intake.allTheWay();
+                    if (waitSecs(1)) {
+                        pathState = PathState.INTAKE;
                     }
                 }
                 break;
 
             case INTAKE:
-                if(intake.haveBall() && spikeMark != 5){
+                if(intake.haveBall()){
                     resetActionTimer();
                     spikeMark += 1;
                     pathState = PathState.TO_SHOOT;
                 }
 
-                if (!follower.isBusy()){
+                if (!follower.isBusy()) {
                     intake.transferOff();
                     intake.intakeIn();
 
-//                    if (!ran) {
-//                        PathChain collectPath = getCollectPath(spikeMark);//gets spike mark path
-//                        follower.followPath(collectPath, 0.7, true);
-//                        ran = true;
-//                    }
-
-                    if(spikeMark == 0) {
-                        follower.followPath(paths.shootTo1(), 0.7, true);
+                    if (spikeMark == 0) {
+                        follower.followPath(paths.shootTo1(), 0.8, true);
 
                         if (follower.atParametricEnd()) {
                             spikeMark += 1;
-                            ran = false;
                             resetActionTimer();
-                            //pathState = PathState.TO_SHOOT;
+                            pathState = PathState.TO_SHOOT;
                         }
-                    } /*else if (spikeMark == 2){
-                        if(follower.atParametricEnd() && waitSecs(2) || waitSecs(3)){
-                            ran = false;
+                    } else if (spikeMark == 1 || spikeMark == 2 || spikeMark == 3){
+                        follower.followPath(paths.shootToSelfee(), 0.8, true);
+
+                        if (follower.atParametricEnd() && waitSecs(4) || waitSecs(5)) {
+                            spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.OUT;
                         }
-                    }*/
+
+                    }
                 }
                 break;
 
@@ -164,6 +154,7 @@ public class SelfeeCloseAuto extends OpMode {
                     pathState = PathState.TO_SHOOT;
                 } else if (!follower.isBusy()){
                     follower.followPath(paths.selfeeWiggle1(), 0.7, true);
+
                     if(follower.atParametricEnd()) {
                         resetActionTimer();
                         pathState = PathState.IN;
@@ -236,7 +227,7 @@ public class SelfeeCloseAuto extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
-        telemetry.addData("haveBall", intake.haveBall());
+        //telemetry.addData("haveBall", intake.haveBall());
         telemetry.addData("mirror", isMirror);
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
