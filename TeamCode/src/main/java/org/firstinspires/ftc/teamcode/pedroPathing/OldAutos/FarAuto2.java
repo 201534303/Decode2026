@@ -198,7 +198,7 @@ public class FarAuto2 extends OpMode {
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
-        limelight = new BallDetection(hardwareMap);
+        limelight = new BallDetection(hardwareMap, 0);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
 
@@ -221,7 +221,7 @@ public class FarAuto2 extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
-        double[] results = limelight.update();
+        double[] results = limelight.updateBall();
         x = results[1];
         y = results[0];
         telemetry.addData("detect x", x);
