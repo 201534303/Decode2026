@@ -19,8 +19,8 @@ public class SelfeeCloseAuto2 extends OpMode {
     //ROBOT
     private IntakeAuto intake;
     private ShooterAuto shooter;
-    private double turnTableAngle = 60;
-    private double hoodHeight = 0.4;//0.4;//
+    private double turnTableAngle = 45;
+    private double hoodHeight = 0.30;//0.4;//
     private int targetV = 1200;
     private double x = 0.0;
 
@@ -74,6 +74,9 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case TO_SHOOT:
+                shooter.rotateTurret(turnTableAngle);
+                shooter.setHood(hoodHeight);
+
                 if(!follower.isBusy()) {
                     if (spikeMark == 1) {
                         follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
@@ -81,13 +84,13 @@ public class SelfeeCloseAuto2 extends OpMode {
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
+                    } else if (spikeMark == 2 || spikeMark == 3 /*|| spikeMark == 4*/) {
                         follower.followPath(paths.selfeeToShoot(), 0.9, true);
                         if (follower.atParametricEnd()) {
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
-                    } else if(spikeMark == 5){
+                    } else if(spikeMark == 4){
                         follower.followPath(paths._2ToShoot(), 0.9, true);
                         if (follower.atParametricEnd()) {
                             resetActionTimer();
@@ -118,31 +121,32 @@ public class SelfeeCloseAuto2 extends OpMode {
                     intake.intakeIn();
 
                     if (spikeMark == 0) {
-                        follower.followPath(paths.shootTo1(), 0.8, true);
+                        follower.followPath(paths.shootTo1(), 0.9, true);
+
+                        if (follower.atParametricEnd() && waitSecs(3)) {
+                            spikeMark += 1;
+                            resetActionTimer();
+                            pathState = PathState.TO_SHOOT;
+                        }
+                    } else if (spikeMark == 1 || spikeMark == 2 /*|| spikeMark == 3*/){
+                        follower.followPath(paths.shootToSelfee(), 0.9, true);
+
+                        if (follower.atParametricEnd() && waitSecs(6) || waitSecs(8)) {
+                            spikeMark += 1;
+                            resetActionTimer();
+                            pathState = PathState.TO_SHOOT;
+                            //pathState = PathState.OUT;
+                        }
+                    } else if (spikeMark == 3){
+                        follower.followPath(paths.shootTo2(), 0.9, true);
 
                         if (follower.atParametricEnd()) {
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;
-                        }
-                    } else if (spikeMark == 1 || spikeMark == 2 || spikeMark == 3){
-                        follower.followPath(paths.shootToSelfee(), 0.8, true);
-
-                        if (follower.atParametricEnd() && waitSecs(4) || waitSecs(5)) {
-                            spikeMark += 1;
-                            resetActionTimer();
-                            pathState = PathState.OUT;
                         }
                     } else if (spikeMark == 4){
-                        follower.followPath(paths.shootTo2(), 0.8, true);
-
-                        if (follower.atParametricEnd()) {
-                            spikeMark += 1;
-                            resetActionTimer();
-                            pathState = PathState.TO_SHOOT;
-                        }
-                    } else if (spikeMark == 5){
-                        follower.followPath(paths.shootToPark(), 0.8, true);
+                        follower.followPath(paths.shootToPark(), 0.9, true);
 
                         if (follower.atParametricEnd()) {
                             resetActionTimer();
@@ -157,7 +161,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     resetActionTimer();
                     pathState = PathState.TO_SHOOT;
                 } else if (!follower.isBusy()){
-                    follower.followPath(paths.selfeeWiggle1(), 0.7, true);
+                    follower.followPath(paths.selfeeWiggle1(), 0.8, true);
 
                     if(follower.atParametricEnd()) {
                         resetActionTimer();
@@ -171,7 +175,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     resetActionTimer();
                     pathState = PathState.TO_SHOOT;
                 } else if (!follower.isBusy()){
-                    follower.followPath(paths.selfeeWiggle2(), 0.7, true);
+                    follower.followPath(paths.selfeeWiggle2(), 0.8, true);
                     if(follower.atParametricEnd() || waitSecs(3)) {
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
@@ -196,7 +200,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
-        shooter.setHood(0.85);
+        shooter.setHood(0.80);
     }
 
     public void init_loop(){
@@ -214,7 +218,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
         if(isMirror) {turnTableAngle = -43; }//if it's mirrored turn the turntable
         //shooter.rotateTurret(turnTableAngle);//rotates the turntable
-        shooter.rotateTurret(25);
+        shooter.rotateTurret(13);
 
         runtime.reset();//resets overall timer
         //actionTimer.resetTimer();//resets path timer

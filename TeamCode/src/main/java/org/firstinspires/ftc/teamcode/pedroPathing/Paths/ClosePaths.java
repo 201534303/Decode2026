@@ -13,16 +13,24 @@ public class ClosePaths extends Paths{
     }
 
     public Pose startPose = makePos(126, 120, 35); // Start Pose of our robot.
-    public Pose shootPose0 = makePos(85, 75, 5);
-    public Pose shootPose = makePos(90, 75);
+    public Pose shootPose0 = makePos(85, 80, 35);
+    public Pose shootPose = makePos(88, 77);
+    public Pose shootPose2 = makePos(85, 90);
     public Pose ballCollect1 = makePos(130, 55, 0);
     public Pose ballCollectMid1 = new Pose(90, 50);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(130, 59, 35);
+    public Pose selfee = makePos(130, 60, 35);
     public Pose selfeeWiggle = makePos(127, 57, 35);
     public Pose selfeeMid = new Pose(92.9805447470817, 47.437743190661486);
-    public Pose ballCollect2 = makePos(125, 90);
+    public Pose ballCollect2 = makePos(125, 80);
     public Pose park = makePos(110, 80, 90);
+
+    public Pose reset = makePos(120, 72, 90);
+    public Pose resetMiddle = new Pose(116.135, 74.992);
+
+    public PathChain reset(){
+        return bezierCurve(ballCollect1, resetMiddle, reset);
+    }
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {

@@ -40,6 +40,6 @@ public class IntakeAuto extends Intake {
     }
 
     public void transferOff(){
-        setTransferPower(0);
+        setTransferPower(0.1);
     }
 }

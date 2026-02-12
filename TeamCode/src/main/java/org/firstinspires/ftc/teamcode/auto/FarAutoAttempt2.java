@@ -150,7 +150,7 @@ public class FarAutoAttempt2 extends OpMode {
                 }
 
                 if (count == 0) {
-                    double[] results = limelight.update();
+                    double[] results = limelight.updateBall();
                     x = results[1];
                     y = results[0];
                 }

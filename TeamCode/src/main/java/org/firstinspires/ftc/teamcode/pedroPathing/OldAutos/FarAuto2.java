@@ -221,7 +221,7 @@ public class FarAuto2 extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
-        double[] results = limelight.update();
+        double[] results = limelight.updateBall();
         x = results[1];
         y = results[0];
         telemetry.addData("detect x", x);

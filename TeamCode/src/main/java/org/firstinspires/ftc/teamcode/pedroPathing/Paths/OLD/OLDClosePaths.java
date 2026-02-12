@@ -11,17 +11,17 @@ public class OLDClosePaths extends Paths2 {
 
     public Pose startPose = makePos(125, 128, -52); // Start Pose of our robot.
     public Pose shootPose = makePos(100, 82);
-    public Pose ballCollect1 = makePos(130, 82);
-    public Pose reset = makePos(133, 72, 90);
-    public Pose resetMiddle = new Pose(116.135, 74.992);
+    public Pose ballCollect1 = makePos(135, 85);
+    public Pose reset = makePos(133, 82, 90);
+    public Pose resetMiddle = new Pose(116.135, 84.992);
     public Pose resetMiddle2 = new Pose(115, 65);
     public Pose reset2 = makePos(133, 72, -90);
-    public Pose ballCollect2 = makePos(140, 50);//135, 50
-    public Pose shootTo2Middle = new Pose(61.260700389105054, 46.964980544747085);
-    public Pose ballCollect3 = makePos(135, 28);
-    public Pose ballCollect3Middle = new Pose(65.730, 26.930);
-    public Pose ballCollect4 = makePos(138, 3, -90);//135, 10
-    public Pose ballCollectMiddle4 = makePos(140, 30, -90);//143, 20
+    public Pose ballCollect2 = makePos(150, 60);//135, 50
+    public Pose shootTo2Middle = new Pose(70, 47);
+    public Pose ballCollect3 = makePos(145, 38);
+    public Pose ballCollect3Middle = new Pose(60, 26.930);
+    public Pose ballCollect4 = makePos(140, 8, -90);//135, 10
+    public Pose ballCollectMiddle4 = makePos(130, 30, -90);//143, 20
     public Pose shootTo5Middle = new Pose(92, 5);
     public Pose backUp = makePos(130,25,-90);
     public Pose goUp = makePos(130,5,-90);

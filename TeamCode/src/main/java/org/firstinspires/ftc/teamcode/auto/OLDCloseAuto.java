@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
+package org.firstinspires.ftc.teamcode.auto;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 @Autonomous(name = "OldCloseAuto")
-@Disabled
+//Disabled
 public class OLDCloseAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
@@ -65,16 +64,15 @@ public class OLDCloseAuto extends OpMode {
 
             case SHOOT_COLLECT:
                 if (!follower.isBusy() && waitSecs(0.75)) {//waits 0.5 works
+                    intake.intakeIn();
+                    intake.transferOff();
+
                     PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
                     if (spikeMark <= maxTrips && spikeMark < 4) {//if there is a spike pos
-                        intake.intakeIn();
-                        intake.transferOff();
                         follower.followPath(collectPath, 0.7, true);
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     } else if (spikeMark <= maxTrips && spikeMark < 5) {
-                        intake.intakeIn();
-                        intake.transferOff();
                         follower.followPath(collectPath, 0.9, true);
                         resetActionTimer();
                         pathState = PathState.UP;
