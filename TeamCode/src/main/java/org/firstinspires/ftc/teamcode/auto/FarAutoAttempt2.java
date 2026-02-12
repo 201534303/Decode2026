@@ -359,7 +359,7 @@ public class FarAutoAttempt2 extends OpMode {
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
-        limelight = new BallDetection(hardwareMap);
+        limelight = new BallDetection(hardwareMap, 0);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
 
