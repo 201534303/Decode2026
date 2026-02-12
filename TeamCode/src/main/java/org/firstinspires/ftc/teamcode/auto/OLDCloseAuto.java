@@ -28,8 +28,10 @@ public class OLDCloseAuto extends OpMode {
 
     private int spikeMark = 1;
     private int maxTrips = 4;
+    private boolean reset = false;
+    private boolean once = false;
     public enum PathState {
-        COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
+        INTAKE, TO_SHOOT, SHOOT,
         OFF, RESET, START, UP
     }
     PathState pathState = PathState.START;
@@ -38,93 +40,124 @@ public class OLDCloseAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
-                follower.followPath(paths.startToShoot(), 0.7, true);
                 resetActionTimer();
-                pathState = PathState.SHOOT;
+                pathState = PathState.TO_SHOOT;
                 break;
 
             case SHOOT:
+                intake.allTheWay();
+
                 if(!follower.isBusy()) {
                     if(spikeMark == 3) {
                         if(waitSecs(2)) {
-                            shooter.rotateTurret(47.5);
-                            intake.allTheWay();//go all the way to shoot
                             resetActionTimer();
-                            pathState = PathState.SHOOT_COLLECT;
+                            pathState = PathState.INTAKE;
                         }
                     }
                     else {
-                        shooter.rotateTurret(47.5);
-                        intake.allTheWay();//go all the way to shoot
-                        resetActionTimer();
-                        pathState = PathState.SHOOT_COLLECT;
+                        if(waitSecs(0.75)) {
+                            resetActionTimer();
+                            pathState = PathState.INTAKE;
+                        }
                     }
                 }
                 break;
 
-            case SHOOT_COLLECT:
-                if (!follower.isBusy() && waitSecs(0.75)) {//waits 0.5 works
-                    intake.intakeIn();
+            case INTAKE:
+                if (!follower.isBusy()) {//waits 0.5 works
                     intake.transferOff();
 
                     PathChain collectPath = getCollectPath(spikeMark);//gets spike mark pos
-                    if (spikeMark <= maxTrips && spikeMark < 4) {//if there is a spike pos
+
+                    if (spikeMark < 4) {//if there is a spike pos
                         follower.followPath(collectPath, 0.7, true);
-                        resetActionTimer();
-                        pathState = PathState.COLLECT_SHOOT;
-                    } else if (spikeMark <= maxTrips && spikeMark < 5) {
+                        if(spikeMark == 1){
+                            reset = true;
+                        }
+                        if(follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.TO_SHOOT;
+                        }
+                    } else if (spikeMark < 5) {
                         follower.followPath(collectPath, 0.9, true);
-                        resetActionTimer();
-                        pathState = PathState.UP;
+
+                        if(follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.UP;
+                        }
                     }
                     else { pathState = PathState.OFF; }
                 }
                 break;
 
-            case COLLECT_SHOOT:
-                if (!follower.isBusy() &&  waitSecs(1)) {
-                    intake.setIntakeSpeed(0.5);
-                    if (spikeMark == 1) {
-                        spikeMark--;
-                        follower.followPath(paths.reset(), 0.75, false);
-                        resetActionTimer();
-                        pathState = PathState.RESET;
-                    } else if (spikeMark <= maxTrips && spikeMark < 4){
-                        if (spikeMark < 1){ spikeMark = 1; }
-                        follower.followPath(paths.collectToShoot(), 0.8, true);
-                        spikeMark++;
-                        resetActionTimer();
-                        pathState = PathState.SHOOT;
-                    } else if (spikeMark < 5) {
-                        follower.followPath(paths.collectToShoot(), 0.9, true);
-                        spikeMark++;
-                        resetActionTimer();
-                        pathState = PathState.SHOOT;
-                    } else { pathState = PathState.OFF; }
+            case TO_SHOOT:
+                if(spikeMark != 0) {
+                    shooter.rotateTurret(47.5);
                 }
-                break;
 
-            case RESET:
-                if(!follower.isBusy()) {
-                    if(waitSecs(0.75)){
-                        pathState = PathState.COLLECT_SHOOT;
+                if (!follower.isBusy()) {
+                    if(spikeMark == 0){
+                        follower.followPath(paths.startToShoot(), 0.7, true);
+                        if(follower.atParametricEnd()){
+                            spikeMark += 1;
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    }
+
+                    intake.setIntakeSpeed(0.5);
+                    if (reset) {
+                        follower.followPath(paths.reset(), 0.75, false);
+                        if(follower.atParametricEnd() && waitSecs(0.75)) {
+                            reset = false;
+                            resetActionTimer();
+                            pathState = PathState.TO_SHOOT;
+                        }
+                    } else if (spikeMark < 4){
+                        if(!once) {
+                            follower.followPath(paths.collectToShoot(), 0.8, true);
+                            once = true;
+                        }
+                        if(follower.atParametricEnd()) {
+                            once = false;
+                            spikeMark++;
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    } else if (spikeMark < 5) {
+                        if(!once) {
+                            follower.followPath(paths.collectToShoot(), 0.9, true);
+                            once = true;
+                        }
+                        if(follower.atParametricEnd()) {
+                            once = false;
+                            spikeMark++;
+                            resetActionTimer();
+                            pathState = PathState.SHOOT;
+                        }
+                    } else {
+                        follower.followPath(paths.shootToOut(), 0.7, true);
+
+                        if(follower.atParametricEnd()) {
+                            resetActionTimer();
+                            pathState = PathState.OFF;
+                        }
                     }
                 }
-
                 break;
 
             case UP:
                 if (!follower.isBusy()) {
                     follower.followPath(paths.shootTo4(), 0.6, true);
-                    if (!follower.isBusy() || waitSecs(2)) {
-                        pathState = PathState.COLLECT_SHOOT;
+
+                    if (follower.atParametricEnd() || waitSecs(2)) {
+                        pathState = PathState.TO_SHOOT;
                     }
                 }
                 break;
 
             case OFF:
                 if(!follower.isBusy()) {
-                    follower.followPath(paths.shootToOut(), 0.7, true);
                     shooter.off();
                     intake.intakeOff();
                     intake.transferOff();
