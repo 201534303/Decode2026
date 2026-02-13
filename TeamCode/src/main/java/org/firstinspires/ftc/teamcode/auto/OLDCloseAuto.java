@@ -192,7 +192,7 @@ public class OLDCloseAuto extends OpMode {
     }
 
     public void setUp(){
-        shooter.setHood(0.3);
+        shooter.setHood(0.48);
         shooter.rotateTurret(47.5);
     }
 
@@ -227,7 +227,7 @@ public class OLDCloseAuto extends OpMode {
     }
 
     public void loop() {
-        shooter.closeSlow();
+        shooter.close();
         follower.update();
 
         autonomousPathUpdate();//main auto code
