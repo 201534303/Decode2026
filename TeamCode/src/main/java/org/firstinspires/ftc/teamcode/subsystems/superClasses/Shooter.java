@@ -83,8 +83,8 @@ public class Shooter {
 
     public void flywheelSpin(double targetVelo, double currentVelo, double kf){//kf is a tester varible
         //double speed = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.12,0.59);
-        shooterR.setVeloCoefficients(12, 0, 0.12);
-        shooterL.setVeloCoefficients(12, 0, 0.12);
+        shooterR.setVeloCoefficients(9, 0, 0);
+        shooterL.setVeloCoefficients(9, 0, 0);
         shooterR.setFeedforwardCoefficients(0, 2.4, 0);
         shooterL.setFeedforwardCoefficients(0, 2.4, 0);
         //12, 0.59 13

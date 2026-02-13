@@ -21,6 +21,11 @@ public class ShooterAuto extends Shooter {
         runFlywheel(getMotorVel(), 1520, 0);//1300
     }
 
+    public void closeSlow(){
+        //runFlywheel(getMotorVel(), 1250, 0);//1300
+        runFlywheel(getMotorVel(), 1450, 0);//1300
+    }
+
     public void closeMove(int targetV){
         runFlywheel(getMotorVel(), targetV, 0);//1300
     }
