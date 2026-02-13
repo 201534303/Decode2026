@@ -225,6 +225,14 @@ public class OLDChoose {
         telemetry.addLine("");
     }
 
+    public void displayReadyCloseScreen2() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
+        telemetry.addData("Alliance", selectedAlliance);
+        telemetry.addData("Number of Trips", mark);
+        telemetry.addLine("");
+    }
+
     public Alliance getSelectedAlliance() { return selectedAlliance; }
     public Boolean getSelectedWolfpack() { return wolfpack; }
     public int getMark() {

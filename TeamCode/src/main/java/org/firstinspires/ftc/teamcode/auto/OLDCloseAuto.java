@@ -30,11 +30,14 @@ public class OLDCloseAuto extends OpMode {
     private int maxTrips = 4;
     private boolean reset = false;
     private boolean once = false;
+    private boolean readyTrips = false;
+    private boolean readyAlliance = false;
     public enum PathState {
         INTAKE, TO_SHOOT, SHOOT,
         OFF, RESET, START, UP
     }
     PathState pathState = PathState.START;
+    private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
 
     public void resetActionTimer(){ actionTimer.resetTimer(); }
     public void autonomousPathUpdate() {
@@ -210,12 +213,16 @@ public class OLDCloseAuto extends OpMode {
     }
 
     public void init_loop(){
-        boolean ready = choose.tripsInit();
-        maxTrips = choose.getMark();
-
-        /*if (ready){
+        if (!readyTrips){//run trips selection only if wolfpack false
+            readyTrips = choose.tripsInit();
             maxTrips = choose.getMark();
-        }*/
+        } else if(!readyAlliance) { //run alliance selection
+            readyAlliance = choose.allianceInit();
+            alliance = choose.getSelectedAlliance();
+        } else{
+            choose.displayReadyCloseScreen2();
+        }
+
         telemetry.update();
     }
 

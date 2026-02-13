@@ -37,25 +37,25 @@ public class OLDClosePaths extends Paths2 {
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
-            this.startPose = makePos(19, 128, 232);
-            this.shootPose = makePos(44, 82,180);
-            this.ballCollect1 = makePos(14, 82,180);
-            this.reset = makePos(11, 72, 90);
-            this.resetMiddle = new Pose(27.865, 70,180);
+            this.startPose = startPose.mirror();
+            this.shootPose = shootPose.mirror();
+            this.ballCollect1 = ballCollect1.mirror();
+            this.reset = reset.mirror();
+            this.resetMiddle = resetMiddle.mirror();
             this.resetMiddle2 = resetMiddle2.mirror();
             this.reset2 = reset2.mirror();
-            this.ballCollect2 = makePos(2, 50,180);
-            this.shootTo2Middle = new Pose(83, 47,180);
-            this.ballCollect3 = makePos(2, 28,180);
-            this.ballCollect3Middle = new Pose(78.27, 26.93,180);
-            this.ballCollect4 = ballCollect4.mirror();  //makePos(14, 8, 270);//135, 10
-            this.ballCollectMiddle4 = ballCollectMiddle4.mirror();//makePos(10, 20, 270);//130, 30
-            this.shootTo5Middle = new Pose(52, 5,180);
-            this.backUp = makePos(14,25,270);
-            this.goUp = makePos(14,5,270);
-            this.out = makePos(29, 70,90); // park
+            this.ballCollect2 = ballCollect2.mirror();
+            this.midBack = midBack.mirror();
+            this.shootTo2Middle = shootTo2Middle.mirror();
+            this.ballCollect3 = ballCollect3.mirror();
+            this.ballCollect3Middle = ballCollect3Middle.mirror();
+            this.ballCollect4 = ballCollect4.mirror();
+            this.ballCollectMiddle4 = ballCollectMiddle4.mirror();
+            this.shootTo5Middle = shootTo5Middle.mirror();
+            this.backUp = backUp.mirror();
+            this.goUp = goUp.mirror();
+            this.out = out.mirror();
             this.outDown = outDown.mirror();
-
             return true;
         }
         return false;

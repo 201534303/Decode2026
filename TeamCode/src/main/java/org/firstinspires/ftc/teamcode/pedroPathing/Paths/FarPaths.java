@@ -35,11 +35,13 @@ public class FarPaths extends Paths{
             this.alliance = getAlliance;
             startPose = startPose.mirror();
             ballCollect1 = ballCollect1.mirror();
+            ballCollect12 = ballCollect12.mirror();
             ballCollect1Out = ballCollect1Out.mirror();
             ballCollect1Mid = ballCollect1Mid.mirror();
             shootPose = shootPose.mirror();
             shootPose2 = shootPose2.mirror();
             ballCollect2 = ballCollect2.mirror();
+            ballCollect22 = ballCollect22.mirror();
             out = out.mirror();
             park = park.mirror();
             return true;
