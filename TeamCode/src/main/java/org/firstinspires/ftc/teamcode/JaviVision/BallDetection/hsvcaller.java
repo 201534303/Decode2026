@@ -27,7 +27,8 @@ public class hsvcaller extends OpMode {
         telemetry.addData("Smax", results[4]);
         telemetry.addData("Vmin", results[2]);
         telemetry.addData("Vmax", results[5]);
-        telemetry.addData("wait time", results[6]);
+        telemetry.addData("Hmin 2", results[6]);
+        telemetry.addData("Hmax 2", results[7]);
         telemetry.update();
         //telemetry.update();
         dash.update();

@@ -23,12 +23,15 @@ public class BallDetection {
     // ------------------------------------------------------------
     public double[] updateBall() {
         // ================= LIMELIGHT =================
-        double[] purple = {153, 30, 0, 13, 255, 80};
-        double purpleH = 100000 + purple[0]*1000 + purple[3];
-        double purpleS = 100000 + purple[1]*1000 + purple[4];
-        double purpleV = 100000 + purple[2]*1000 + purple[5];
-        double[] green = {0,0,0,0,0,0};
-        double[] inputs = {1, purpleH, purpleS, purpleV, 0, 0, 0, 0};
+        double[] purple = {164, 13, 84, 255, 5, 58};
+        double purpleH = 100000 + purple[0]*1000 + purple[1];
+        double purpleS = 100000 + purple[2]*1000 + purple[3];
+        double purpleV = 100000 + purple[4]*1000 + purple[5];
+        double[] green = {55,75,125,255,5,71};
+        double greenH = 100000 + green[0]*1000 + green[1];
+        double greenS = 100000 + green[2]*1000 + green[3];
+        double greenV = 100000 + green[4]*1000 + green[5];
+        double[] inputs = {1, purpleH, purpleS, purpleV, 1, greenH, greenS, greenV};
         //             P, Hmin, Smin, Vmin, Hmax, Smax, vmax, 0
         limelight.updatePythonInputs(inputs);
         LLResult result = limelight.getLatestResult();

@@ -19,6 +19,7 @@ public class OLDCloseAuto extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private OLDClosePaths paths;
+    private boolean isMirror = false;
 
     //robot stuff
     private IntakeAuto intake;
@@ -27,7 +28,8 @@ public class OLDCloseAuto extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     private int spikeMark = 0;
-    private int maxTrips = 4;
+    private double turnTableAngle = 47.5;
+    private int maxTrips = 5;
     private boolean reset = false;
     private boolean once = false;
     private boolean readyTrips = false;
@@ -51,7 +53,7 @@ public class OLDCloseAuto extends OpMode {
                 intake.allTheWay();
 
                 if(!follower.isBusy()) {
-                    if(waitSecs(0.75)) {
+                    if(waitSecs(1.25)) {//0.75
                         resetActionTimer();
                         pathState = PathState.INTAKE;
                     }
@@ -63,41 +65,55 @@ public class OLDCloseAuto extends OpMode {
                     intake.intakeIn();
                     intake.transferOffOff();
 
-                    if(spikeMark == 1){
-                        follower.followPath(paths.shootTo1(), 0.8, true);
+                    if(spikeMark == maxTrips){
+                        if (maxTrips <= 1){
+                            follower.followPath(paths.shootToOutDown(), 0.9, true);
+                            if(follower.atParametricEnd()){
+                                resetActionTimer();
+                                pathState = PathState.OFF;
+                            }
+                        } else{
+                            follower.followPath(paths.shootToOut(), 0.9, true);
+                            if(follower.atParametricEnd()){
+                                resetActionTimer();
+                                pathState = PathState.OFF;
+                            }
+                        }
+                    } else if(spikeMark == 1){
+                        follower.followPath(paths.shootTo1(), 0.9, true);
 
                         if(follower.atParametricEnd() && waitSecs(0.5)) {
                             resetActionTimer();
                             pathState = PathState.RESET;
                         }
                     } else if(spikeMark == 2){
-                        follower.followPath(paths.shootTo2(), 0.8, true);
+                        follower.followPath(paths.shootTo2(), 0.9, true);
 
                         if(follower.atParametricEnd() && waitSecs(0.5)) {
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;
                         }
                     } else if(spikeMark == 3){
-                        follower.followPath(paths.shootTo3(), 0.8, true);
+                        follower.followPath(paths.shootTo3(), 0.9, true);
 
                         if(follower.atParametricEnd() && waitSecs(0.5)) {
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;
                         }
                     } else if(spikeMark == 4){
-                        follower.followPath(paths.shootTo4Mid(), 0.8, true);
+                        follower.followPath(paths.shootTo4Mid(), 0.9, true);
 
-                        if(follower.atParametricEnd()) {
+                        if(follower.atParametricEnd() || waitSecs(6)) {
                             resetActionTimer();
                             pathState = PathState.UP;
                         }
-                    } else if(spikeMark == 5){
+                    } /*else if(spikeMark == 5){
                         follower.followPath(paths.shootToOut(), 0.9, true);
                         if(follower.atParametricEnd()){
                             resetActionTimer();
                             pathState = PathState.OFF;
                         }
-                    }
+                    }*/
                 }
                 break;
 
@@ -118,32 +134,32 @@ public class OLDCloseAuto extends OpMode {
             case TO_SHOOT:
                 if (!follower.isBusy()) {
                     if(spikeMark != 0) {
-                        shooter.rotateTurret(47.5);
+                        shooter.rotateTurret(turnTableAngle);
                     }
 
                     if(spikeMark == 0){
-                        follower.followPath(paths.startToShoot(), 0.8, true);
+                        follower.followPath(paths.startToShoot(), 0.9, true);
                         if(follower.atParametricEnd()){
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
                     } else if(spikeMark == 1){
-                        follower.followPath(paths.resetToShoot(), 0.8, true);
+                        follower.followPath(paths.resetToShoot(), 0.9, true);
                         if(follower.atParametricEnd()){
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
                     } else if(spikeMark == 2){
-                        follower.followPath(paths.twoToShoot(), 0.8, true);
+                        follower.followPath(paths.twoToShoot(), 0.9, true);
                         if(follower.atParametricEnd()){
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.SHOOT;
                         }
                     } else if(spikeMark == 3){
-                        follower.followPath(paths.threeToShoot(), 0.8, true);
+                        follower.followPath(paths.threeToShoot(), 0.9, true);
                         if(follower.atParametricEnd()){
                             spikeMark += 1;
                             resetActionTimer();
@@ -193,7 +209,7 @@ public class OLDCloseAuto extends OpMode {
 
     public void setUp(){
         shooter.setHood(0.48);
-        shooter.rotateTurret(47.5);
+        //shooter.rotateTurret(-47.5);
     }
 
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
@@ -203,9 +219,6 @@ public class OLDCloseAuto extends OpMode {
         actionTimer = new Timer();
 
         choose = new OLDChoose(gamepad1, telemetry);
-        follower = Constants.createFollower(hardwareMap);
-        paths = new OLDClosePaths(follower);
-        follower.setStartingPose(paths.startPose);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
 
@@ -243,6 +256,15 @@ public class OLDCloseAuto extends OpMode {
     }
 
     public void start() {
+        follower = Constants.createFollower(hardwareMap);
+        paths = new OLDClosePaths(follower);
+
+        isMirror = paths.bluePath(alliance);
+        follower.setStartingPose(paths.startPose);
+
+        if (isMirror) { turnTableAngle =  -47.5; }
+        shooter.rotateTurret(turnTableAngle);
+
         runtime.reset();
         pathTimer.resetTimer();
         pathState = PathState.START;

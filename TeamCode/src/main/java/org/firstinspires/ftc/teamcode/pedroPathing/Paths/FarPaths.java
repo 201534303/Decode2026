@@ -13,7 +13,7 @@ public class FarPaths extends Paths{
     }
 
     public Pose startPose = makePos(87, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(125, 37);
+    public Pose ballCollect1 = makePos(126, 37);
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
@@ -25,14 +25,16 @@ public class FarPaths extends Paths{
 
     public Pose park = makePos(98, 25, 90);
 
+    public Pose midShoot4 = new Pose(85, 7);
+
     private Pose outGet;
     private Pose ballCollectVision;
     private Pose ballCollectOut;
-    OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
+    //OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
-            this.alliance = getAlliance;
+            //this.alliance = getAlliance;
             startPose = startPose.mirror();
             ballCollect1 = ballCollect1.mirror();
             ballCollect12 = ballCollect12.mirror();
@@ -44,6 +46,7 @@ public class FarPaths extends Paths{
             ballCollect22 = ballCollect22.mirror();
             out = out.mirror();
             park = park.mirror();
+            midShoot4 = midShoot4.mirror();
             return true;
         }
         return false;
@@ -132,7 +135,9 @@ public class FarPaths extends Paths{
 
     public PathChain shootTo2(){ return bezierLine(shootPose, ballCollect2); }
     public PathChain shootTo3(){ return bezierLine(shootPose2, ballCollect1); }
-    public PathChain shootTo4(){ return bezierLine(shootPose2, ballCollect2); }
+    public PathChain shootTo4(){ //return bezierLine(shootPose2, ballCollect2);
+        return bezierCurve(shootPose2, midShoot4, ballCollect2);
+    }
     public PathChain shootToPark(){ return bezierLine(shootPose2, park); }
 
     public PathChain outSet(){ return bezierLine(ballCollect2, out); }

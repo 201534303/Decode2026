@@ -20,6 +20,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private double turnTableAngle = 45;
+    private double turnTableAngleFirst = 13;
     private double hoodHeight = 0.30;//0.4;//
     private int targetV = 1200;
     private double x = 0.0;
@@ -103,7 +104,7 @@ public class SelfeeCloseAuto2 extends OpMode {
             case SHOOT:
                 if(!follower.isBusy()) {
                     intake.allTheWay();
-                    if (waitSecs(1)) {
+                    if (waitSecs(1.25)) {
                         pathState = PathState.INTAKE;
                     }
                 }
@@ -216,12 +217,13 @@ public class SelfeeCloseAuto2 extends OpMode {
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue
         follower.setStartingPose(paths.startPose);//sets up the starting pose
 
-        if(isMirror) {turnTableAngle = -43; }//if it's mirrored turn the turntable
-        //shooter.rotateTurret(turnTableAngle);//rotates the turntable
-        shooter.rotateTurret(13);
+        if(isMirror) {
+            turnTableAngleFirst = -13;
+            turnTableAngle = -45;
+        }//if it's mirrored turn the turntable
+        shooter.rotateTurret(turnTableAngleFirst);
 
         runtime.reset();//resets overall timer
-        //actionTimer.resetTimer();//resets path timer
         pathState = PathState.START;//sets the path state
     }
 
@@ -245,9 +247,5 @@ public class SelfeeCloseAuto2 extends OpMode {
         telemetry.addData("heading", follower.getPose().getHeading());
         telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
-    }
-
-    public void stop(){
-
     }
 }

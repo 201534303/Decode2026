@@ -33,14 +33,14 @@ public class OLDClosePaths extends Paths2 {
     public Pose backUp = makePos(130,25,-90);
     public Pose goUp = makePos(130,5,-90);
     public Pose out = makePos(115, 90, 90);//park
-    public Pose outDown = makePos(130, 100, 90);//park
+    public Pose outDown = makePos(130, 110, 90);//park
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
             this.startPose = startPose.mirror();
             this.shootPose = shootPose.mirror();
             this.ballCollect1 = ballCollect1.mirror();
-            this.reset = reset.mirror();
+            this.reset = makePos(5, 77  , 180);
             this.resetMiddle = resetMiddle.mirror();
             this.resetMiddle2 = resetMiddle2.mirror();
             this.reset2 = reset2.mirror();

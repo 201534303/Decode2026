@@ -34,6 +34,20 @@ public class ClosePaths extends Paths{
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
+            startPose = startPose.mirror(); // Start Pose of our robot.
+            shootPose0 = shootPose0.mirror();
+            shootPose = shootPose.mirror();
+            shootPose2 = shootPose2.mirror();
+            ballCollect1 = ballCollect1.mirror();
+            ballCollectMid1 = ballCollectMid1.mirror();
+            ballCollectMid2 = ballCollectMid2.mirror();
+            selfee = selfee.mirror();
+            selfeeWiggle = selfeeWiggle.mirror();
+            selfeeMid = selfeeMid.mirror();
+            ballCollect2 = ballCollect2.mirror();
+            park = park.mirror();
+            reset = reset.mirror();
+            resetMiddle = resetMiddle.mirror();
 
             return true;
         }

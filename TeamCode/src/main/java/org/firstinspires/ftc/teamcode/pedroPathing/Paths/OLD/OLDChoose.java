@@ -18,7 +18,7 @@ public class OLDChoose {
     private Auto selectedAuto = Auto.NONE;
     private boolean autoConfirmed = false;
 
-    private int mark = 4;
+    private int mark = 5;
     private boolean numConfirmed = false;
     private boolean dpadUpPressed = false;
     private boolean dpadDownPressed = false;
