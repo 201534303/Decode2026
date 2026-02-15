@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,6 +25,8 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 @TeleOp(name="Transfer Tester", group="Iterative OpMode")
 @Config
+@Disabled
+
 public class TransferTester extends OpMode {
 
     //choose

@@ -153,11 +153,12 @@ public class RobotActions {
         }
 
         double dist = Math.hypot(delY, delX);
-        double speedMul = 1;
+        double speedMul = 0.60;
 
         if(dist > 140){
-            speedMul = 0.7;
+            speedMul = 0.56;
         }
+
 
         if(total < 3 && Math.abs(gamepad2.left_stick_y) > 0.05){
             intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
@@ -248,7 +249,7 @@ public class RobotActions {
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
-        shooter.rotateTurret(turretAngle);
+        shooter.rotateTurret(turretAngle*1.05);
         turAngle = turretAngle;
     }
 

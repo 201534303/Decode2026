@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="TeerritTester", group="Iterative OpMode")
 @Config
+@Disabled
 public class TeerritTester extends OpMode {
 
     //choose
@@ -210,8 +212,8 @@ public class TeerritTester extends OpMode {
         --------------------------DRIVER TWO CONTROLS--------------------------
          */
 
-        robot.updateIntake();
-        robot.updateTransfer(currentColor, vel, x, y);
+        //robot.updateIntake();
+        //robot.updateTransfer(currentColor, vel, x, y, gamepad2.right_bumper, gamepad2.right_bumper);
 
         /*
         --------------------------UPDATE--------------------------

@@ -103,7 +103,7 @@ public class OLDCloseAuto extends OpMode {
                     } else if(spikeMark == 4){
                         follower.followPath(paths.shootTo4Mid(), 0.9, true);
 
-                        if(follower.atParametricEnd() || waitSecs(6)) {
+                        if(follower.atParametricEnd() || waitSecs(5)) {
                             resetActionTimer();
                             pathState = PathState.UP;
                         }

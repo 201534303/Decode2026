@@ -22,9 +22,7 @@ public class FarPaths extends Paths{
     public Pose ballCollect2 = makePos(130, 9);
     public Pose ballCollect22 = makePos(133, 9);
     public Pose out = makePos(125, 9);
-
     public Pose park = makePos(98, 25, 90);
-
     public Pose midShoot4 = new Pose(85, 7);
 
     private Pose outGet;
@@ -143,7 +141,11 @@ public class FarPaths extends Paths{
     public PathChain outSet(){ return bezierLine(ballCollect2, out); }
 
     public PathChain outFrom(Pose pos1, Pose pos2){
-        return bezierLine(pos1, pos2);
+        return follower.pathBuilder()
+                .addPath(new BezierLine(pos1, pos2))
+                .setLinearHeadingInterpolation(pos1.getHeading(), pos2.getHeading())
+                .build();
+        //return bezierLine(pos1, pos2);
     }
     public PathChain inFrom(Pose pos1, Pose pos2){
         return bezierLine(pos1, pos2);

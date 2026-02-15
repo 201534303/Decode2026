@@ -132,7 +132,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     } else if (spikeMark == 1 || spikeMark == 2 /*|| spikeMark == 3*/){
                         follower.followPath(paths.shootToSelfee(), 0.9, true);
 
-                        if (follower.atParametricEnd() && waitSecs(6) || waitSecs(8)) {
+                        if (follower.atParametricEnd() && waitSecs(6) || waitSecs(7)) {
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.pedropathing.follower.Follower;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 @Config
 @TeleOp(name = "Sammy Shooter Testing")
+@Disabled
 
 public class SammyTesting extends OpMode {
     private ElapsedTime runtime = new ElapsedTime();

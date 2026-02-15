@@ -161,11 +161,11 @@ public class FarAutoAttempt2 extends OpMode {
 
                 if(!follower.isBusy()){
                     count += 1;
-                    if (x == 0 && y == 0) {
+                    if (x == 0 && y == 0 || alliance == OLDChoose.Alliance.BLUE) {
                         detect = false;
-                        if( spikeMark == 3) {
+                        if( spikeMark == 3 ) {
                             follower.followPath(paths.shootTo3(), 0.9, false);
-                        } else if( spikeMark == 4) {
+                        } else if( spikeMark == 4 ) {
                             follower.followPath(paths.shootTo4(), 0.9, false);
                         }
 
@@ -176,23 +176,28 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     } else if (x != 0 || y != 0){
                         if (count2 == 0) {
-                            newY = paths.shootPose2.getY() - y - 7;
+                            newY = paths.shootPose2.getY() - y - 5; // 7
 
                             if (newY < 9) {
                                 newY = 9;
                             }
 
-                            double newX = 130;
-                            if(alliance == OLDChoose.Alliance.BLUE){
-                                newX = 14;
-                            }
-                            ballCollect = new Pose(newX, newY);
+//                            double rotation = 0;
+//                            double newX = 130;
+                            ballCollect = new Pose(130, newY, 0);
+//                            if(alliance == OLDChoose.Alliance.RED) { ballCollect = new Pose(130, newY, 0); }
+//                            else if(alliance == OLDChoose.Alliance.BLUE){
+//                                ballCollect = new Pose(14, newY, 180);
+//                                newX = 14;
+//                                rotation = 180;
+//                            }
+                            //ballCollect = new Pose(newX, newY, rotation);
                             count2 += 1;
                         }
 
-                        if (newY < 20){
+                        if (newY < 12){ // 20
                             follower.followPath(paths.shootTo4(), 0.9, false);
-                        } else { follower.followPath(paths.to(ballCollect), 0.9, true); }
+                        } else { follower.followPath(paths. to(ballCollect), 0.9, true); }
 
                         if (follower.atParametricEnd() || waitSecs(3)) {
                             resetActionTimer();
@@ -225,11 +230,11 @@ public class FarAutoAttempt2 extends OpMode {
                     } else if (spikeMark == 3 || spikeMark == 4) {
                         if (detect) {
                             if (count2 == 0){
-                                newOut = new Pose(ballCollect.getX() - 10, ballCollect.getY());
-
-                                if(alliance == OLDChoose.Alliance.BLUE) {
-                                    newOut = new Pose(ballCollect.getX() + 10, ballCollect.getY());
-                                }
+                                if(alliance == OLDChoose.Alliance.RED) {
+                                    newOut = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
+                                } /*else if(alliance == OLDChoose.Alliance.BLUE) {
+                                    newOut = new Pose(ballCollect.getX() + 10, ballCollect.getY(), ballCollect.getHeading());
+                                }*/
                                 count2 += 1;
                             }
                             follower.followPath(paths.outFrom(ballCollect, newOut), 0.9, false);
