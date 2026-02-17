@@ -160,7 +160,7 @@ public class RobotActions {
         }
 
 
-        if(total < 3 && Math.abs(gamepad2.left_stick_y) > 0.05){
+        if(Math.abs(gamepad2.left_stick_y) > 0.05){
             intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
         }
         else{
@@ -172,37 +172,30 @@ public class RobotActions {
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
-        double[] velocities = getVelocities(currentColor, vel, x, y);
-        //double rVel = velocities[0];
-        double tVel = velocities[0];
+        double time = time(x,y)*2.0;
+
+        double virtualX = x + time*vel.getXComponent();
+        double virtualY = y + time*vel.getYComponent();
+        telemetry.addData("virtualX", virtualX);
+        telemetry.addData("virtualY", virtualY);
+
         if (turretOn){
-            updateTurret(currentColor, tVel, x, y, heading);
+            updateTurret(currentColor, virtualX, virtualY, heading);
         }
         if (!turretOn){
             shooter.rotateTurret(0);
         }
-        updateShooter(currentColor, rVel, x, y, rVel);
-    }
-    public void updateTurretTest(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
-        double[] velocities = getVelocities(currentColor, vel, x, y);
-        //double rVel = velocities[0];
-        double tVel = velocities[0];
-        if (turretOn){
-            updateTurretTest(currentColor, tVel, x, y, heading, mul);
-        }
-        if (!turretOn){
-            shooter.rotateTurret(0);
-        }
-        updateShooter(currentColor, rVel, x, y, rVel);
+
+        updateShooter(currentColor, virtualX, virtualY);
     }
 
+    public double time(double x, double y){
+        double dist = Math.hypot(x, y);
+        double time = 0.00411765*dist+0.0894118;
+        return time;
+    }
 
     public void updateShooterTesting(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
-        double[] velocities = getVelocities(currentColor, vel, x, y);
-        double rVel = velocities[0];
-        double tVel = velocities[0];
-        //updateTurret(currentColor, tVel, x, y, heading);
-        //shooter.rotateTurret(0);
         telemetry.addData("hood", DELETEBUTTHISISHOOD);
         telemetry.addData("turret", DELETEBUTTHISISTURRET);
         telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
@@ -211,7 +204,8 @@ public class RobotActions {
         shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
     }
 
-    private void updateTurretTest(OLDChoose.Alliance currentColor, double tVel, double posX, double posY, double h, double mul){
+
+    private void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
         double heading = Math.toDegrees(h);
@@ -253,50 +247,8 @@ public class RobotActions {
         turAngle = turretAngle;
     }
 
-    private void updateTurret(OLDChoose.Alliance currentColor, double tVel, double posX, double posY, double h){
-        this.posX = posX;
-        this.posY = posY;
-        double heading = Math.toDegrees(h);
-        double turretAngle = 0;
 
-        if(currentColor == OLDChoose.Alliance.BLUE){
-            //targets (0, 124), (20, 144)
-            double delX1 = 0 - posX;
-            double delY1 = 124 - posY;
-            double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = 20 - posX;
-            double delY2 = 144 - posY;
-            double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
-            rawX = posX - CONSTX;
-            rawY = fieldLength - posY - CONSTY;
-            idealAngle = Math.atan(rawY/rawX);
-            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
-        }
-
-        if(currentColor == OLDChoose.Alliance.RED){
-            //targets (144, 124), (124, 144)
-            //X = 7.7
-            //y = 4.5
-            double delX1 = 144 - posX;
-            double delY1 = 124 - posY;
-            double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = 124 - posX;
-            double delY2 = 144 - posY;
-            double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
-            rawX = fieldLength - posX - CONSTX;
-            rawY = fieldLength - posY - CONSTY;
-            idealAngle = Math.atan(rawY/rawX);
-            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
-        }
-
-        shooter.rotateTurret(turretAngle);
-        turAngle = turretAngle;
-    }
-
-
-    private void updateShooter(OLDChoose.Alliance currentColor, double rVel, double posX, double posY, double regTest) {
+    private void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY) {
         double dist = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){
@@ -341,7 +293,7 @@ public class RobotActions {
             speed = 0;
         }
 
-        shooter.flywheelSpin(speed, shooter.getMotorVel(), rVel);
+        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
     }
 
     private double[] getVelocities(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY) {

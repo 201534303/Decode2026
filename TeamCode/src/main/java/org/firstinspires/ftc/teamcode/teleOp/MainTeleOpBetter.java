@@ -145,7 +145,7 @@ public class MainTeleOpBetter extends OpMode {
         if (vel.getMagnitude() < 0.5) {
             moving = false;
         } else {
-            rotating = true;
+            moving = true;
         }
         final double margin = Math.toRadians(2);
         if (storedTurAngle - margin < robot.turAngle && storedTurAngle + margin > robot.turAngle) {

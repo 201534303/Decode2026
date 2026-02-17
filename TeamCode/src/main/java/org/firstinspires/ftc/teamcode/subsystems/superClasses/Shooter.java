@@ -94,9 +94,6 @@ public class Shooter {
         shooterL.setVelocity(speed);
         telemetry.addData("target velocity", Math.round(targetVelo*100)/100.0);
         telemetry.addData("current velocity", Math.round(currentVelo*100)/100.0);
-        //telemetry.addData("current velocityR", shooterR.getVelocity());
-        //telemetry.addData("current velocityL", shooterL.getVelocity());
-
     }
 
     public void rotateTurret(double theta){
