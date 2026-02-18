@@ -14,7 +14,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
-import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV4.LimelightProcessor_v4Tele;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -55,6 +54,7 @@ public class MainTeleOpBetter extends OpMode {
     private double heading;
     private Vector vel;
     private double counter = 0;
+    private double timeSinceLastLochalazationReset = 0;
     private boolean moving;
     private boolean rotating;
     private boolean movingOrRotating;
@@ -62,6 +62,8 @@ public class MainTeleOpBetter extends OpMode {
     LimelightProcessor_v3Tele ll;
     private Telemetry dash;
     public static double kf = 0.59;
+    private double timeDif = 1.0;
+    private double oldHeading = 0;
 
     @Override
     public void init() {
@@ -112,8 +114,13 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void loop() {
+        double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
+        timeDif = nowTime - lastTime;
+        double hertz = 1.0/timeDif;
+        lastTime = nowTime;
 
         ll.updateTele(follower.getPose().getHeading(), robot.turAngle, movingOrRotating);
+        /*
         telemetry.addLine("------");
         telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
@@ -132,6 +139,8 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("fieldX", ll.pose.posX);
         telemetry.addData("fieldY", ll.pose.posY);
         telemetry.addLine("------");
+
+         */
         /*
         --------------------------GRAB COORDINATES--------------------------
          */
@@ -147,13 +156,12 @@ public class MainTeleOpBetter extends OpMode {
         } else {
             moving = true;
         }
-        final double margin = Math.toRadians(2);
-        if (storedTurAngle - margin < robot.turAngle && storedTurAngle + margin > robot.turAngle) {
+        if (Math.abs(Math.toDegrees((oldHeading - heading))/timeDif) < .06) {
             rotating = false;
         } else {
             rotating = true;
         }
-
+        telemetry.addData("rotating", rotating);
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
          */
@@ -165,14 +173,14 @@ public class MainTeleOpBetter extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-
-            robot.setIMUZero(currentColor, x, y);
+            robot.setIMUZero(x, y);
         }
 
-        //rezero position
+        //reset position to corner
         if (gamepad1.dpad_down){
             robot.setLocalizationOurSide(currentColor);
         }
+
         if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
             if (counter > 5) {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
@@ -185,14 +193,14 @@ public class MainTeleOpBetter extends OpMode {
         }
 
 
+
+
+        //turn turret on/off
         if (gamepad1.y){
-            if (turretOn){
-                turretOn = false;
-            } else {
-                turretOn = true;
-            }
+            turretOn = !turretOn;
         }
 
+        //switch alliances
         if(gamepad1.xWasPressed()) {
             if(currentColor == OLDChoose.Alliance.RED){
                 currentColor = OLDChoose.Alliance.BLUE;
@@ -202,7 +210,7 @@ public class MainTeleOpBetter extends OpMode {
             }
         }
 
-
+        //drive
         robot.fieldCentricDrive(currentColor, heading);
 
 
@@ -211,20 +219,16 @@ public class MainTeleOpBetter extends OpMode {
          */
 
         robot.updateIntake();
-        robot.updateTransfer(currentColor, vel, x, y);
+        robot.updateTransfer(currentColor, vel, x, y, rotating);
 
 
         /*
         --------------------------UPDATE--------------------------
          */
-        double nowTime = overallRuntime.time(TimeUnit.SECONDS);
-        double timeDif = nowTime - lastTime;
-        double hertz = 1.0/timeDif;
-        lastTime = nowTime;
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
         telemetry.addData("hertz", hertz);
-        dash.addData("current vel", shooter.getMotorVel());
+
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
 
@@ -269,6 +273,7 @@ public class MainTeleOpBetter extends OpMode {
 
         storedTurAngle = robot.turAngle;
         movingOrRotating = moving || rotating;
+        oldHeading = heading;
     }
 
     @Override

@@ -10,7 +10,6 @@ import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
@@ -120,7 +119,7 @@ public class ShootingTeleOpTesting extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            robot.setIMUZero(currentColor, x, y);
+            robot.setIMUZero(x, y);
         }
 
         //rezero position

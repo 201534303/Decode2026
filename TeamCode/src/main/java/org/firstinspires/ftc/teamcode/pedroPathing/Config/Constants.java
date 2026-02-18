@@ -37,7 +37,7 @@ public class Constants {
                 //.strafePodX(0)
             //center relative to shooter
             .forwardPodY(-5.5)
-            .strafePodX(-5)
+            .strafePodX(5)
             //---------------------------
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")

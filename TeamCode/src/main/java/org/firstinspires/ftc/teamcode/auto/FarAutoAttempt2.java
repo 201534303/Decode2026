@@ -303,7 +303,7 @@ public class FarAutoAttempt2 extends OpMode {
             case TO_SHOOT:
                 if(!follower.isBusy()) {
                     if (spikeMark == 1) {
-                        shooter.rotateTurretOld(turnTableAngle2);
+                        shooter.rotateTurretAuto(turnTableAngle2);
                         if (shootCount == 0) {
                             follower.followPath(paths.collectToShootNotSetFirst(), 0.8, false);
                             shootCount += 1;
@@ -315,7 +315,7 @@ public class FarAutoAttempt2 extends OpMode {
                             pathState = PathState.SHOOT;
                         }
                     } else if (spikeMark == 2) {
-                        shooter.rotateTurretOld(turnTableAngle);
+                        shooter.rotateTurretAuto(turnTableAngle);
                         if (shootCount == 0) {
                             follower.followPath(paths.collectToShootNotSet(), 0.8, false);
                             shootCount += 1;
@@ -327,7 +327,7 @@ public class FarAutoAttempt2 extends OpMode {
                             pathState = PathState.SHOOT;
                         }
                     } else if (spikeMark == 3 || spikeMark == 4) {
-                        shooter.rotateTurretOld(turnTableAngle);
+                        shooter.rotateTurretAuto(turnTableAngle);
 
                         if (shootCount == 0) {
                             follower.followPath(paths.collectToShootNotSet(), 0.8, false);
@@ -358,7 +358,7 @@ public class FarAutoAttempt2 extends OpMode {
         shooter.off();
         intake.intakeOff();
         intake.transferOff();
-        shooter.rotateTurretOld(0);
+        shooter.rotateTurretAuto(0);
     }
 
     @Override
@@ -396,7 +396,7 @@ public class FarAutoAttempt2 extends OpMode {
             turnTableAngle = -65;
             turnTableAngle2 = -68;
         }
-        shooter.rotateTurretOld(turnTableAngle);
+        shooter.rotateTurretAuto(turnTableAngle);
 
         // resets timers
         runtime.reset();

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.superClasses;
 
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -90,18 +88,18 @@ public class Shooter {
         //shooterR.setFeedforwardCoefficients(0, 2.4, 0);
         //shooterL.setFeedforwardCoefficients(0, 2.4, 0);
         //12, 0.59 13
-        shooterR.setVelocity(speed);
-        shooterL.setVelocity(speed);
+        //shooterR.setVelocity(speed);
+        //shooterL.setVelocity(speed);
         telemetry.addData("target velocity", Math.round(targetVelo*100)/100.0);
         telemetry.addData("current velocity", Math.round(currentVelo*100)/100.0);
     }
 
     public void rotateTurret(double theta){
+        telemetry.addData("turret", Math.round(theta*100)/100.0);
         theta = normalizeDeg(theta);
 
-//<<<<<<< HEAD
         thetaT = theta;
-//=======
+
         //hard stops
         if (theta > 75){
             theta = 75;
@@ -111,12 +109,11 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.48 /*center*/ + theta * (1.0*1.74/(360.0) * 1.3);
-        right.setPosition(theta);
-        left.setPosition(theta);
-        telemetry.addData("turret", Math.round(theta*100)/100.0);
+        theta = 0.48 /*center*/ + theta * (1.74 /(360.0) * 1.3);
+        //right.setPosition(theta);
+        //left.setPosition(theta);
     }
-    public void rotateTurretOld(double theta){
+    public void rotateTurretAuto(double theta){
         theta = normalizeDeg(theta);
 
         //hard stops
@@ -132,30 +129,6 @@ public class Shooter {
         right.setPosition(theta);
         left.setPosition(theta);
         telemetry.addData("turret", Math.round(theta*100)/100.0);
-    }
-
-    public void rotateTurret(double theta, double mul){
-        theta = normalizeDeg(theta);
-//>>>>>>> ae7eab2f851095a124e4807c045d8b67a59546e8
-
-        //hard stops
-        if (theta > 75){
-            theta = 75;
-        }
-        if (theta < -75){
-            theta = -75;
-        }
-
-        //setting it
-        theta = 0.48 /*center*/ + theta * (.0048333) * 1.3;
-        right.setPosition(theta);
-        left.setPosition(theta);
-        telemetry.addData("turret", Math.round(theta*100)/100.0);
-    }
-
-    public void seTurretRaw(double theta){
-        right.setPosition(theta);
-        left.setPosition(theta);
     }
 
     public static double normalizeDeg(double angleDeg) {
