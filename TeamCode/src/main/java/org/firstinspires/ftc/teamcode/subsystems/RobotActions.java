@@ -218,8 +218,7 @@ public class RobotActions {
             double delX2 = 20 - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            telemetry.addData("turretAngle12", Math.round(turretAngle1*100)/100.0 + "," + Math.round(turretAngle2*100)/100.0);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            turretAngle = averageAngle(turretAngle1, turretAngle2);
             rawX = posX - CONSTX;
             rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
@@ -228,27 +227,36 @@ public class RobotActions {
 
         if(currentColor == OLDChoose.Alliance.RED){
             //targets (144, 124), (124, 144)
-            //X = 7.7
-            //y = 4.5
             double delX1 = 144 - posX;
             double delY1 = 124 - posY;
             double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
             double delX2 = 124 - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            telemetry.addData("turretAngle12", Math.toDegrees(Math.atan2(delY1, delX1)) + "," + Math.toDegrees(Math.atan2(delY2, delX2)));
-            telemetry.addData("distxy1", delX1 + "," + delY1);
-            telemetry.addData("distxy2", delX2 + "," + delY2);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            turretAngle = averageAngle(turretAngle1, turretAngle2);
             rawX = fieldLength - posX - CONSTX;
             rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
-
+        telemetry.addData("turretAngle", turretAngle);
         shooter.rotateTurret(turretAngle);
         turAngle = turretAngle;
+    }
+
+    private double averageAngle(double angleA, double angleB){
+        double aRad = Math.toRadians(angleA);
+        double bRad = Math.toRadians(angleB);
+
+        double x = Math.cos(aRad) + Math.cos(bRad);
+        double y = Math.sin(aRad) + Math.sin(bRad);
+
+        double avgRad = Math.atan2(y, x);
+        double avgDeg = Math.toDegrees(avgRad);
+
+        // normalize to [0, 360)
+        return (avgDeg + 360) % 360;
     }
 
 

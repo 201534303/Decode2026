@@ -58,7 +58,6 @@ public class MainTeleOpBetter extends OpMode {
     private boolean moving;
     private boolean rotating;
     private boolean movingOrRotating;
-    private double storedTurAngle = 0;
     LimelightProcessor_v3Tele ll;
     private Telemetry dash;
     public static double kf = 0.59;
@@ -192,9 +191,6 @@ public class MainTeleOpBetter extends OpMode {
             counter++;
         }
 
-
-
-
         //turn turret on/off
         if (gamepad1.y){
             turretOn = !turretOn;
@@ -232,46 +228,18 @@ public class MainTeleOpBetter extends OpMode {
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
 
-        if(currentColor == OLDChoose.Alliance.BLUE){
-            x = -x;
-            y = 144-y;
-        }
-
-        if(currentColor == OLDChoose.Alliance.RED){
-            x = 144-y;
-            y = 144-y;
-        }
-
-        double dist = Math.hypot(x, y);
 
         if(intake.haveBall()){
-            if(dist < 65){
-                light.setIndicatorLight(new double[]{0.50, 0.65}, 500);
-            }
-            else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
-                light.setIndicatorLight(new double[]{0.50, 0.38}, 500);
-            }
-            else{
-                light.setIndicatorLight(new double[]{0.50}, 700);
-            }
+            light.setIndicatorLight(new double[]{0.50}, 700);
         }
         else {
-            if(dist < 65){
-                light.setIndicatorLight(new double[]{0.28, 0.60}, 500);
-            }
-            else if(shooter.getTurret() > 75 || shooter.getTurret() < - 75){
-                light.setIndicatorLight(new double[]{0.28, 0.38}, 500);
-            }
-            else{
-                light.setIndicatorLight(new double[]{0.28}, 700);
-            }
+            light.setIndicatorLight(new double[]{0.28}, 700);
         }
 
         light.update();
         telemetry.update();
         dash.update();
 
-        storedTurAngle = robot.turAngle;
         movingOrRotating = moving || rotating;
         oldHeading = heading;
     }

@@ -88,8 +88,8 @@ public class Shooter {
         //shooterR.setFeedforwardCoefficients(0, 2.4, 0);
         //shooterL.setFeedforwardCoefficients(0, 2.4, 0);
         //12, 0.59 13
-        //shooterR.setVelocity(speed);
-        //shooterL.setVelocity(speed);
+        shooterR.setVelocity(speed);
+        shooterL.setVelocity(speed);
         telemetry.addData("target velocity", Math.round(targetVelo*100)/100.0);
         telemetry.addData("current velocity", Math.round(currentVelo*100)/100.0);
     }
@@ -110,8 +110,8 @@ public class Shooter {
 
         //setting it
         theta = 0.48 /*center*/ + theta * (1.74 /(360.0) * 1.3);
-        //right.setPosition(theta);
-        //left.setPosition(theta);
+        right.setPosition(theta);
+        left.setPosition(theta);
     }
     public void rotateTurretAuto(double theta){
         theta = normalizeDeg(theta);
