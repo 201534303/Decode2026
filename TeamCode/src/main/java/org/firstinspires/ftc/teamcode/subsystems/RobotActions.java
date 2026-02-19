@@ -214,12 +214,18 @@ public class RobotActions {
             //targets (0, 124), (20, 144)
             double delX1 = 0 - posX;
             double delY1 = 124 - posY;
-            double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
+            double targetHeading1 = Math.toDegrees(Math.atan2(delY1, delX1)) - heading;
+            double turretAngle1 = wrapDegrees(targetHeading1);
             double delX2 = 20 - posX;
             double delY2 = 144 - posY;
-            double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            telemetry.addData("turretAngle12", Math.round(turretAngle1*100)/100.0 + "," + Math.round(turretAngle2*100)/100.0);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            double targetHeading2 = Math.toDegrees(Math.atan2(delY2, delX2)) - heading;
+            double turretAngle2 = wrapDegrees(targetHeading2);
+            telemetry.addData("turretDebug/alliance", "BLUE");
+            telemetry.addData("turretDebug/robotHeadingDeg", heading);
+            telemetry.addData("turretDebug/targetRaw12", Math.round(targetHeading1*100)/100.0 + "," + Math.round(targetHeading2*100)/100.0);
+            telemetry.addData("turretDebug/targetWrapped12", Math.round(turretAngle1*100)/100.0 + "," + Math.round(turretAngle2*100)/100.0);
+            turretAngle = averageAnglesDegrees(turretAngle1, turretAngle2);
+            telemetry.addData("turretDebug/targetFinal", Math.round(turretAngle * 100) / 100.0);
             rawX = posX - CONSTX;
             rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
@@ -232,14 +238,20 @@ public class RobotActions {
             //y = 4.5
             double delX1 = 144 - posX;
             double delY1 = 124 - posY;
-            double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
+            double targetHeading1 = Math.toDegrees(Math.atan2(delY1, delX1)) - heading;
+            double turretAngle1 = wrapDegrees(targetHeading1);
             double delX2 = 124 - posX;
             double delY2 = 144 - posY;
-            double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
-            telemetry.addData("turretAngle12", Math.toDegrees(Math.atan2(delY1, delX1)) + "," + Math.toDegrees(Math.atan2(delY2, delX2)));
-            telemetry.addData("distxy1", delX1 + "," + delY1);
-            telemetry.addData("distxy2", delX2 + "," + delY2);
-            turretAngle = (turretAngle1 + turretAngle2)/2.0;
+            double targetHeading2 = Math.toDegrees(Math.atan2(delY2, delX2)) - heading;
+            double turretAngle2 = wrapDegrees(targetHeading2);
+            telemetry.addData("turretDebug/alliance", "RED");
+            telemetry.addData("turretDebug/robotHeadingDeg", heading);
+            telemetry.addData("turretDebug/targetRaw12", Math.round(targetHeading1*100)/100.0 + "," + Math.round(targetHeading2*100)/100.0);
+            telemetry.addData("turretDebug/targetWrapped12", Math.round(turretAngle1*100)/100.0 + "," + Math.round(turretAngle2*100)/100.0);
+            telemetry.addData("turretDebug/distxy1", delX1 + "," + delY1);
+            telemetry.addData("turretDebug/distxy2", delX2 + "," + delY2);
+            turretAngle = averageAnglesDegrees(turretAngle1, turretAngle2);
+            telemetry.addData("turretDebug/targetFinal", Math.round(turretAngle * 100) / 100.0);
             rawX = fieldLength - posX - CONSTX;
             rawY = fieldLength - posY - CONSTY;
             idealAngle = Math.atan(rawY/rawX);
@@ -247,8 +259,19 @@ public class RobotActions {
         }
 
 
+        telemetry.addData("turretDebug/rotateCmd", Math.round(turretAngle * 100) / 100.0);
         shooter.rotateTurret(turretAngle);
         turAngle = turretAngle;
+    }
+
+    private double wrapDegrees(double angle) {
+        return Math.atan2(Math.sin(Math.toRadians(angle)), Math.cos(Math.toRadians(angle))) * 180.0 / Math.PI;
+    }
+
+    private double averageAnglesDegrees(double angle1, double angle2) {
+        double sinAvg = (Math.sin(Math.toRadians(angle1)) + Math.sin(Math.toRadians(angle2))) / 2.0;
+        double cosAvg = (Math.cos(Math.toRadians(angle1)) + Math.cos(Math.toRadians(angle2))) / 2.0;
+        return wrapDegrees(Math.toDegrees(Math.atan2(sinAvg, cosAvg)));
     }
 
 
