@@ -36,13 +36,13 @@ public class Constants {
                 //.forwardPodY(-6.5)
                 //.strafePodX(0)
             //center relative to shooter
-            .forwardPodY(-5.5)
-            .strafePodX(5)
+            .forwardPodY(3.93)
+            .strafePodX(1)
             //---------------------------
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
             .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 
 

@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Shooter Testing", group="Iterative OpMode")
 @Config
-@Disabled
 public class ShootingTeleOpTesting extends OpMode {
 
     //choose
@@ -153,8 +152,8 @@ public class ShootingTeleOpTesting extends OpMode {
         --------------------------DRIVER TWO CONTROLS--------------------------
          */
 
-        //robot.updateIntake();
-        //robot.updateTransfer(currentColor, vel, x, y, gamepad2.right_bumper, gamepad2.right_bumper);
+        robot.updateIntake();
+        robot.updateTransfer(currentColor, vel, x, y, false);
 
         if(gamepad2.dpadUpWasPressed()){
             robot.DELETEBUTTHISISVEL += 5;

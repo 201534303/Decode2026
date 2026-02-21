@@ -43,6 +43,7 @@ public class Intake {
         left = hardwareMap.get(DigitalChannel.class, "distLeft");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setInverted(true);
         //transfer.setRunMode(MotorEx.RunMode.VelocityControl);
 
         telemetry = t;
