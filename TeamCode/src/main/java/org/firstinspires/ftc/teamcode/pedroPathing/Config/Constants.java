@@ -19,8 +19,8 @@ public class Constants {
             .maxPower(1)
             //.xVelocity(76.83625517116756)
             //.yVelocity(63.33562415415846)
-            .xVelocity(72.79995319036048)//new
-            .yVelocity(54.70373439037894)//new
+            .xVelocity(69.70359165461983)//new
+            .yVelocity(53.20379686731053)//new
             .rightFrontMotorName("rightFrontMotor")
             .rightRearMotorName("rightBackMotor")
             .leftRearMotorName("leftBackMotor")
@@ -31,10 +31,6 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            //----need to make sure this is correct---
-            //center of robot
-                //.forwardPodY(-6.5)
-                //.strafePodX(0)
             //center relative to shooter
             .forwardPodY(3.93)
             .strafePodX(1)
@@ -47,10 +43,8 @@ public class Constants {
 
 
     public static FollowerConstants followerConstants = new FollowerConstants()
-            //.lateralZeroPowerAcceleration(-73.66390773672457)
-            //.forwardZeroPowerAcceleration(-26.912657186607678)
-            .forwardZeroPowerAcceleration(-35.71563085866153)//new
-            .lateralZeroPowerAcceleration(-81.38187788469911)//new
+            .forwardZeroPowerAcceleration(-46.85727529962036)//new
+            .lateralZeroPowerAcceleration(-73.11159099522709)//new
 
             //PIDF
             .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0, 0))
