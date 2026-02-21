@@ -144,7 +144,6 @@ public class ShootingTeleOpTesting extends OpMode {
             }
         }
 
-
         robot.fieldCentricDrive(currentColor, heading);
 
 
@@ -153,7 +152,7 @@ public class ShootingTeleOpTesting extends OpMode {
          */
 
         robot.updateIntake();
-        robot.updateTransfer(currentColor, vel, x, y, false);
+        robot.updateTransfer();
 
         if(gamepad2.dpadUpWasPressed()){
             robot.DELETEBUTTHISISVEL += 5;
@@ -174,19 +173,22 @@ public class ShootingTeleOpTesting extends OpMode {
             robot.DELETEBUTTHISISTURRET -= 0.01;
         }
 
-
         /*
         --------------------------UPDATE--------------------------
          */
         double nowTime = overallRuntime.time(TimeUnit.SECONDS);
         double timeDif = nowTime - lastTime;
         double hertz = 1.0/timeDif;
+
         lastTime = nowTime;
+
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
         telemetry.addData("distance", Math.round(Math.hypot(x, y)));
         telemetry.addData("hertz", hertz);
+
         robot.updateShooterTesting(currentColor, turretOn, x, y, heading, vel);
+
         follower.update();
         telemetry.update();
     }

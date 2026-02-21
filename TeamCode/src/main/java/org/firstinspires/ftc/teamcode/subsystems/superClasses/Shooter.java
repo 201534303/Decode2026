@@ -141,11 +141,10 @@ public class Shooter {
         return angleDeg;
     }
 
-
     public void setHood(double theta) {
         theta = 1-theta;
         hood.setPosition(theta);
-        telemetry.addData("hood", Math.round(theta*100)/100.0);
+        telemetry.addData("raw hood", Math.round(theta*100)/100.0);
     }
 
     public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {

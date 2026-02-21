@@ -162,6 +162,16 @@ public class RobotActions {
             intake.setTransferPower(0.1);
         }
     }
+    public void updateTransfer() {
+
+        if(Math.abs(gamepad2.left_stick_y) > 0.05){
+            intake.setTransferVelPID(-gamepad2.left_stick_y * 0.6 * 2250, intake.getTransferVel(), 0, 0);
+        }
+        else{
+            //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
+            intake.setTransferPower(0.1);
+        }
+    }
 
     //UPDATE
 
@@ -195,9 +205,9 @@ public class RobotActions {
     }
 
     public void updateShooterTesting(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel) {
-        telemetry.addData("hood", DELETEBUTTHISISHOOD);
-        telemetry.addData("turret", DELETEBUTTHISISTURRET);
-        telemetry.addData("shooterVel", DELETEBUTTHISISVEL);
+        telemetry.addData("setHood", DELETEBUTTHISISHOOD);
+        telemetry.addData("setTurret", DELETEBUTTHISISTURRET);
+        telemetry.addData("setShooterVel", DELETEBUTTHISISVEL);
         shooter.setHood(DELETEBUTTHISISHOOD);
         shooter.rotateTurret(DELETEBUTTHISISTURRET);
         shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
