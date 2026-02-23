@@ -43,18 +43,12 @@ public class Shooter {
         //invertMotor
         shooterR.setInverted(true);
 
-        //break
-        //shooterL.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-        //shooterR.setZeroPowerBehavior(MotorEx.ZeroPowerBehavior.BRAKE);
-
-        //VelocityMode
-        shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
-        shooterL.setRunMode(MotorEx.RunMode.VelocityControl);
+        shooterR.setRunMode(MotorEx.RunMode.RawPower);
+        shooterL.setRunMode(MotorEx.RunMode.RawPower);
 
         telemetry = t;
         runtime = r;
     }
-
     public double getMotorVel(){
         //in ticks/sec - gobilda bare is 28 tps
         //return (shooterL.getVelocity() + shooterR.getVelocity())/2;
