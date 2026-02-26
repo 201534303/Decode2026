@@ -215,7 +215,7 @@ public class RobotActions {
             shooter.rotateTurret(0);
         }
 
-        updateShooter(currentColor, virtualX, virtualY);
+        updateShooter(currentColor, virtualX, virtualY, vel.getMagnitude());
     }
 
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
@@ -235,7 +235,7 @@ public class RobotActions {
             shooter.rotateTurret(0);
         }
 
-        updateShooter(currentColor, virtualX, virtualY);
+        //updateShooter(currentColor, virtualX, virtualY);
     }
 
     public double time(double x, double y){
@@ -254,10 +254,10 @@ public class RobotActions {
         shooter.setHood(DELETEBUTTHISISHOOD);
         shooter.rotateTurretZeroTest(DELETEBUTTHISISTURRET);
         if (shooterOff){
-            shooter.flywheelSpin(0, shooter.getMotorVel(), 0);
+            shooter.flywheelSpinBangBang(0, shooter.getMotorVel(), 0);
         }
         else{
-            shooter.flywheelSpin(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
+            shooter.flywheelSpinBangBang(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
         }
     }
     public void toggleNoahMode(){
@@ -362,7 +362,7 @@ public class RobotActions {
     }
 
 
-    private void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY) {
+    private void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
         double dist = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){
@@ -394,7 +394,7 @@ public class RobotActions {
         if(speed < 0){
             speed = 0;
         }
-        shooter.flywheelSpin(speed, shooter.getMotorVel(), 0);
+        shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
         speedDif = speed - shooter.getMotorVel();
     }
 }
