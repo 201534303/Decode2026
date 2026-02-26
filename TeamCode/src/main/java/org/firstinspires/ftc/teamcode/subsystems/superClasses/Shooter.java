@@ -95,17 +95,18 @@ public class Shooter {
         thetaT = theta;
 
         //hard stops
-        if (theta > 72) {
-            theta = 72;
+        if (theta > 73) {//72
+            theta = 73;
         }
-        if (theta < -72) {
-            theta = -72;
+        if (theta < -73) {
+            theta = -73;
         }
 
         //setting it
         theta = 0.5025 /*center*/ + theta * (1.74 / (360.0) * 1.40);
         right.setPosition(theta);
         left.setPosition(theta);
+        telemetry.addData("rawTurret", theta);
     }
 
     public void rotateTurretZeroTest(double theta) {

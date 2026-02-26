@@ -13,7 +13,9 @@ public class FarPaths extends Paths{
     }
 
     public Pose startPose = makePos(88, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(126, 37);
+    public Pose ballCollect1 = makePos(130, 37);
+    public Pose ballCollect1More = makePos(130, 37);
+    public Pose side = makePos(128, 28);
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
@@ -126,10 +128,18 @@ public class FarPaths extends Paths{
                 .build();
     }
 
+    public PathChain shootTo1More(){
+        return bezierLine(shootPose2, ballCollect1More);
+    }
+
     public PathChain shootTo1(){
         return bezierCurve(startPose,
                 ballCollect1Mid,
                 ballCollect1);
+    }
+
+    public PathChain sideShuffle(){
+        return bezierLine(ballCollect1, side);
     }
 
     public PathChain shootTo12(){
