@@ -167,7 +167,7 @@ public class RobotActions {
         telemetry.addData("shooting dif", speedDif);
 
         if(noahMode){
-            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && !rotating && Math.abs(gamepad2.left_stick_y) > 0.05 && vel.getMagnitude() < 20 && Math.abs(turAngle) < 72 && dist >= 66){
+            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && !rotating && Math.abs(gamepad2.left_stick_y) > 0.05 && vel.getMagnitude() < 20 && Math.abs(turAngle) < 72 && dist >= 55){
                 intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
             }
             else{
