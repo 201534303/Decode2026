@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.BallDetection;
+import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
@@ -22,7 +22,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Robot Subsystems
     private IntakeAuto intake;
     private ShooterAuto shooter;
-    private BallDetection limelight;
+    private LimelightV5 limelight;
 
     // Timers
     private Timer actionTimer;
@@ -414,7 +414,7 @@ public class FarAutoAttempt2 extends OpMode {
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
-        limelight = new BallDetection(hardwareMap, 0);
+        limelight = new LimelightV5(hardwareMap, 0);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
 

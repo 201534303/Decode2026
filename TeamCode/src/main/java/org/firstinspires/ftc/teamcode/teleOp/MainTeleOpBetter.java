@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
+import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -58,7 +59,7 @@ public class MainTeleOpBetter extends OpMode {
     private boolean moving;
     private boolean rotating;
     private boolean movingOrRotating;
-    LimelightProcessor_v3Tele ll;
+    LimelightV5 ll;
     private Telemetry dash;
     public static double kf = 0.59;
     private double timeDif = 1.0;
@@ -66,7 +67,7 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void init() {
-        ll = new LimelightProcessor_v3Tele(hardwareMap);
+        ll = new LimelightV5(hardwareMap, 3);
         //choose
         choose = new OLDChoose(gamepad1, telemetry);
 
@@ -118,28 +119,30 @@ public class MainTeleOpBetter extends OpMode {
         double hertz = 1.0/timeDif;
         lastTime = nowTime;
 
-        ll.updateTele(follower.getPose().getHeading(), robot.turAngle, movingOrRotating);
-        /*
+        // IF YOU WANT TO JUST GET THE POSITION
+        ll.updatePos(follower.getHeading(), false);
+
+        // IF YOU WANT TO GET THE HEADING AND THE POSITION
+        ll.updatePos(0, true);
+
         telemetry.addLine("------");
         telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
         telemetry.addData("heading", Math.toDegrees(follower.getHeading()));
-        telemetry.addData("raw tx", ll.pose.roll);
+        telemetry.addData("Cam Heading", ll.pose.heading);
         telemetry.addData("tx", ll.pose.tx);
         telemetry.addData("id", ll.pose.id);
-        telemetry.addData("yaw", Math.toDegrees(ll.pose.yaw));
+        telemetry.addData("yaw", ll.pose.yaw);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
-        telemetry.addData("dx",ll.pose.posX2);
-        telemetry.addData("dy", ll.pose.posY2);
-        telemetry.addData("rawX", ll.pose.rawX);
-        telemetry.addData("rawY", ll.pose.rawY);
+        telemetry.addData("rawX", ll.pose.posX);
+        telemetry.addData("rawY", ll.pose.posY);
         telemetry.addLine("----------");
-        telemetry.addData("fieldX", ll.pose.posX);
-        telemetry.addData("fieldY", ll.pose.posY);
-        telemetry.addLine("------");
+        //telemetry.addData("fieldX", ll.pose.posX);
+        //telemetry.addData("fieldY", ll.pose.posY);
+        //telemetry.addLine("------");
 
-         */
+
         /*
         --------------------------GRAB COORDINATES--------------------------
          */

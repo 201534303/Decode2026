@@ -10,12 +10,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Autonomous()
 @Config
 public class ballcaller extends OpMode {
-    BallDetection ll;
+    LimelightV5 ll;
     private Telemetry dash;
     @Override
     public void init()
     {
-        ll = new BallDetection(hardwareMap, 0);
+        ll = new LimelightV5(hardwareMap, 0);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
     }
