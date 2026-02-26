@@ -31,7 +31,7 @@ public class BallDetection {
         double greenH = 100000 + green[0]*1000 + green[1];
         double greenS = 100000 + green[2]*1000 + green[3];
         double greenV = 100000 + green[4]*1000 + green[5];
-        double[] inputs = {1, purpleH, purpleS, purpleV, 1, greenH, greenS, greenV};
+        double[] inputs = {1 , purpleH, purpleS, purpleV, 1, greenH, greenS, greenV};
         //             P, Hmin, Smin, Vmin, Hmax, Smax, vmax, 0
         limelight.updatePythonInputs(inputs);
         LLResult result = limelight.getLatestResult();
@@ -44,5 +44,8 @@ public class BallDetection {
         limelight.updatePythonInputs(inputs);
         LLResult result = limelight.getLatestResult();
         return result.getPythonOutput();
+    }
+    public double[] updatePos() {
+        return limelight.getLatestResult().getPythonOutput();
     }
 }
