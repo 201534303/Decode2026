@@ -13,7 +13,7 @@ public class ShooterAuto extends Shooter {
     }
 
     public void runFlywheel(double currentV, double targetV, double kf){
-        flywheelSpin(targetV, currentV, kf);
+        flywheelSpinBangBang(targetV, currentV, kf);
     }
 
     public void close(){

@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+import java.util.Vector;
+
 public class Shooter {
 
     //telemetry
@@ -45,8 +47,7 @@ public class Shooter {
         //invertMotor
         shooterR.setInverted(true);
 
-        shooterR.setRunMode(MotorEx.RunMode.RawPower);
-        shooterL.setRunMode(MotorEx.RunMode.RawPower);
+
 
         telemetry = t;
         runtime = r;
@@ -76,7 +77,7 @@ public class Shooter {
         shooterL.setVelocity(RPMToVel(flywheelRPM));
     }
 
-    public void flywheelSpin(double targetVelo, double currentVelo, double kf) {//kf is a tester varible
+    public void flywheelSpinBangBang(double targetVelo, double currentVelo, double kf) {//kf is a tester varible
         if (targetVelo - currentVelo <= 0) {
             speed = 0;
         } else {
@@ -84,6 +85,31 @@ public class Shooter {
         }
         shooterL.set(speed);
         shooterR.set(speed);
+        telemetry.addData("target velocity", Math.round(targetVelo * 100) / 100.0);
+        telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
+    }
+
+    public void flywheelSpinDynamic(double targetVelo, double currentVelo, double robotVel) {
+
+        if (robotVel > 10){
+            shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
+            shooterL.setRunMode(MotorEx.RunMode.VelocityControl);
+            double speedPID = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
+            shooterR.setVelocity(speedPID);
+            shooterL.setVelocity(speedPID);
+        } else {
+            shooterR.setRunMode(MotorEx.RunMode.RawPower);
+            shooterL.setRunMode(MotorEx.RunMode.RawPower);
+            if (targetVelo - currentVelo <= 0) {
+                speed = 0;
+            } else {
+                speed = 1;
+            }
+            shooterL.set(speed);
+            shooterR.set(speed);
+        }
+
+        telemetry.addData("robot velocity", robotVel);
         telemetry.addData("target velocity", Math.round(targetVelo * 100) / 100.0);
         telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
     }
@@ -155,5 +181,25 @@ public class Shooter {
 
     public double servoPos() {
         return hood.getPosition();
+    }
+
+
+    public double PIDF(double error, double setpoint, double kp, double ki, double kd, double kF) {
+
+        integral += error;
+        double derivative = error - last_error;
+
+        double proportional = error * kp;
+        double integralTerm = integral * ki;
+        double derivativeTerm = derivative * kd;
+
+        // Feedforward = kF * setpoint; important for scaling feedforward
+        double feedforward = kF * setpoint;
+
+        double correction = proportional + integralTerm + derivativeTerm + feedforward;
+
+        last_error = error;
+
+        return correction;
     }
 }
