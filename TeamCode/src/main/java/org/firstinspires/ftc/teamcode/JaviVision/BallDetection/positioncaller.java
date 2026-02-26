@@ -29,16 +29,20 @@ public class positioncaller extends OpMode {
             double y = results[2];
             double z = results[3];
             double raw_yaw = results[4];
-            double yaw = 36 -raw_yaw;
+            double tx = results[6];
+            double heading = 90
+            double theta = yaw - tx;
             double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z,2));
             telemetry.addData("X: ", x);
             telemetry.addData("Y:", y);
             telemetry.addData("Z", z);
             telemetry.addData("Raw Yaw: ", raw_yaw);
             telemetry.addData("Yaw", yaw);
+            telemetry.addData("Tx", tx);
             telemetry.addData("Distance: ", distance);
-            telemetry.addData("X (cos):", distance*Math.cos(Math.toRadians(yaw)));
-            telemetry.addData("Z (sin):", distance*Math.sin(Math.toRadians(yaw)));
+            telemetry.addData("Theta", theta);
+            telemetry.addData("X (cos):", distance*Math.cos(Math.toRadians(theta)));
+            telemetry.addData("Z (sin):",  distance*Math.sin(Math.toRadians(theta)));
         }
         telemetry.update();
         dash.update();
