@@ -46,7 +46,27 @@ public class LimelightV5 {
         LLResult result = limelight.getLatestResult();
         return result.getPythonOutput();
     }
-    public void updatePos(double headingIn, boolean updateHeading) {
+    public void updatePos(double headingIn){
+        double heading = headingIn;
+        double tx = pose.tx;
+        double distance = pose.distance;
+        double theta = Math.toRadians(heading - tx);
+        double camX = distance * Math.cos(theta);
+        double camY = distance * Math.sin(theta);
+        pose.rawX = camX;
+        pose.rawY = camY;
+        double dx = 10*Math.cos(heading);
+        double dy = 10*Math.sin(heading);
+        double id = pose.id;
+        if (id == 20) {
+            pose.posX = pose.rawX + CONSTX + dx;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+        } else { // id == 24
+            pose.posX = FIELD_LENGTH - pose.rawX - CONSTX + dx;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+        }
+    }
+    public void updateHeading() {
         double[] results = limelight.getLatestResult().getPythonOutput();
         if (results[0] == 0) {
             pose.valid = false;
@@ -58,34 +78,16 @@ public class LimelightV5 {
             double yaw = results[4];
             double tx = results[6];
             int id = (int) results[7];
-            double heading = 0;
-            if (updateHeading) {
-                heading = Math.toDegrees(headingIn);
-            }
-            else {
-                heading = KNOWN_ANGLE - yaw;
-            }
+            double heading = KNOWN_ANGLE - yaw;
             double theta = Math.toRadians(heading - tx);
             double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
-            double camX = distance * Math.cos(theta);
-            double camY = distance * Math.sin(theta);
             pose.yaw = yaw;
             pose.heading = heading;
             pose.tx = tx;
             pose.distance = distance;
             pose.theta = theta;
-            pose.rawX = camX;
-            pose.rawY = camY;
-            double dx = 10*Math.cos(heading);
-            double dy = 10*Math.sin(heading);
             pose.id = id;
-            if (id == 20) {
-                pose.posX = pose.rawX + CONSTX + dx;
-                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
-            } else { // id == 24
-                pose.posX = FIELD_LENGTH - pose.rawX - CONSTX + dx;
-                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
-            }
+            pose.valid = true;
             //telemetry.addData("X (cos):", distance*Math.cos(Math.toRadians(theta)));
             //telemetry.addData("Z (sin):",  distance*Math.sin(Math.toRadians(theta)));
         }

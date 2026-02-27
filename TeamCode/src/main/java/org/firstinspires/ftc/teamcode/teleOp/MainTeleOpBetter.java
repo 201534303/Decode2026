@@ -119,11 +119,8 @@ public class MainTeleOpBetter extends OpMode {
         double hertz = 1.0/timeDif;
         lastTime = nowTime;
 
-        // IF YOU WANT TO JUST GET THE POSITION
-        ll.updatePos(follower.getHeading(), false);
-
-        // IF YOU WANT TO GET THE HEADING AND THE POSITION
-        ll.updatePos(0, true);
+        ll.updateHeading();
+        ll.updatePos(follower.getHeading());
 
         telemetry.addLine("------");
         telemetry.addLine("angles");
@@ -185,7 +182,7 @@ public class MainTeleOpBetter extends OpMode {
 
         if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
             if (counter > 5) {
-                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getPose().getHeading()));
+                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, ll.pose.heading));
                 gamepad1.rumble(500);
                 counter = 0;
             }
