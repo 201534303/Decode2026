@@ -135,7 +135,7 @@ public class FarAutoAttempt2 extends OpMode {
                     } else if (spikeMark == 1) {
                         follower.followPath(paths.shootTo2(), 0.9, false);
 
-                        if (follower.atParametricEnd() && waitSecs(2) || waitSecs(2)){
+                        if (follower.atParametricEnd() && waitSecs(2) || waitSecs(3)){
                             spikeMark += 1;
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;
@@ -143,7 +143,7 @@ public class FarAutoAttempt2 extends OpMode {
                     } else if (spikeMark == 5) {
                         park();
                         done = true;
-                        follower.followPath(paths.shootToPark(), 0.9, false);
+                        follower.followPath(paths.shootToPark(), 1, false);
                         pathState = PathState.PARK;
                     }
                 }
