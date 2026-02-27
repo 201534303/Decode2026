@@ -56,7 +56,7 @@ public class RobotActions {
     private final double CONSTY = 13.375;
     private final double fieldLength = 144;
     private double speedDif;
-    private boolean noahMode;
+    private boolean noahMode = true;
 
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
         gamepad1 = g1;

@@ -19,8 +19,8 @@ public class FarPaths extends Paths{
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
-    public Pose shootPose = makePos(93, 12);
-    public Pose shootPose2 = makePos(90, 17);
+    public Pose shootPose = new Pose(93, 12,0);
+    public Pose shootPose2 = new Pose(90, 17,0);
     public Pose ballCollect2 = makePos(130, 9);
     public Pose ballCollect22 = makePos(133, 9);
     public Pose out = makePos(125, 9);
@@ -62,7 +62,19 @@ public class FarPaths extends Paths{
         Pose ballCollect = follower.getPose();
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose2))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose2.getHeading())
+                .setLinearHeadingInterpolation(ballCollect.getHeading(), 0)
+                //.setHeadingConstraint(0)
+                //.setTimeoutConstraint(1)
+                .build();
+    }
+
+    public PathChain headingCheck(){
+        Pose ballCollect = follower.getPose();
+        return follower.pathBuilder()
+                .addPath(new BezierLine(ballCollect, shootPose2))
+                .setLinearHeadingInterpolation(ballCollect.getHeading(), 0)
+                //.setHeadingConstraint(0)
+                //.setTimeoutConstraint(1)
                 .build();
     }
 

@@ -30,7 +30,7 @@ public class Shooter {
     protected Servo hood;
     Servo right, left;
     AnalogInput leftEnc;
-    private double thetaT;
+    public double thetaT;
     double speed;
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r) {
@@ -144,7 +144,7 @@ public class Shooter {
         telemetry.addData("turret", Math.round(theta * 100) / 100.0);
         theta = normalizeDeg(theta);
 
-        thetaT = theta;
+        //thetaT = theta;
 
         //hard stops
         if (theta > 75) {
@@ -156,6 +156,7 @@ public class Shooter {
 
         //setting it
         theta = 0.5025 /*center*/ + theta * (1.74 / (360.0) * mul);
+        thetaT = theta;
         right.setPosition(theta);
         left.setPosition(theta);
     }

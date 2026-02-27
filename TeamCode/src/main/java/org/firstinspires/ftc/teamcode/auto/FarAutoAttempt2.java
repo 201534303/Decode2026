@@ -43,7 +43,7 @@ public class FarAutoAttempt2 extends OpMode {
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
         OUT, IN, DETECT, ONE_MORE_TIME,
-        SIDE_SHUFFLE
+        SIDE_SHUFFLE, FIX
     }
     PathState pathState = PathState.START;
 
@@ -60,6 +60,8 @@ public class FarAutoAttempt2 extends OpMode {
     private int inPark = 0;
     private double turnTableAngle = 72;
     private double turnTableAngle2 = 75;
+    private double turnTableAngle3 = 65;
+
     double newY;
 
     // For Vision
@@ -138,7 +140,7 @@ public class FarAutoAttempt2 extends OpMode {
                             resetActionTimer();
                             pathState = PathState.TO_SHOOT;
                         }
-                    } else if (spikeMark == 6) {
+                    } else if (spikeMark == 5) {
                         park();
                         done = true;
                         follower.followPath(paths.shootToPark(), 0.9, false);
@@ -365,28 +367,56 @@ public class FarAutoAttempt2 extends OpMode {
                 break;*/
 
             case TO_SHOOT:
-                if(!follower.isBusy()) {
+                //if(!follower.isBusy()) {
                     if (shootCount == 0) {
-                        follower.followPath(paths.collectToShootNotSet(), 0.8, false);
+                        follower.followPath(paths.collectToShootNotSet(), 0.9, true);
                         shootCount += 1;
                     }
 
                     if (spikeMark == 1) {
-                        shooter.rotateTurret(turnTableAngle2);
+                        shooter.rotateTurret(75);
+                    } else if (spikeMark == 2) {
+                        shooter.rotateTurret(60);
+                        if (waitSecs(0.5)) {
+                            intake.setIntakeSpeed(0);
+                        }
+                    } else if (spikeMark == 3) {
+                        shooter.rotateTurret(70);
+                        if (waitSecs(0.5)) {
+                            intake.setIntakeSpeed(0);
+                        }
+                    } else if (spikeMark == 4) {
+                        shooter.rotateTurret(60);
+                        if (waitSecs(0.5)) {
+                            intake.setIntakeSpeed(0);
+                        }
+                    } else if (spikeMark == 5) {
+                        shooter.rotateTurret(55);
+                        if (waitSecs(0.5)) {
+                            intake.setIntakeSpeed(0);
+                        }
                     } else {
-                        shooter.rotateTurret(turnTableAngle);
+                        shooter.rotateTurret(turnTableAngle3);
 
                         if(waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     }
 
-                    if (follower.atParametricEnd()) {
-                        resetActionTimer();
-                        shootCount = 0;
-                        pathState = PathState.SHOOT;
+
+                    double headingError = Math.abs(Math.toDegrees(follower.getHeadingError()));
+
+                    if (!follower.isBusy()) {
+                        if (headingError < 0.5) {
+                            resetActionTimer();
+                            shootCount = 0;
+                            pathState = PathState.SHOOT;
+                        } else {
+                            follower.turnTo(0);
+                            //follower.holdPoint(paths.shootPose2);
+                        }
                     }
-                }
+                //}
                 break;
 
             case PARK:
@@ -458,6 +488,9 @@ public class FarAutoAttempt2 extends OpMode {
         if(!done) { shooter.far(); } // sets shooter speed
         follower.update(); // updates follower
         autonomousPathUpdate();//main auto code
+
+        telemetry.addData("turntable", shooter.thetaT);
+        telemetry.addData("headingError", Math.toDegrees(follower.getHeadingError()));
 
         // auto init prints
         telemetry.addData("mirror", isMirror);
