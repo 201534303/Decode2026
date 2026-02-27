@@ -63,8 +63,8 @@ public class FarPaths extends Paths{
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose2))
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), 0)
-                //.setHeadingConstraint(0)
-                //.setTimeoutConstraint(1)
+                .setHeadingConstraint(0)
+                .setTimeoutConstraint(1)
                 .build();
     }
 
