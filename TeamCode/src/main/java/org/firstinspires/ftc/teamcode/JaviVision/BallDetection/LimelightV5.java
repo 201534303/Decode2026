@@ -8,7 +8,10 @@ import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 public class LimelightV5 {
 
     public final LimelightPose pose = new LimelightPose();
-    public final double KNOWN_ANGLE = 42;
+    private final double KNOWN_ANGLE = 42;
+    private static final double CONSTX = 17.0;
+    private static final double CONSTY = 14.375;
+    private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
 
     public LimelightV5(HardwareMap hardwareMap, int pipeline) {
@@ -64,16 +67,25 @@ public class LimelightV5 {
             }
             double theta = Math.toRadians(heading - tx);
             double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
-            double posX = distance * Math.cos(theta);
-            double posY = distance * Math.sin(theta);
+            double camX = distance * Math.cos(theta);
+            double camY = distance * Math.sin(theta);
             pose.yaw = yaw;
             pose.heading = heading;
             pose.tx = tx;
             pose.distance = distance;
             pose.theta = theta;
-            pose.posX = posX;
-            pose.posY = posY;
+            pose.rawX = camX;
+            pose.rawY = camY;
+            double dx = 10*Math.cos(heading);
+            double dy = 10*Math.sin(heading);
             pose.id = id;
+            if (id == 20) {
+                pose.posX = pose.rawX + CONSTX + dx;
+                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+            } else { // id == 24
+                pose.posX = FIELD_LENGTH - pose.rawX - CONSTX + dx;
+                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+            }
             //telemetry.addData("X (cos):", distance*Math.cos(Math.toRadians(theta)));
             //telemetry.addData("Z (sin):",  distance*Math.sin(Math.toRadians(theta)));
         }
