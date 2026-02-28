@@ -105,7 +105,7 @@ public class SelfeeCloseAuto extends OpMode {
 
                 if(!follower.isBusy()) {
                     if(spikeMark == 0){
-                        follower.followPath(paths.fistToShoot(), 0.9, true);
+                        follower.followPath(paths.firstToShoot(), 0.9, true);
 
                         if (follower.atParametricEnd()){
                             resetActionTimer();
