@@ -58,7 +58,7 @@ public class FarAutoAttempt2 extends OpMode {
     private int count2 = 0;
     private int stuckRun = 0;
     private int inPark = 0;
-    private double turnTableAngle = 72;
+    private double turnTableAngle = 74;
     private double turnTableAngle2 = 75;
     private double turnTableAngle3 = 65;
 
@@ -90,23 +90,24 @@ public class FarAutoAttempt2 extends OpMode {
 
             case SHOOT:
                 if (!follower.isBusy()) {
-                    intake.allTheWaySlow();// go all the way to shoot
+                    if(waitSecs(1)){
+                        intake.allTheWaySlow();// go all the way to shoot
 
-                    if (spikeMark == 0) {
-                        if (waitSecs(1)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            pathState = PathState.INTAKE;
-                        }
-                    } else if (spikeMark == 1 || spikeMark == 5){
-                        if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            pathState = PathState.INTAKE;
-                        }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
-                        if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            spikeMark += 1;
-                            pathState = PathState.DETECT;
+                        if (spikeMark == 0) {
+                            if (waitSecs(2)) { // waits 1 sec to wait for all balls to shoot
+                                resetActionTimer();
+                                pathState = PathState.INTAKE;
+                            }
+                        } else if (spikeMark == 1 || spikeMark == 5) {
+                            if (waitSecs(2.75)) { // waits 1 sec to wait for all balls to shoot
+                                resetActionTimer();
+                                pathState = PathState.INTAKE;
+                            }
+                        } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
+                            if (waitSecs(2.75)) { // waits 1 sec to wait for all balls to shoot
+                                resetActionTimer();
+                                pathState = PathState.DETECT;
+                            }
                         }
                     }
                 }
@@ -156,6 +157,7 @@ public class FarAutoAttempt2 extends OpMode {
                 }
 
                 if (count == 0) {
+                    spikeMark += 1;
                     double[] results = limelight.updateBall();
                     xLast = results[1];
                     yLast = results[0];
@@ -376,53 +378,42 @@ public class FarAutoAttempt2 extends OpMode {
                     if (spikeMark == 1) {
                         shooter.rotateTurret(75);
                     } else if (spikeMark == 2) {
-                        shooter.rotateTurret(60);
+                        shooter.rotateTurret(75);
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     } else if (spikeMark == 3) {
-                        shooter.rotateTurret(70);
+                        shooter.rotateTurret(75);
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     } else if (spikeMark == 4) {
-                        shooter.rotateTurret(60);
+                        shooter.rotateTurret(75);
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     } else if (spikeMark == 5) {
-                        shooter.rotateTurret(55);
+                        shooter.rotateTurret(75);
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     } else {
-                        shooter.rotateTurret(turnTableAngle3);
+                        shooter.rotateTurret(75);
 
                         if(waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     }
 
-
-                    double headingError = Math.abs(Math.toDegrees(follower.getHeadingError()));
-
-                    if (!follower.isBusy()) {
-                        if (headingError < 0.5) {
-                            resetActionTimer();
-                            shootCount = 0;
-                            pathState = PathState.SHOOT;
-                        } else {
-                            follower.turnTo(0);
-                            //follower.holdPoint(paths.shootPose2);
-                        }
-                    }
+                if (follower.atParametricEnd()) {
+                    resetActionTimer();
+                    shootCount = 0;
+                    pathState = PathState.SHOOT;
+                }
                 //}
                 break;
 
             case PARK:
-                if(!follower.isBusy()) {
-                    park();
-                }
                 break;
 
         }
