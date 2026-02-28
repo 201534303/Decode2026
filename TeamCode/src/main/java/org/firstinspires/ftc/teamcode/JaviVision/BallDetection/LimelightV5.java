@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class LimelightV5 {
 
     public final LimelightPose pose = new LimelightPose();
@@ -66,7 +69,8 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
         }
     }
-    public void updateHeading() {
+    public void updateHeading(boolean movingOrRotating) {
+        ArrayList<Double> yaws = new ArrayList<>();
         double[] results = limelight.getLatestResult().getPythonOutput();
         if (results[0] == 0) {
             pose.valid = false;
@@ -81,6 +85,22 @@ public class LimelightV5 {
             double heading = KNOWN_ANGLE - yaw;
             double theta = Math.toRadians(heading - tx);
             double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
+            if (movingOrRotating) {
+                yaws.add(yaw);
+                Collections.sort(yaws);
+                int middle = yaws.size() / 2;
+                int size = yaws.size();
+                if (size % 2 == 1) {
+                    pose.median_yaw = yaws.get(middle);
+                }
+                else {
+                    pose.median_yaw = yaws.get(middle) + yaws.get(middle-1);
+                }
+            }
+            else {
+                yaws.clear();
+                pose.median_yaw = 0;
+            }
             pose.yaw = yaw;
             pose.heading = heading;
             pose.tx = tx;

@@ -119,7 +119,7 @@ public class MainTeleOpBetter extends OpMode {
         double hertz = 1.0/timeDif;
         lastTime = nowTime;
 
-        ll.updateHeading();
+        ll.updateHeading(movingOrRotating);
         ll.updatePos(follower.getHeading());
 
         telemetry.addLine("------");
@@ -182,7 +182,7 @@ public class MainTeleOpBetter extends OpMode {
 
         if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
             if (counter > 5) {
-                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, ll.pose.heading));
+                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getHeading()));
                 gamepad1.rumble(500);
                 counter = 0;
             }
