@@ -11,11 +11,12 @@ import java.util.Collections;
 public class LimelightV5 {
 
     public final LimelightPose pose = new LimelightPose();
-    private final double KNOWN_ANGLE = 42;
+    private final double KNOWN_ANGLE = 38;
     private static final double CONSTX = 17.0;
     private static final double CONSTY = 14.375;
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
+    public ArrayList<Double> yaws = new ArrayList<>();
 
     public LimelightV5(HardwareMap hardwareMap, int pipeline) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -51,26 +52,33 @@ public class LimelightV5 {
     }
     public void updatePos(double headingIn){
         double heading = headingIn;
+        double id = pose.id;
         double tx = pose.tx;
         double distance = pose.distance;
+        if (id == 20) {
+            heading = 180 - heading;
+        }
         double theta = Math.toRadians(heading - tx);
+        pose.theta = theta;
         double camX = distance * Math.cos(theta);
         double camY = distance * Math.sin(theta);
-        pose.rawX = camX;
-        pose.rawY = camY;
-        double dx = 10*Math.cos(heading);
-        double dy = 10*Math.sin(heading);
-        double id = pose.id;
+
+        double dx = 10*Math.cos(Math.toRadians(heading));
+        double dy = 10*Math.sin(Math.toRadians(heading));
+        pose.dx = dx;
+        pose.dy = dy;
+        pose.rawX = camX + dx;
+        pose.rawY = camY + dy;
+
         if (id == 20) {
-            pose.posX = pose.rawX + CONSTX + dx;
-            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+            pose.posX = pose.rawX + CONSTX;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         } else { // id == 24
-            pose.posX = FIELD_LENGTH - pose.rawX - CONSTX + dx;
-            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY + dy;
+            pose.posX = FIELD_LENGTH - pose.rawX - CONSTX;
+            pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
     public void updateHeading(boolean movingOrRotating) {
-        ArrayList<Double> yaws = new ArrayList<>();
         double[] results = limelight.getLatestResult().getPythonOutput();
         if (results[0] == 0) {
             pose.valid = false;
@@ -82,25 +90,36 @@ public class LimelightV5 {
             double yaw = results[4];
             double tx = results[6];
             int id = (int) results[7];
-            double heading = KNOWN_ANGLE - yaw;
-            double theta = Math.toRadians(heading - tx);
             double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
-            if (movingOrRotating) {
+            distance *= 0.95;
+            if (!movingOrRotating) {
                 yaws.add(yaw);
                 Collections.sort(yaws);
                 int middle = yaws.size() / 2;
                 int size = yaws.size();
+                pose.roll = size;
                 if (size % 2 == 1) {
                     pose.median_yaw = yaws.get(middle);
                 }
                 else {
-                    pose.median_yaw = yaws.get(middle) + yaws.get(middle-1);
+                    pose.median_yaw = (yaws.get(middle) + yaws.get(middle-1)) / 2;
                 }
             }
             else {
                 yaws.clear();
                 pose.median_yaw = 0;
             }
+            double heading = 0;
+            if (pose.median_yaw != 0) {
+                heading = KNOWN_ANGLE + Math.abs(pose.median_yaw);
+            }
+            else {
+                heading = KNOWN_ANGLE + Math.abs(yaw);
+            }
+            if (id == 20) {
+                heading = 180 - heading;
+            }
+            double theta = Math.toRadians(heading - tx);
             pose.yaw = yaw;
             pose.heading = heading;
             pose.tx = tx;
