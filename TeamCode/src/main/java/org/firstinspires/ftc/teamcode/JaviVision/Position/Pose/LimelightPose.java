@@ -17,6 +17,8 @@ public class LimelightPose {
 
     public double posX;
     public double posY;
+    public double dx;
+    public double dy;
 
     public double cornerX;
     public double cornerY;

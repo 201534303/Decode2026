@@ -59,7 +59,7 @@ public class MainTeleOpBetter extends OpMode {
     private boolean moving;
     private boolean rotating;
     private boolean movingOrRotating;
-    LimelightV5 ll;
+    LimelightProcessor_v3Tele ll;
     private Telemetry dash;
     public static double kf = 0.59;
     private double timeDif = 1.0;
@@ -67,7 +67,7 @@ public class MainTeleOpBetter extends OpMode {
 
     @Override
     public void init() {
-        ll = new LimelightV5(hardwareMap, 3);
+        ll = new LimelightProcessor_v3Tele(hardwareMap);
         //choose
         choose = new OLDChoose(gamepad1, telemetry);
 
@@ -119,9 +119,7 @@ public class MainTeleOpBetter extends OpMode {
         double hertz = 1.0/timeDif;
         lastTime = nowTime;
 
-        ll.updateHeading(movingOrRotating);
-        ll.updatePos(follower.getHeading());
-
+        ll.updateTele(follower.getHeading(), 0, movingOrRotating);
         telemetry.addLine("------");
         telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
@@ -130,13 +128,17 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("tx", ll.pose.tx);
         telemetry.addData("id", ll.pose.id);
         telemetry.addData("yaw", ll.pose.yaw);
+        telemetry.addData("Median yaw", ll.pose.median_yaw);
+        telemetry.addData("size", ll.pose.roll);
         telemetry.addLine("----------");
         telemetry.addData("distance", ll.pose.distance);
-        telemetry.addData("rawX", ll.pose.posX);
-        telemetry.addData("rawY", ll.pose.posY);
+        telemetry.addData("rawX ", ll.pose.rawX);
+        telemetry.addData("rawY", ll.pose.rawY);
+        telemetry.addData("posX", ll.pose.posX);
+        telemetry.addData("posY", ll.pose.posY);
         telemetry.addLine("----------");
-        //telemetry.addData("fieldX", ll.pose.posX);
-        //telemetry.addData("fieldY", ll.pose.posY);
+        telemetry.addData("dx", ll.pose.dx);
+        telemetry.addData("dy", ll.pose.dy);
         //telemetry.addLine("------");
 
 
