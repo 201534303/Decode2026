@@ -7,29 +7,25 @@ import com.pedropathing.paths.PathChain;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 
-public class FarPaths extends Paths{
-    public FarPaths(Follower follower){
+public class FarPaths extends Paths {
+    public FarPaths(Follower follower) {
         this.follower = follower;
     }
 
     public Pose startPose = makePos(88, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(130, 37);
+    public Pose ballCollect1 = makePos(128, 37);
     public Pose ballCollect1More = makePos(130, 37);
     public Pose side = makePos(128, 28);
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
-    public Pose shootPose = new Pose(93, 12,0);
-    public Pose shootPose2 = new Pose(90, 17,0);
+    public Pose shootPose = new Pose(93, 12, 0);
+    public Pose shootPose2 = new Pose(89, 17, 0);
     public Pose ballCollect2 = makePos(130, 9);
     public Pose ballCollect22 = makePos(133, 9);
     public Pose out = makePos(125, 9);
     public Pose park = makePos(105, 10, 0);
     public Pose midShoot4 = new Pose(85, 7);
-
-    private Pose outGet;
-    private Pose ballCollectVision;
-    private Pose ballCollectOut;
     //OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
@@ -52,146 +48,74 @@ public class FarPaths extends Paths{
         return false;
     }
 
-    public PathChain collectToShoot(){
+    public PathChain collectToShoot() {
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect1, shootPose))
                 .setLinearHeadingInterpolation(ballCollect1.getHeading(), shootPose.getHeading())
                 .build();
     }
-    public PathChain collectToShootNotSet(){
+
+    public PathChain collectToShootNotSet() {
         Pose ballCollect = follower.getPose();
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect, shootPose2))
                 .setLinearHeadingInterpolation(ballCollect.getHeading(), 0)
-                .setHeadingConstraint(0)
-                .setTimeoutConstraint(1)
                 .build();
     }
 
-    public PathChain headingCheck(){
-        Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, shootPose2))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), 0)
-                //.setHeadingConstraint(0)
-                //.setTimeoutConstraint(1)
-                .build();
-    }
-
-    public PathChain unstuck(){
-        Pose ballCollect = follower.getPose();
-        Pose unstuck = new Pose(ballCollect.getX(), ballCollect.getY()-10);
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, unstuck))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), unstuck.getHeading())
-                .build();
-    }
-
-    public PathChain collectToShootNotSetFirst(){
-        Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, shootPose))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
-                .build();
-    }
-
-    public PathChain collectToShoot3(){
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect12, shootPose2))
-                .setLinearHeadingInterpolation(ballCollect12.getHeading(), shootPose2.getHeading())
-                .build();
-    }
-
-    public PathChain collectToShoot4(){
+    public PathChain collectToShoot2() {
         return follower.pathBuilder()
                 .addPath(new BezierLine(ballCollect22, shootPose2))
                 .setLinearHeadingInterpolation(ballCollect22.getHeading(), shootPose2.getHeading())
                 .build();
     }
 
-    public PathChain collectToShoot2(){
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect22, shootPose2))
-                .setLinearHeadingInterpolation(ballCollect22.getHeading(), shootPose2.getHeading())
-                .build();
-    }
-
-    public PathChain to(Pose pos){
+    public PathChain to(Pose pos) {
         return follower.pathBuilder()
                 .addPath(new BezierLine(shootPose2, pos))
                 .setLinearHeadingInterpolation(shootPose2.getHeading(), pos.getHeading())
                 .build();
     }
 
-    public PathChain to(Pose pos1, Pose pos2){
+    public PathChain to(Pose pos1, Pose pos2) {
         return follower.pathBuilder()
                 .addPath(new BezierLine(pos1, pos2))
                 .setLinearHeadingInterpolation(pos1.getHeading(), pos2.getHeading())
                 .build();
     }
 
-    public PathChain set(double x, double y){
-        final Pose currPose = follower.getPose();
-        final Pose goTo = new Pose(x, y);
-
-        return follower.pathBuilder()
-                .addPath(new BezierLine(currPose, goTo))
-                .setLinearHeadingInterpolation(currPose.getHeading(), currPose.getHeading())
-                .build();
-    }
-
-    public PathChain shootTo1More(){
-        return bezierLine(shootPose2, ballCollect1More);
-    }
-
-    public PathChain shootTo1(){
+    public PathChain shootTo1() {
         return bezierCurve(startPose,
                 ballCollect1Mid,
                 ballCollect1);
     }
-
-    public PathChain sideShuffle(){
-        return bezierLine(ballCollect1, side);
-    }
-
-    public PathChain shootTo12(){
+    public PathChain shootTo12() {
         return bezierCurve(follower.getPose(),
                 ballCollect1Mid,
                 ballCollect1);
     }
 
-    public PathChain shootTo2(){ return bezierLine(shootPose, ballCollect2); }
-    public PathChain shootTo3(){ return bezierLine(shootPose2, ballCollect12); }
-    public PathChain shootTo4(){ //return bezierLine(shootPose2, ballCollect2);
+    public PathChain shootTo2() {
+        return bezierLine(shootPose, ballCollect2);
+    }
+
+    public PathChain shootTo3() {
+        return bezierLine(shootPose2, ballCollect12);
+    }
+
+    public PathChain shootTo4() { //return bezierLine(shootPose2, ballCollect2);
         return bezierCurve(shootPose2, midShoot4, ballCollect2);
     }
-    public PathChain shootTo4(Pose currPose){ //return bezierLine(shootPose2, ballCollect2);
-        return bezierLine(currPose, ballCollect2);
+
+    public PathChain shootToPark() {
+        return bezierLine(shootPose2, park);
     }
 
-    public PathChain shootTo4NotSet(){ //return bezierLine(shootPose2, ballCollect2);
-        Pose ballCollect = follower.getPose();
-        return bezierLine(ballCollect, ballCollect2);
-    }
-    public PathChain shootToPark(){ return bezierLine(shootPose2, park); }
-
-    public PathChain outSet(){ return bezierLine(ballCollect2, out); }
-
-    public PathChain outFrom(Pose pos1, Pose pos2){
-        return follower.pathBuilder()
-                .addPath(new BezierLine(pos1, pos2))
-                .setLinearHeadingInterpolation(pos1.getHeading(), pos2.getHeading())
-                .build();
-        //return bezierLine(pos1, pos2);
-    }
-    public PathChain inFrom(Pose pos1, Pose pos2){
-        return bezierLine(pos1, pos2);
+    public PathChain outSet() {
+        return bezierLine(ballCollect2, out);
     }
 
-
-    public PathChain inSet(){ return bezierLine(out, ballCollect22); }
-
-    public PathChain outSet2(){ return bezierLine(ballCollect12, ballCollect1Out); }
-
-    public PathChain inSet2(){ return bezierLine(ballCollect1Out, ballCollect12); }
+    public PathChain inSet() {
+        return bezierLine(out, ballCollect22);
+    }
 }

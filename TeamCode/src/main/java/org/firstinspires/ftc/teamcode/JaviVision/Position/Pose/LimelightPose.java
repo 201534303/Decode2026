@@ -5,6 +5,7 @@ public class LimelightPose {
     public double y = 0;
     public double z = 0;
     public double yaw = 0;
+    public double median_yaw = 0;
     public double pitch = 0;
     public double roll = 0;
     public double distance = 0;
@@ -16,6 +17,8 @@ public class LimelightPose {
 
     public double posX;
     public double posY;
+    public double dx;
+    public double dy;
 
     public double cornerX;
     public double cornerY;

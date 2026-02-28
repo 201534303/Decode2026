@@ -38,6 +38,9 @@ public class FarAutoAttempt2 extends OpMode {
     private FarPaths paths;
     private Telemetry dash;
     private Boolean timerOnce = false;
+    private boolean detectInitDone = false;
+    private boolean detectPathSet = false;
+    private boolean intakePathSet = false;
 
     // Actions
     public enum PathState {
@@ -58,7 +61,7 @@ public class FarAutoAttempt2 extends OpMode {
     private int count2 = 0;
     private int stuckRun = 0;
     private int inPark = 0;
-    private double turnTableAngle = 72;
+    private double turnTableAngle = 74;
     private double turnTableAngle2 = 75;
     private double turnTableAngle3 = 65;
 
@@ -82,7 +85,7 @@ public class FarAutoAttempt2 extends OpMode {
         switch (pathState) {
             case START:
                 shooter.far();
-                if (waitSecs(1.25)) { // waits for flywheel to speed up
+                if (waitSecs(1)) { //1.25
                     resetActionTimer(); // resets timer
                     pathState = PathState.SHOOT; // sets to shoot state
                 }
@@ -90,136 +93,117 @@ public class FarAutoAttempt2 extends OpMode {
 
             case SHOOT:
                 if (!follower.isBusy()) {
-                    intake.allTheWaySlow();// go all the way to shoot
+                    if(waitSecs(0.75)){
+                        intake.allTheWaySlow();// go all the way to shoot
 
-                    if (spikeMark == 0) {
-                        if (waitSecs(1)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            pathState = PathState.INTAKE;
-                        }
-                    } else if (spikeMark == 1 || spikeMark == 5){
-                        if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            pathState = PathState.INTAKE;
-                        }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
-                        if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
-                            resetActionTimer();
-                            spikeMark += 1;
-                            pathState = PathState.DETECT;
+                        if (spikeMark == 0) {
+                            if (waitSecs(1.5)) {//1.75
+                                resetActionTimer();
+                                intakePathSet = false;
+                                pathState = PathState.INTAKE;
+                            }
+                        } else if (spikeMark == 1 || spikeMark == 5) {
+                            if (waitSecs(1.75)) {//2.5
+                                resetActionTimer();
+                                intakePathSet = false;
+                                pathState = PathState.INTAKE;
+                            }
+                        } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
+                            if (waitSecs(1.75)) { // waits 1 sec to wait for all balls to shoot
+                                resetActionTimer();
+                                pathState = PathState.DETECT;
+                                detectInitDone = false;
+                                detectPathSet = false;
+                            }
                         }
                     }
                 }
                 break;
 
             case INTAKE:
-                if (intake.haveBall()){
+                if (intake.haveBall() && waitSecs(1)){
                     timerOnce = true;
                     resetActionTimer();
                     spikeMark += 1;
                     pathState = PathState.TO_SHOOT;
-                }
-
-                if (!follower.isBusy()) {
+                } else if (!follower.isBusy()) {
                     intake.transferOff();
                     intake.intakeIn();
 
-                    if (spikeMark == 0) {
-                        follower.followPath(paths.shootTo1(), 0.9, false);
-
-                        if (follower.atParametricEnd() || waitSecs(6)) {
-                            spikeMark += 1;
-                            resetActionTimer();
-                            pathState = PathState.TO_SHOOT;
+                    if (!intakePathSet) {
+                        intakePathSet = true;
+                        if (spikeMark == 0) {
+                            follower.followPath(paths.shootTo1(), 0.9, false);
+                        } else if (spikeMark == 1) {
+                            follower.followPath(paths.shootTo2(), 0.9, false);
+                        } else if (spikeMark == 5) {
+                            park();
+                            follower.followPath(paths.shootToPark(), 1, false);
+                            pathState = PathState.PARK;
+                            break;
                         }
-                    } else if (spikeMark == 1) {
-                        follower.followPath(paths.shootTo2(), 0.9, false);
+                    }
 
-                        if (follower.atParametricEnd() && waitSecs(2) || waitSecs(2)){
-                            spikeMark += 1;
-                            resetActionTimer();
-                            pathState = PathState.TO_SHOOT;
-                        }
-                    } else if (spikeMark == 5) {
-                        park();
-                        done = true;
-                        follower.followPath(paths.shootToPark(), 0.9, false);
-                        pathState = PathState.PARK;
+                    if (spikeMark == 0 && (follower.atParametricEnd() || waitSecs(6))) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        resetActionTimer();
+                        pathState = PathState.TO_SHOOT;
+                    } else if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(2) || waitSecs(3))) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        resetActionTimer();
+                        pathState = PathState.TO_SHOOT;
                     }
                 }
                 break;
 
             case DETECT:
-                if (intake.haveBall()){
+                if (intake.haveBall() && waitSecs(1)){
                     resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
                     pathState = PathState.TO_SHOOT;
+                    break;
                 }
 
-                if (count == 0) {
+                if (!detectInitDone) {
+                    spikeMark += 1;
                     double[] results = limelight.updateBall();
                     xLast = results[1];
                     yLast = results[0];
-                    count += 1;
+                    detectInitDone = true;
                 }
 
                 intake.transferOff();
 
-                if(!follower.isBusy()){
-                    count += 1;
+                if(!follower.isBusy() && !detectPathSet){
+                    detectPathSet = true;
+
                     if (xLast == 0 && yLast == 0 || alliance == OLDChoose.Alliance.BLUE) {
                         detect = false;
-
-                        follower.followPath(paths.shootTo4(), 0.9, false);
-
-                        if (waitSecs(1)){
-                            resetActionTimer();
-                            count = 0;
-                            pathState = PathState.TO_SHOOT;
-                        }
-                    } else if (xLast != 0 || yLast != 0){
-                        if (count2 == 0) {
-                            newY = paths.shootPose2.getY() - yLast - 7;
-
-                            if (newY < 9) {
-                                newY = 9;
-                            }
-
-//                            double rotation = 0;
-//                            double newX = 130;
-                            ballCollect = new Pose(130, newY, 0);
-//                            if(alliance == OLDChoose.Alliance.RED) { ballCollect = new Pose(130, newY, 0); }
-//                            else if(alliance == OLDChoose.Alliance.BLUE){
-//                                ballCollect = new Pose(14, newY, 180);
-//                                newX = 14;
-//                                rotation = 180;
-//                            }
-                            //ballCollect = new Pose(newX, newY, rotation);
-                            count2 += 1;
-                        }
-
-                        if (newY < 12){ // 20
+                        if(spikeMark == 3 || spikeMark == 5){
+                            follower.followPath(paths.shootTo3(), 0.9, false);
+                        } else {
                             follower.followPath(paths.shootTo4(), 0.9, false);
-                        } else { follower.followPath(paths. to(ballCollect), 0.9, true); }
-
-
-//                        if (waitSecs(0.10)) {
-//                            resetActionTimer();
-//                            count = 0;
-//                            count2 = 0;
-//                            detect = true;
-//                            pathState = PathState.ONE_MORE_TIME;
-//                        }
-
-                            //pathState = PathState.ONE_MORE_TIME;
-                        if (follower.atParametricEnd() && waitSecs(1)|| waitSecs(3)) {
-                            resetActionTimer();
-                            count = 0;
-                            count2 = 0;
-                            detect = true;
-                            //pathState = PathState.OUT;
-                            pathState = PathState.TO_SHOOT;
                         }
+                    } else /*if (xLast != 0 || yLast != 0)*/{
+                        newY = paths.shootPose2.getY() - yLast - 7;
+                        if (newY < 9) { newY = 9; }
+
+                        ballCollect = new Pose(130, newY, 0); // ADD THIS BACK
+
+                        if (newY < 12){ follower.followPath(paths.shootTo4(), 0.9, false); }
+                        else { follower.followPath(paths. to(ballCollect), 0.9, true); }
                     }
+                }
+
+                if (follower.atParametricEnd() && waitSecs(2) || waitSecs(3)) {//1.5/
+                    resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
+                    detect = true;
+                    pathState = PathState.TO_SHOOT;
                 }
                 break;
 
@@ -376,51 +360,43 @@ public class FarAutoAttempt2 extends OpMode {
                     if (spikeMark == 1) {
                         shooter.rotateTurret(75);
                     } else if (spikeMark == 2) {
-                        shooter.rotateTurret(60);
+                        shooter.rotateTurret(75);
                         if (waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0);
+                            intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 3) {
-                        shooter.rotateTurret(70);
-                        if (waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0);
+                        shooter.rotateTurret(74);
+                        if (waitSecs(0.75)) {
+                            intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 4) {
-                        shooter.rotateTurret(60);
-                        if (waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0);
+                        shooter.rotateTurret(74);
+                        if (waitSecs(0.75)) {
+                            intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 5) {
-                        shooter.rotateTurret(55);
-                        if (waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0);
+                        shooter.rotateTurret(74);
+                        if (waitSecs(0.75)) {
+                            intake.setIntakeSpeed(0.3);
                         }
                     } else {
-                        shooter.rotateTurret(turnTableAngle3);
+                        shooter.rotateTurret(75);
 
                         if(waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
                         }
                     }
 
-
-                    double headingError = Math.abs(Math.toDegrees(follower.getHeadingError()));
-
-                    if (!follower.isBusy()) {
-                        if (headingError < 0.5) {
-                            resetActionTimer();
-                            shootCount = 0;
-                            pathState = PathState.SHOOT;
-                        } else {
-                            follower.turnTo(0);
-                            //follower.holdPoint(paths.shootPose2);
-                        }
-                    }
+                if (follower.atParametricEnd()) {
+                    resetActionTimer();
+                    shootCount = 0;
+                    pathState = PathState.SHOOT;
+                }
                 //}
                 break;
 
             case PARK:
-                if(!follower.isBusy()) {
+                if (!follower.isBusy()) {
                     park();
                 }
                 break;

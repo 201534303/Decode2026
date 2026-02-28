@@ -16,14 +16,14 @@ public class ClosePaths extends Paths{
     public Pose shootPose0 = makePos(85, 80, 35);
     public Pose shootPose = makePos(88, 85);
     public Pose shootPose2 = makePos(85, 90);
-    public Pose ballCollect1 = makePos(130, 60, 0);
+    public Pose ballCollect1 = makePos(127, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(130, 60, 35);
+    public Pose selfee = makePos(132, 58, 35);//60
     public Pose selfeeWiggle = makePos(127, 57, 35);
     public Pose selfeeMid = new Pose(92.9805447470817, 47.437743190661486);
     public Pose ballCollect2 = makePos(125, 90);
-    public Pose park = makePos(120, 90, -2);
+    public Pose park = makePos(125, 90, -2);
 
     public Pose reset = makePos(120, 72, 90);
     public Pose resetMiddle = new Pose(116.135, 74.992);
@@ -85,7 +85,7 @@ public class ClosePaths extends Paths{
                 shootPose);
     }
 
-    public PathChain fistToShoot(){
+    public PathChain firstToShoot(){
         return bezierLine(startPose, shootPose0);
     }
     public PathChain shootTo1(){
