@@ -16,7 +16,7 @@ public class ClosePaths extends Paths{
     public Pose shootPose0 = makePos(85, 80, 35);
     public Pose shootPose = makePos(88, 85);
     public Pose shootPose2 = makePos(85, 90);
-    public Pose ballCollect1 = makePos(130, 60, 0);
+    public Pose ballCollect1 = makePos(127, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
     public Pose selfee = makePos(132, 58, 35);//60

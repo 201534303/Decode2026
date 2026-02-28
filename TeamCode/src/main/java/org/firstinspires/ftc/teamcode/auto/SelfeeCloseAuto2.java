@@ -72,7 +72,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
                 if(!follower.isBusy() && !firstShootPathSet) {
                     firstShootPathSet = true;
-                    follower.followPath(paths.firstToShoot(), 0.9, true);
+                    follower.followPath(paths.firstToShoot(), 0.9, false);
                 }
 
                 if (follower.atParametricEnd() && firstShootPathSet) {
@@ -91,14 +91,14 @@ public class SelfeeCloseAuto2 extends OpMode {
                     toShootPathSet = true;
                     if (spikeMark == 1) {
                         follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
-                    } else if (spikeMark == 2 || spikeMark == 4 /*|| spikeMark == 5*/) {
+                    } else if (spikeMark == 2 || spikeMark == 4 || spikeMark == 5) {
                         follower.followPath(paths.selfeeToShoot(), 0.9, true);
                     } else if (spikeMark == 3) {
                         follower.followPath(paths._2ToShoot(), 0.9, true);
                     }
                 }
                 if (toShootPathSet) {
-                    if ((spikeMark == 2 || spikeMark == 3 || spikeMark == 4) && waitSecs(0.5)) {
+                    if ((spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5) && waitSecs(0.5)) {
                         intake.setIntakeSpeed(0.3);
                     }
                     if (follower.atParametricEnd()) {
@@ -112,7 +112,7 @@ public class SelfeeCloseAuto2 extends OpMode {
             case SHOOT:
                 if(!follower.isBusy()) {
                     intake.allTheWay();
-                    if (waitSecs(1)) {//1.25
+                    if (waitSecs(0.75)) {//1.25
                         resetActionTimer();
                         intakePathSet = false;
                         toShootPathSet = false;
@@ -122,7 +122,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case INTAKE:
-                if(intake.haveBall() && waitSecs(1)){
+                if(intake.haveBall() && waitSecs(0.75)){
                     resetActionTimer();
                     spikeMark += 1;
                     intakePathSet = false;
@@ -138,31 +138,31 @@ public class SelfeeCloseAuto2 extends OpMode {
                         intakePathSet = true;
                         if (spikeMark == 0) {
                             follower.followPath(paths.shootTo1(), 0.9, true);
-                        } else if (spikeMark == 1 || spikeMark == 3) {
+                        } else if (spikeMark == 1 || spikeMark == 3 || spikeMark == 4) {
                             follower.followPath(paths.shootToSelfee(), 0.9, true);
                         } else if (spikeMark == 2) {
                             follower.followPath(paths.shootTo2(), 0.9, true);
-                        } else if (spikeMark == 4) {
-                            follower.followPath(paths.shootToPark(), 0.9, true);
+                        } else if (spikeMark == 5) {
+                            follower.followPath(paths.shootToPark(), 0.9, false);
                         }
                     }
 
-                    if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(1) || waitSecs(2))) {
+                    if (spikeMark == 0 && (follower.atParametricEnd() /*&& waitSecs(1) */|| waitSecs(2))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if ((spikeMark == 1 || spikeMark == 3) && (follower.atParametricEnd() && waitSecs(5) || waitSecs(6))) {
+                    } else if ((spikeMark == 1 || spikeMark == 3 || spikeMark == 4) && (follower.atParametricEnd() && waitSecs(4) || waitSecs(5))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 2 && (follower.atParametricEnd() || waitSecs(3))) {
+                    } else if (spikeMark == 2 && (follower.atParametricEnd() || waitSecs(2))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 4 && follower.atParametricEnd()) {
+                    } else if (spikeMark == 5 && follower.atParametricEnd()) {
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.PARK;
