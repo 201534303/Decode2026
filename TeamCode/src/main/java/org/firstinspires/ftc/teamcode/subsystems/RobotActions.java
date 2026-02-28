@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.Vector;
@@ -24,7 +25,9 @@ public class RobotActions {
     //gamepads
     Gamepad gamepad1, gamepad2;
 
-    //telemetry
+    private PIDController rotationPID = new PIDController(1.5, 0, 0);
+    private final double OFFSETROTATIONGATE = Math.toRadians(56);
+    //telemetry`
     Telemetry telemetry;
 
     //runtime
@@ -57,7 +60,6 @@ public class RobotActions {
     private final double fieldLength = 144;
     private double speedDif;
     private boolean noahMode = true;
-
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
         gamepad1 = g1;
         gamepad2 = g2;
@@ -90,7 +92,24 @@ public class RobotActions {
     public void fieldCentricDrive(OLDChoose.Alliance currentColor, double botHeadingaForMatrix){
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
-        double rot = gamepad1.left_stick_x;
+        double rot = 0;
+        if(gamepad1.left_bumper){
+            double idealRot = Math.PI/2;
+            if(currentColor == OLDChoose.Alliance.RED){
+                idealRot -= OFFSETROTATIONGATE;
+            }
+            else{
+                idealRot += OFFSETROTATIONGATE;
+            }
+            double error = angleDiffRad(botHeadingaForMatrix, idealRot);
+            telemetry.addData("idealRot", idealRot);
+            telemetry.addData("error", error);
+            rot = rotationPID.calculate(error);
+            telemetry.addData("rot", rot);
+        }
+        else{
+            rot = gamepad1.left_stick_x;
+        }
 
         double brake = gamepad1.right_trigger;
         double superBrake = gamepad1.left_trigger;
@@ -121,6 +140,13 @@ public class RobotActions {
             drivetrain.setMotorPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
         }
     }
+    public static double angleDiffRad(double fromRad, double toRad) {
+        double diff = (toRad - fromRad) % (2.0 * Math.PI);
+        if (diff > Math.PI) diff -= 2.0 * Math.PI;
+        if (diff < -Math.PI) diff += 2.0 * Math.PI;
+        return diff; // range: [-PI, PI]
+    }
+
 
     public void updateIntake(){
         if(noahMode){
@@ -199,7 +225,7 @@ public class RobotActions {
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
-        double time = time(x,y)*2.0;
+        double time = 0;
 
         double virtualX = x + time*vel.getXComponent();
         double virtualY = y + time*vel.getYComponent();

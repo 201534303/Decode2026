@@ -158,7 +158,7 @@ public class MainTeleOpBetter extends OpMode {
         } else {
             moving = true;
         }
-        if (Math.abs(Math.toDegrees((oldHeading - heading))/timeDif) < .06) {
+        if (Math.abs(Math.toDegrees((oldHeading - heading))/timeDif) < .005) {
             rotating = false;
         } else {
             rotating = true;
