@@ -229,10 +229,10 @@ public class SelfeeCloseAuto2 extends OpMode {
         telemetry.addData("path state", pathState);
         telemetry.addData("spike mark", spikeMark);
         telemetry.addData("alliance", alliance);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("flywheel RPM", shooter.getMotorRPM());
+        //telemetry.addData("x", follower.getPose().getX());
+        //telemetry.addData("y", follower.getPose().getY());
+        //telemetry.addData("heading", follower.getPose().getHeading());
+        //telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
     }
 }

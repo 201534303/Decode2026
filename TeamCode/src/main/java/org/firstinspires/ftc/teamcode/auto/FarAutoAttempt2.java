@@ -460,8 +460,8 @@ public class FarAutoAttempt2 extends OpMode {
         follower.update(); // updates follower
         autonomousPathUpdate();//main auto code
 
-        telemetry.addData("turntable", shooter.thetaT);
-        telemetry.addData("headingError", Math.toDegrees(follower.getHeadingError()));
+        //telemetry.addData("turntable", shooter.thetaT);
+        //telemetry.addData("headingError", Math.toDegrees(follower.getHeadingError()));
 
         // auto init prints
         telemetry.addData("mirror", isMirror);
@@ -470,15 +470,15 @@ public class FarAutoAttempt2 extends OpMode {
         // auto control prints
         telemetry.addData("spikeMark", spikeMark);
         telemetry.addData("path state", pathState);
-        telemetry.addData("inPark", inPark);
+        //telemetry.addData("inPark", inPark);
 
         // curr pos
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
+        //telemetry.addData("x", follower.getPose().getX());
+        //telemetry.addData("y", follower.getPose().getY());
 
         // shooter prints
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("flywheel RPM", shooter.getMotorRPM());
+        //telemetry.addData("heading", follower.getPose().getHeading());
+        //telemetry.addData("flywheel RPM", shooter.getMotorRPM());
 
         // updates and sends to phone
         telemetry.update();
