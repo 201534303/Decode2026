@@ -206,7 +206,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
         if(isMirror) {
             turnTableAngleFirst = -13;
-            turnTableAngle = -45;
+            turnTableAngle = -47;
         }//if it's mirrored turn the turntable
         shooter.rotateTurret(turnTableAngleFirst);
 

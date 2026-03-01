@@ -97,7 +97,7 @@ public class FarAutoAttempt2 extends OpMode {
                         intake.allTheWaySlow();// go all the way to shoot
 
                         if (spikeMark == 0) {
-                            if (waitSecs(1.5)) {//1.75
+                            if (waitSecs(1.75)) {//1.75
                                 resetActionTimer();
                                 intakePathSet = false;
                                 pathState = PathState.INTAKE;
@@ -425,8 +425,6 @@ public class FarAutoAttempt2 extends OpMode {
         dash = dashboard.getTelemetry();
 
         shooter.setHood(0.2);
-        shooter.rotateTurret(100);
-
     }
 
     public void init_loop(){
@@ -445,10 +443,7 @@ public class FarAutoAttempt2 extends OpMode {
         follower.setStartingPose(paths.startPose);
 
         // setting shooter stuff
-        if (isMirror) {
-            turnTableAngle = -65;
-            turnTableAngle2 = -68;
-        }
+        if (isMirror) { turnTableAngle = -74; }
         shooter.rotateTurret(turnTableAngle);
 
         // resets timers
