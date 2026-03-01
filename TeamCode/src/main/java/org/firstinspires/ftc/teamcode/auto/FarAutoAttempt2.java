@@ -63,8 +63,6 @@ public class FarAutoAttempt2 extends OpMode {
     private int inPark = 0;
     private double turnTableAngle = 74;
     private double turnTableAngle2 = 75;
-    private double turnTableAngle3 = 65;
-
     double newY;
 
     // For Vision
@@ -358,29 +356,29 @@ public class FarAutoAttempt2 extends OpMode {
                     }
 
                     if (spikeMark == 1) {
-                        shooter.rotateTurret(75);
+                        shooter.rotateTurret(turnTableAngle2);
                     } else if (spikeMark == 2) {
-                        shooter.rotateTurret(75);
+                        shooter.rotateTurret(turnTableAngle2);
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 3) {
-                        shooter.rotateTurret(74);
+                        shooter.rotateTurret(turnTableAngle);
                         if (waitSecs(0.75)) {
                             intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 4) {
-                        shooter.rotateTurret(74);
+                        shooter.rotateTurret(turnTableAngle);
                         if (waitSecs(0.75)) {
                             intake.setIntakeSpeed(0.3);
                         }
                     } else if (spikeMark == 5) {
-                        shooter.rotateTurret(74);
+                        shooter.rotateTurret(turnTableAngle);
                         if (waitSecs(0.75)) {
                             intake.setIntakeSpeed(0.3);
                         }
                     } else {
-                        shooter.rotateTurret(75);
+                        shooter.rotateTurret(turnTableAngle2);
 
                         if(waitSecs(0.5)) {
                             intake.setIntakeSpeed(0);
@@ -443,7 +441,10 @@ public class FarAutoAttempt2 extends OpMode {
         follower.setStartingPose(paths.startPose);
 
         // setting shooter stuff
-        if (isMirror) { turnTableAngle = -74; }
+        if (isMirror) {
+            turnTableAngle = -74;
+            turnTableAngle2 = -75;
+        }
         shooter.rotateTurret(turnTableAngle);
 
         // resets timers
