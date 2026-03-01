@@ -11,14 +11,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 @Autonomous(name = "FarAuto")
 
-public class FarAutoAttempt2 extends OpMode {
+public class FarAutoBetterVision extends OpMode {
     // Robot Subsystems
     private IntakeAuto intake;
     private ShooterAuto shooter;
@@ -45,7 +45,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        OUT, IN, DETECT, ONE_MORE_TIME,
+        OUT, IN, DETECT, ONE_MORE_TIME, TWO_MORE_TIME,
         SIDE_SHUFFLE, FIX
     }
     PathState pathState = PathState.START;
@@ -196,7 +196,120 @@ public class FarAutoAttempt2 extends OpMode {
                     }
                 }
 
-                if (follower.atParametricEnd() && waitSecs(2) || waitSecs(3)) {//1.5/
+                if (waitSecs(0.2)) {//1.5/
+                    resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
+                    detect = true;
+                    pathState = PathState.ONE_MORE_TIME;
+                }
+                break;
+
+            case ONE_MORE_TIME:
+                if (intake.haveBall()){
+                    resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
+                    pathState = PathState.TO_SHOOT;
+                    break;
+                }
+
+                if(follower.getPose().getX() >= 110) {
+                    if (!detectInitDone) {
+                        spikeMark += 1;
+                        double[] results = limelight.updateBall();
+                        xLast = results[1];
+                        yLast = results[0];
+                        detectInitDone = true;
+                    }
+
+                    intake.transferOff();
+
+                    if (!detectPathSet) {
+                        detectPathSet = true;
+
+                        if (xLast == 0 && yLast == 0 || alliance == OLDChoose.Alliance.BLUE) {
+                            detect = false;
+                            if (spikeMark == 3 || spikeMark == 5) {
+                                follower.followPath(paths.shootTo3NotSet(), 0.9, false);
+                            } else {
+                                follower.followPath(paths.shootTo4NotSet(), 0.9, false);
+                            }
+                        } else {
+                            newY = paths.shootPose2.getY() - yLast - 7;
+                            if (newY < 9) {
+                                newY = 9;
+                            }
+
+                            ballCollect = new Pose(130, newY, 0);
+
+                            if (newY < 12) {
+                                follower.followPath(paths.shootTo4NotSet(), 0.9, false);
+                            } else {
+                                follower.followPath(paths.fromTo(ballCollect), 0.9, true);
+                            }
+                        }
+                    }
+                }
+
+                if (waitSecs(0.1) && detectPathSet) {
+                    resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
+                    detect = true;
+                    pathState = PathState.TWO_MORE_TIME;
+                }
+
+                break;
+
+            case TWO_MORE_TIME:
+                if (intake.haveBall()){
+                    resetActionTimer();
+                    detectInitDone = false;
+                    detectPathSet = false;
+                    pathState = PathState.TO_SHOOT;
+                    break;
+                }
+
+                if(follower.getPose().getX() >= 120) {
+                    if (!detectInitDone) {
+                        spikeMark += 1;
+                        double[] results = limelight.updateBall();
+                        xLast = results[1];
+                        yLast = results[0];
+                        detectInitDone = true;
+                    }
+
+                    intake.transferOff();
+
+                    if (!detectPathSet) {
+                        detectPathSet = true;
+
+                        if (xLast == 0 && yLast == 0 || alliance == OLDChoose.Alliance.BLUE) {
+                            detect = false;
+                            if (spikeMark == 3 || spikeMark == 5) {
+                                follower.followPath(paths.shootTo3NotSet(), 0.9, false);
+                            } else {
+                                follower.followPath(paths.shootTo4NotSet(), 0.9, false);
+                            }
+                        } else {
+                            newY = paths.shootPose2.getY() - yLast - 7;
+                            if (newY < 9) {
+                                newY = 9;
+                            }
+
+                            ballCollect = new Pose(130, newY, 0);
+
+                            if (newY < 12) {
+                                follower.followPath(paths.shootTo4NotSet(), 0.9, false);
+                            } else {
+                                follower.followPath(paths.fromTo(ballCollect), 0.9, true);
+                            }
+                        }
+                    }
+                }
+
+                if (follower.atParametricEnd() && waitSecs(1) || waitSecs(2)) {
                     resetActionTimer();
                     detectInitDone = false;
                     detectPathSet = false;
@@ -204,6 +317,7 @@ public class FarAutoAttempt2 extends OpMode {
                     pathState = PathState.TO_SHOOT;
                 }
                 break;
+
 
             case TO_SHOOT:
                 //if(!follower.isBusy()) {

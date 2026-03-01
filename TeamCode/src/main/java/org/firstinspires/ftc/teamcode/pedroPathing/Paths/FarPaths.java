@@ -77,6 +77,14 @@ public class FarPaths extends Paths {
                 .build();
     }
 
+    public PathChain fromTo(Pose pos) {
+        Pose currPos = follower.getPose();
+        return follower.pathBuilder()
+                .addPath(new BezierLine(currPos, pos))
+                .setLinearHeadingInterpolation(currPos.getHeading(), pos.getHeading())
+                .build();
+    }
+
     public PathChain to(Pose pos1, Pose pos2) {
         return follower.pathBuilder()
                 .addPath(new BezierLine(pos1, pos2))
@@ -103,8 +111,18 @@ public class FarPaths extends Paths {
         return bezierLine(shootPose2, ballCollect12);
     }
 
+    public PathChain shootTo3NotSet() {
+        Pose currPos = follower.getPose();
+        return bezierLine(currPos, ballCollect12);
+    }
+
     public PathChain shootTo4() { //return bezierLine(shootPose2, ballCollect2);
         return bezierCurve(shootPose2, midShoot4, ballCollect2);
+    }
+
+    public PathChain shootTo4NotSet() { //return bezierLine(shootPose2, ballCollect2);
+        Pose currPos = follower.getPose();
+        return bezierCurve(currPos, midShoot4, ballCollect2);
     }
 
     public PathChain shootToPark() {
