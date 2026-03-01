@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "FarAuto")
+@Autonomous(name = "FarAutoVision2")
 
 public class FarAutoBetterVision extends OpMode {
     // Robot Subsystems
