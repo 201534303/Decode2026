@@ -84,9 +84,13 @@ public class RobotActions {
         }
     }
 
-
-    public void setIMUZero(double x, double y) {
-        follower.setPose(new Pose(x, y, Math.PI/2.0));
+    public void setIMUZero(double x, double y, OLDChoose.Alliance currentColor) {
+        if(currentColor == OLDChoose.Alliance.RED){
+            follower.setPose(new Pose(x, y, 0));
+        }
+        else{
+            follower.setPose(new Pose(x, y, Math.PI));
+        }
     }
 
     public void fieldCentricDrive(OLDChoose.Alliance currentColor, double botHeadingaForMatrix){

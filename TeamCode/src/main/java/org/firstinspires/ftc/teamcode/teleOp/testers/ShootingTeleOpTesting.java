@@ -133,7 +133,7 @@ public class ShootingTeleOpTesting extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            robot.setIMUZero(x, y);
+            robot.setIMUZero(x, y, currentColor);
         }
 
         //rezero position

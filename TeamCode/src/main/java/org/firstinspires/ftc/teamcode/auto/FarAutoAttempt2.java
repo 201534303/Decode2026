@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
+import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
@@ -343,5 +344,10 @@ public class FarAutoAttempt2 extends OpMode {
         //dash.update();
     }
 
+    @Override
+    public void stop() {
+        Pose p = follower.getPose();
+        PoseSaver.save(p.getX(), p.getY(), p.getHeading());
+    }
 
 }

@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
+import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -105,11 +106,16 @@ public class MainTeleOpBetter extends OpMode {
     @Override
     public void start() {
         overallRuntime.reset();
-        if(currentColor == RED){
-            follower.setPose(new Pose(115, 70, Math.PI/2));
-        }
-        if(currentColor == BLUE){
-            follower.setPose(new Pose(29, 70, Math.PI/2));
+        if (PoseSaver.hasPose) {
+            follower.setPose(new Pose(PoseSaver.x, PoseSaver.y, PoseSaver.heading));
+            PoseSaver.clear(); // optional, prevents stale reuse
+        } else {
+            if(currentColor == RED){
+                follower.setPose(new Pose(115, 70, 0));
+            }
+            if(currentColor == BLUE){
+                follower.setPose(new Pose(29, 70, Math.PI));
+            }
         }
     }
 
@@ -180,7 +186,7 @@ public class MainTeleOpBetter extends OpMode {
 
         //reset imu to 0
         if (gamepad1.options){
-            robot.setIMUZero(x, y);
+            robot.setIMUZero(x, y, currentColor);
         }
 
         //reset position to corner
