@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -77,6 +78,19 @@ public class LimelightV5 {
             pose.posX = FIELD_LENGTH - pose.rawX - CONSTX;
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
+    }
+    public ArrayList<double[]> updateBall2() {
+        LLResult result = limelight.getLatestResult();
+        ArrayList<double[]> detections = new ArrayList<>();
+        for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
+            double ty = Math.sqrt(detection.getTargetYDegrees());
+            double tx = Math.sqrt(detection.getTargetXDegrees());
+            double camZ = 7.5/Math.tan(Math.toRadians(ty));
+            double camX = camZ*Math.tan(Math.toRadians(tx));
+            double[] ret = {camX, camZ};
+            detections.add(ret);
+        }
+        return detections;
     }
     public void updateHeading(boolean movingOrRotating) {
         double[] results = limelight.getLatestResult().getPythonOutput();
