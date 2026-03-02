@@ -79,16 +79,15 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<double[]> updateBall2() {
+    public ArrayList<Double> updateBall2() {
         LLResult result = limelight.getLatestResult();
-        ArrayList<double[]> detections = new ArrayList<>();
+        ArrayList<Double> detections = new ArrayList<>();
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
-            double ty = Math.sqrt(detection.getTargetYDegrees());
-            double tx = Math.sqrt(detection.getTargetXDegrees());
+            double ty = detection.getTargetYDegrees();
+            double tx = detection.getTargetXDegrees();
             double camZ = 7.5/Math.tan(Math.toRadians(ty));
             double camX = camZ*Math.tan(Math.toRadians(tx));
-            double[] ret = {camX, camZ};
-            detections.add(ret);
+            detections.add(camX);
         }
         return detections;
     }

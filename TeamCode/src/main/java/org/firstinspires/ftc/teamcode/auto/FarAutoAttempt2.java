@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
+import java.util.ArrayList;
+
 @Autonomous(name = "FarAuto")
 
 public class FarAutoAttempt2 extends OpMode {
@@ -169,6 +171,7 @@ public class FarAutoAttempt2 extends OpMode {
                 if (!detectInitDone) {
                     spikeMark += 1;
                     double[] results = limelight.updateBall();
+                    ArrayList<Double> results2 = limelight.updateBall2();
                     xLast = results[1];
                     yLast = results[0];
                     detectInitDone = true;

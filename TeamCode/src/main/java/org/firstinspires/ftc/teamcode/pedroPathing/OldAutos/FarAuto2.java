@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
+import java.util.ArrayList;
+
 //@Autonomous(name = "FarAuto")
 @Disabled
 public class FarAuto2 extends OpMode {
@@ -224,6 +226,9 @@ public class FarAuto2 extends OpMode {
         double[] results = limelight.updateBall();
         x = results[1];
         y = results[0];
+
+        ArrayList<Double> results2 = limelight.updateBall2();
+
         telemetry.addData("detect x", x);
         telemetry.addData("detect y", y);
 
