@@ -20,8 +20,8 @@ public class RobotActions {
     public double DELETEBUTTHISISVEL = 1720;
     public double DELETEBUTTHISISHOOD = 0.3;
     public double DELETEBUTTHISISTURRET = 0.48;
-    private double noiseRedution = 0;
-
+    private final double[] noiseReduction = new double[3]; // last 3 turret angles
+    private int noiseReductionCount = 0; // for startup (avoid averaging in zeros)
     //gamepads
     Gamepad gamepad1, gamepad2;
 
@@ -327,10 +327,34 @@ public class RobotActions {
         }
 
         telemetry.addData("turretAngle", turretAngle);
-        noiseRedution = (turretAngle + noiseRedution*3.0)/4.0;
-        shooter.rotateTurret(noiseRedution);
-        turAngle = noiseRedution;
+
+        double filteredTurretAngle = rollingAverage4(turretAngle);
+        shooter.rotateTurret(filteredTurretAngle);
+        turAngle = filteredTurretAngle;
     }
+
+    private double rollingAverage4(double current) {
+        double sum = current;
+        int n = 1;
+
+        int valid = Math.min(noiseReductionCount, noiseReduction.length);
+        for (int i = 0; i < valid; i++) {
+            sum += noiseReduction[i];
+            n++;
+        }
+
+        double avg = sum / n;
+
+        // shift right, drop oldest
+        for (int i = noiseReduction.length - 1; i > 0; i--) {
+            noiseReduction[i] = noiseReduction[i - 1];
+        }
+        noiseReduction[0] = current;
+        if (noiseReductionCount < noiseReduction.length) noiseReductionCount++;
+
+        return avg;
+    }
+
 
     private void updateTurretConversion(OLDChoose.Alliance currentColor, double posX, double posY, double h, double mul){
         this.posX = posX;

@@ -65,6 +65,7 @@ public class MainTeleOpBetter extends OpMode {
     private double timeDif = 1.0;
     private double oldHeading = 0;
 
+
     @Override
     public void init() {
         ll = new LimelightProcessor_v3Tele(hardwareMap);
@@ -116,11 +117,10 @@ public class MainTeleOpBetter extends OpMode {
     public void loop() {
         double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
         timeDif = nowTime - lastTime;
-        double hertz = 1.0/timeDif;
         lastTime = nowTime;
+        telemetry.addData("loop time", timeDif);
 
-        ll.updateTele(follower.getHeading(), 0, movingOrRotating);
-        telemetry.addLine("------");
+        /*telemetry.addLine("------");
         telemetry.addLine("angles");
         telemetry.addData("theta", Math.toDegrees(ll.pose.theta));
         telemetry.addData("heading", Math.toDegrees(follower.getHeading()));
@@ -140,15 +140,20 @@ public class MainTeleOpBetter extends OpMode {
         telemetry.addData("dx", ll.pose.dx);
         telemetry.addData("dy", ll.pose.dy);
         //telemetry.addLine("------");
+         */
 
 
         /*
         --------------------------GRAB COORDINATES--------------------------
          */
+        shooter.flywheelSpinDynamicLoop();
+
         Pose robotPos = follower.getPose();
         x = robotPos.getX();
         y = robotPos.getY();
         heading = robotPos.getHeading();
+
+        shooter.flywheelSpinDynamicLoop();
 
         vel = follower.getVelocity();
 
@@ -163,6 +168,7 @@ public class MainTeleOpBetter extends OpMode {
             rotating = true;
         }
         telemetry.addData("rotating", rotating);
+        ll.updateTele(heading, 0, movingOrRotating);
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
          */
@@ -184,7 +190,7 @@ public class MainTeleOpBetter extends OpMode {
 
         if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
             if (counter > 5) {
-                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, follower.getHeading()));
+                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, heading));
                 gamepad1.rumble(500);
                 counter = 0;
             }
@@ -227,7 +233,6 @@ public class MainTeleOpBetter extends OpMode {
          */
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
-        telemetry.addData("hertz", hertz);
 
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();

@@ -23,8 +23,6 @@ public class Shooter {
     //runtime
     protected ElapsedTime runtime;
 
-    public double power = 0;
-    protected double idealSpeed;
     double last_error = 0;
     double integral = 0;
     protected Servo hood;
@@ -32,6 +30,12 @@ public class Shooter {
     AnalogInput leftEnc;
     public double thetaT;
     double speed;
+
+    private double tv;
+    private double cv;
+    private double rv;
+
+
 
     public Shooter(HardwareMap hardwareMap, Telemetry t, ElapsedTime r) {
         //init servos and motors
@@ -89,6 +93,9 @@ public class Shooter {
         telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
     }
 
+    public void flywheelSpinDynamicLoop(){
+        flywheelSpinDynamic(tv, cv, rv);
+    }
     public void flywheelSpinDynamic(double targetVelo, double currentVelo, double robotVel) {
 
         if (robotVel > 10){
@@ -112,6 +119,9 @@ public class Shooter {
         telemetry.addData("robot velocity", robotVel);
         telemetry.addData("target velocity", Math.round(targetVelo * 100) / 100.0);
         telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
+        tv = targetVelo;
+        cv = currentVelo;
+        rv = robotVel;
     }
 
     public void rotateTurret(double theta) {
