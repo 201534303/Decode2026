@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
@@ -91,9 +93,9 @@ public class SelfeeCloseAuto2 extends OpMode {
                     toShootPathSet = true;
                     if (spikeMark == 1) {
                         follower.followPath(paths.ballCollect1ToShoot(), 0.9, true);
-                    } else if (spikeMark == 2 || spikeMark == 4 || spikeMark == 5) {
+                    } else if (spikeMark == 2 || spikeMark == 4 || spikeMark == 3) {
                         follower.followPath(paths.selfeeToShoot(), 0.9, true);
-                    } else if (spikeMark == 3) {
+                    } else if (spikeMark == 5) {
                         follower.followPath(paths._2ToShoot(), 0.9, true);
                     }
                 }
@@ -137,10 +139,10 @@ public class SelfeeCloseAuto2 extends OpMode {
                     if (!intakePathSet) {
                         intakePathSet = true;
                         if (spikeMark == 0) {
-                            follower.followPath(paths.shootTo1(), 0.9, true);
-                        } else if (spikeMark == 1 || spikeMark == 3 || spikeMark == 4) {
+                            follower.followPath(paths.shootTo1(), 0.9, false);
+                        } else if (spikeMark == 1 || spikeMark == 2 || spikeMark == 3) {
                             follower.followPath(paths.shootToSelfee(), 0.9, true);
-                        } else if (spikeMark == 2) {
+                        } else if (spikeMark == 4) {
                             follower.followPath(paths.shootTo2(), 0.9, true);
                         } else if (spikeMark == 5) {
                             follower.followPath(paths.shootToPark(), 0.9, false);
@@ -152,12 +154,12 @@ public class SelfeeCloseAuto2 extends OpMode {
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if ((spikeMark == 1 || spikeMark == 3 || spikeMark == 4) && (follower.atParametricEnd() && waitSecs(4) || waitSecs(5))) {
+                    } else if ((spikeMark == 1 || spikeMark == 3 || spikeMark == 2) && (follower.atParametricEnd() && waitSecs(4) || waitSecs(5))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 2 && (follower.atParametricEnd() || waitSecs(2))) {
+                    } else if (spikeMark == 4 && (follower.atParametricEnd() || waitSecs(2))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -234,5 +236,11 @@ public class SelfeeCloseAuto2 extends OpMode {
         //telemetry.addData("heading", follower.getPose().getHeading());
         //telemetry.addData("flywheel RPM", shooter.getMotorRPM());
         telemetry.update();
+    }
+
+    @Override
+    public void stop(){
+        Pose p = follower.getPose();
+        PoseSaver.save(p.getX(), p.getY(), p.getHeading());
     }
 }

@@ -111,10 +111,10 @@ public class MainTeleOpBetter extends OpMode {
             PoseSaver.clear(); // optional, prevents stale reuse
         } else {
             if(currentColor == RED){
-                follower.setPose(new Pose(115, 70, 0));
+                follower.setPose(new Pose(72, 72, 0));
             }
             if(currentColor == BLUE){
-                follower.setPose(new Pose(29, 70, Math.PI));
+                follower.setPose(new Pose(72, 72, Math.PI));
             }
         }
     }
