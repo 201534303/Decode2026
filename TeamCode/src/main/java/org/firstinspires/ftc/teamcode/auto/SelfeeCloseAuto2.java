@@ -176,6 +176,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                 if(!follower.isBusy() && !done) {
                     done = true;
                     shooter.rotateTurret(0);
+                    intake.transferOff();
                     intake.off();
                     shooter.off();
                 }
