@@ -19,8 +19,8 @@ public class Constants {
             .maxPower(1)
             //.xVelocity(76.83625517116756)
             //.yVelocity(63.33562415415846)
-            .xVelocity(69.70359165461983)//new
-            .yVelocity(53.20379686731053)//new
+            .xVelocity(80.88853634811763)//new
+            .yVelocity(61.78686379259965)//new
             .rightFrontMotorName("rightFrontMotor")
             .rightRearMotorName("rightBackMotor")
             .leftRearMotorName("leftBackMotor")
@@ -43,22 +43,22 @@ public class Constants {
 
 
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .forwardZeroPowerAcceleration(-46.85727529962036)//new
-            .lateralZeroPowerAcceleration(-73.11159099522709)//new
+            .forwardZeroPowerAcceleration(-29.78355716292834)//new
+            .lateralZeroPowerAcceleration(-63.588674584062375)//new
 
             //PIDF
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.2, 0, 0, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(10, 0, 0, 0.001))//p=2
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.019,0.0,0.00001,0.6,0.01))
-            .centripetalScaling(0.0006)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.35, 0, 0, 0.001))//p=2
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.02,0.0,0.00001,0.6,0.01))
+            .centripetalScaling(0.0002)
 
             //for dual PIDF:
             .useSecondaryTranslationalPIDF(true)//set to true for dual
             .useSecondaryHeadingPIDF(true)//set to true for dual
             .useSecondaryDrivePIDF(true)//set to true for dual
-            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.15,0,0.02,0.015))
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(2.6,0,0.2,0.01))//2.6
-            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.021,0,0.000005,0.6,0.01))
+            .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.17,0,0.02,0.015))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.5,0,0.2,0.01))//2.6
+            .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.001,0,0.000005,0.6,0.01))
 
             //need to change
             .mass(13.608);//need to actually weigh robot
@@ -68,7 +68,7 @@ public class Constants {
     public static PathConstraints pathConstraints = new PathConstraints(
             0.99,
             100,
-            1.1,
+            1,
             1)
             //.setBrakingStart(double set)
             //.setBrakingStrength(double set);
