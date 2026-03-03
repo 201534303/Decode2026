@@ -49,7 +49,7 @@ public class FarAutoAttempt2 extends OpMode {
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
         OUT, IN, DETECT, ONE_MORE_TIME,
-        SIDE_SHUFFLE, FIX
+        TEST, FIX
     }
     PathState pathState = PathState.START;
 
@@ -85,11 +85,16 @@ public class FarAutoAttempt2 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                shooter.far();
-                if (waitSecs(1)) { //1.25
-                    resetActionTimer(); // resets timer
-                    pathState = PathState.SHOOT; // sets to shoot state
-                }
+                pathState = PathState.TEST; // sets to shoot state
+
+//                shooter.far();
+//                if (waitSecs(1)) { //1.25
+//                    resetActionTimer(); // resets timer
+//                    pathState = PathState.TEST; // sets to shoot state
+//                }
+                break;
+
+            case TEST:
                 break;
 
             case SHOOT:
@@ -145,12 +150,12 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 0 && (follower.atParametricEnd() || waitSecs(6))) {
+                    if (spikeMark == 1 && (follower.atParametricEnd() || waitSecs(6))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(2) || waitSecs(3))) {
+                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2) || waitSecs(3))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -190,7 +195,7 @@ public class FarAutoAttempt2 extends OpMode {
                             follower.followPath(paths.shootTo4(), 0.9, false);
                         }
                     } else /*if (xLast != 0 || yLast != 0)*/{
-                        newY = paths.shootPose2.getY() - yLast - 7;
+                        newY = paths.shootPose2.getY() - yLast;
                         if (newY < 9) { newY = 9; }
 
                         ballCollect = new Pose(130, newY, 0); // ADD THIS BACK
@@ -210,7 +215,6 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case TO_SHOOT:
-                //if(!follower.isBusy()) {
                     if (shootCount == 0) {
                         follower.followPath(paths.collectToShootNotSet(), 0.9, true);
                         shootCount += 1;
@@ -223,17 +227,7 @@ public class FarAutoAttempt2 extends OpMode {
                         if (waitSecs(0.5)) {
                             intake.setIntakeSpeed(0.3);
                         }
-                    } else if (spikeMark == 3) {
-                        shooter.rotateTurret(turnTableAngle);
-                        if (waitSecs(0.75)) {
-                            intake.setIntakeSpeed(0.3);
-                        }
-                    } else if (spikeMark == 4) {
-                        shooter.rotateTurret(turnTableAngle);
-                        if (waitSecs(0.75)) {
-                            intake.setIntakeSpeed(0.3);
-                        }
-                    } else if (spikeMark == 5) {
+                    } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
                         shooter.rotateTurret(turnTableAngle);
                         if (waitSecs(0.75)) {
                             intake.setIntakeSpeed(0.3);
@@ -251,7 +245,6 @@ public class FarAutoAttempt2 extends OpMode {
                     shootCount = 0;
                     pathState = PathState.SHOOT;
                 }
-                //}
                 break;
 
             case PARK:
@@ -279,7 +272,7 @@ public class FarAutoAttempt2 extends OpMode {
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
-        limelight = new LimelightV5(hardwareMap, 0);
+        limelight = new LimelightV5(hardwareMap, 2);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
 
@@ -322,6 +315,14 @@ public class FarAutoAttempt2 extends OpMode {
         follower.update(); // updates follower
         autonomousPathUpdate();//main auto code
 
+        ArrayList<Double> results2 = limelight.updateBall2();
+        telemetry.addData("limelight", results2);
+        for (double r : results2){
+            telemetry.addData("___", r);
+        }
+
+
+
         //telemetry.addData("turntable", shooter.thetaT);
         //telemetry.addData("headingError", Math.toDegrees(follower.getHeadingError()));
 
@@ -344,7 +345,7 @@ public class FarAutoAttempt2 extends OpMode {
 
         // updates and sends to phone
         telemetry.update();
-        //dash.update();
+        dash.update();
     }
 
     @Override
