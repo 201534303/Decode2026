@@ -12,7 +12,7 @@ public class FarPaths extends Paths {
         this.follower = follower;
     }
 
-    public Pose startPose = makePos(88, 8); // Start Pose of our robot
+    public Pose startPose = new Pose(89, 17, 0);//makePos(88, 8); // Start Pose of our robot
     public Pose ballCollect1 = makePos(128, 37);
     public Pose ballCollect1More = makePos(130, 37);
     public Pose side = makePos(128, 28);
