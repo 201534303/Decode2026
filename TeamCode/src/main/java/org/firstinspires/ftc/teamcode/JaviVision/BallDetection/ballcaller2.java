@@ -23,6 +23,12 @@ public class ballcaller2 extends OpMode {
     }
     public void loop() {// <-- This refreshes pose
         ArrayList<Object[]> detections = ll.updateBall2();
+        for (Object[] row : detections) {
+            telemetry.addLine("----- New ball -----");
+            telemetry.addData("Class name", row[2]);
+            telemetry.addData("confidence", row[3]);
+            telemetry.addData("ID", row[1]);
+        }
         telemetry.update();
         dash.update();
     }

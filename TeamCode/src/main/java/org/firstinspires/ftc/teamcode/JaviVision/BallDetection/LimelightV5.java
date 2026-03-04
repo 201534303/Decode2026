@@ -17,6 +17,8 @@ public class LimelightV5 {
     private static final double CONSTY = 14.375;
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
+    private static final double greenLowerConf = 30;
+    private static final double purpleLowerConf = 70;
     public ArrayList<Double> yaws = new ArrayList<>();
 
 
@@ -93,6 +95,19 @@ public class LimelightV5 {
             double confidence = detection.getConfidence();
             Object[] ret = {camX, classId, className, confidence};
             detections.add(ret);
+            /*
+            if (className.equals("green")) {
+                if (confidence >= greenLowerConf) {
+                    Object[] ret = {camX, classId, className, confidence};
+                    detections.add(ret);
+                }
+            }
+            else if (className.equals("purple")) {
+                if (confidence >= purpleLowerConf) {
+                    Object[] ret = {camX, classId, className, confidence};
+                    detections.add(ret);
+                }
+            }*/
         }
         return detections;
     }
