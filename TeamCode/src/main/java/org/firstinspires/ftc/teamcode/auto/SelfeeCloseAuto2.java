@@ -145,7 +145,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                         } else if (spikeMark == 4) {
                             follower.followPath(paths.shootTo2(), 0.9, true);
                         } else if (spikeMark == 5) {
-                            follower.followPath(paths.shootToPark(), 0.9, false);
+                            follower.followPath(paths.shootToPark(), 0.6, false);
                         }
                     }
 
@@ -241,7 +241,10 @@ public class SelfeeCloseAuto2 extends OpMode {
 
     @Override
     public void stop(){
-        Pose p = follower.getPose();
-        PoseSaver.save(p.getX(), p.getY(), p.getHeading());
+        for (int i  = 0; i < 50; i++){
+            Pose p = follower.getPose();
+            PoseSaver.save(p.getX(), p.getY(), p.getHeading());
+            follower.update();
+        }
     }
 }

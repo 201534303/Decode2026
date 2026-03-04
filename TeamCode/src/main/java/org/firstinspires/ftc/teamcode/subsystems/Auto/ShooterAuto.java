@@ -33,6 +33,10 @@ public class ShooterAuto extends Shooter {
         runFlywheel(getMotorVel(), 1550, 0);//1610
     }
 
+    public void farFaster(){
+        runFlywheel(getMotorVel(), 1575, 0);//1610
+    }
+
     public void off(){
         runFlywheel(getMotorVel(), 0, 0);
     }
