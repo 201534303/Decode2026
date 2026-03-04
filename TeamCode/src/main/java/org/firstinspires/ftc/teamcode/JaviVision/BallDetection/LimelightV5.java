@@ -17,8 +17,8 @@ public class LimelightV5 {
     private static final double CONSTY = 14.375;
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
-    private static final double greenLowerConf = 30;
-    private static final double purpleLowerConf = 70;
+    private static final double greenLowerConf = 0.30;
+    private static final double purpleLowerConf = 0.65;
     public ArrayList<Double> yaws = new ArrayList<>();
 
 
@@ -88,26 +88,24 @@ public class LimelightV5 {
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
             double ty = detection.getTargetYDegrees();
             double tx = detection.getTargetXDegrees();
+            double distance = 5/Math.sqrt(detection.getTargetArea());
             double camZ = 7.5/Math.tan(Math.toRadians(ty));
             double camX = camZ*Math.tan(Math.toRadians(tx));
             double classId = detection.getClassId();
             String className = detection.getClassName();
             double confidence = detection.getConfidence();
-            Object[] ret = {camX, classId, className, confidence};
-            detections.add(ret);
-            /*
             if (className.equals("green")) {
                 if (confidence >= greenLowerConf) {
-                    Object[] ret = {camX, classId, className, confidence};
+                    Object[] ret = {camX, distance, classId, className, confidence, distance};
                     detections.add(ret);
                 }
             }
             else if (className.equals("purple")) {
                 if (confidence >= purpleLowerConf) {
-                    Object[] ret = {camX, classId, className, confidence};
+                    Object[] ret = {camX, distance, classId, className, confidence, distance};
                     detections.add(ret);
                 }
-            }*/
+            }
         }
         return detections;
     }
