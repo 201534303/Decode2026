@@ -95,13 +95,13 @@ public class FarAutoAttempt2 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                pathState = PathState.DETECT; // sets to shoot state
+               // pathState = PathState.DETECT; // sets to shoot state
 
-//                shooter.far();
-//                if (waitSecs(1)) { //1.25
-//                    resetActionTimer(); // resets timer
-//                    pathState = PathState.TEST; // sets to shoot state
-//                }
+                shooter.far();
+                if (waitSecs(1)) { //1.25
+                    resetActionTimer(); // resets timer
+                    pathState = PathState.SHOOT; // sets to shoot state
+                }
                 break;
 
             case TEST:
@@ -175,39 +175,12 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case DETECT:
-                /*if (intake.haveBall() && waitSecs(1)){
-                    resetActionTimer();
-                    detectInitDone = false;
-                    detectPathSet = false;
-                    pathState = PathState.TO_SHOOT;
-                    break;
-                }*/
+                intake.intakeIn();
+                intake.transferOff();
 
-                //if (!detectInitDone) {
-                    //spikeMark += 1;
-                    //double[] results = limelight.updateBall();
-                    /*ArrayList<Double> results2 = limelight.updateBall2();
-                    int times = 0;
-                    Map<Double, double[]> closest = new HashMap<>();
-
-                    for (double result: results2){
-                        times += 1;
-
-                        for (int c = times; c < results2.size(); c++){
-                            double sub = result - results2.get(c);
-                            if(Math.abs(sub) <= 5){
-                                closest.get(result);
-                                closest.put(result, results2.get(c));
-                            }
-                        }
-                    }*/
-                if(waitSecs(1)) {
+                //if(waitSecs(1)) {
                     if (!detectInitDone) {
                         ArrayList<Double> results2 = limelight.updateBall2();
-                        Collections.sort(results2);
-//                        int posCount = 0;
-//                        int negCount = 0;
-//                        double average = 0;
 
                         for (double results : results2) {
                             if (results > 0) {
@@ -220,23 +193,13 @@ public class FarAutoAttempt2 extends OpMode {
                         }
 
                         if (negCount > posCount) {
-                            average = negAverage/negCount;
+                            average = negAverage / negCount;
                         } else {
-                            for (int i = 0; i < posCount; i++) {
-                                average += results2.get(i);
-                            }
-                            average = posAverage/posCount;
+                            average = posAverage / posCount;
                         }
 
                         detectInitDone = true;
                     }
-                }
-//                    xLast = results[1];
-//                    yLast = results[0];
-                   // detectInitDone = true;
-                //}
-
-                //intake.transferOff();
 
                 if(!follower.isBusy() && !detectPathSet && detectInitDone){
                     detectPathSet = true;
@@ -250,12 +213,12 @@ public class FarAutoAttempt2 extends OpMode {
                     //    }
                     //} else {
                         newY = paths.shootPose2.getY() + average;
-                        //if (newY < 9) { newY = 9; }
+                        if (newY < 9) { newY = 9; }
+                        else if (newY > 35) { newY = 35; }
 
-                        ballCollect = new Pose(126, newY, 0); // ADD THIS BACK
+                        ballCollect = new Pose(130, newY, 0); // ADD THIS BACK
 
-                        //if (newY < 12){ follower.followPath(paths.shootTo4(), 0.9, false); }
-                        /*else {*/ follower.followPath(paths. to(ballCollect), 0.6, true);// }
+                        follower.followPath(paths. to(ballCollect), 0.6, true);
                     //}
                 }
 
