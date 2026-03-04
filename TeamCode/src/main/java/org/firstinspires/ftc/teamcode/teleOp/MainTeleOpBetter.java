@@ -245,13 +245,15 @@ public class MainTeleOpBetter extends OpMode {
 
 
         if(intake.haveBall()){
-            light.setIndicatorLight(new double[]{0.50}, 700);
+            //light.setIndicatorLight(new double[]{0.50}, 700);
+            light.setIndicatorLightSimple(0.5);
         }
         else {
-            light.setIndicatorLight(new double[]{0.28}, 700);
+            //light.setIndicatorLight(new double[]{0.28}, 700);
+            light.setIndicatorLightSimple(0.28);
         }
 
-        light.update();
+        //light.update();
         telemetry.update();
         dash.update();
 

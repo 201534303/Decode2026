@@ -44,6 +44,10 @@ public class Lights {
         }
     }
 
+    public void setIndicatorLightSimple (double lightPos){
+        indicatorLight.setPosition(lightPos);
+    }
+
     public void setIndicatorLightAdvance(double[] colors, double stepMs, double delayMs, double durationMs){
         if (colors == null || colors.length == 0) return;
         advColors = colors;
