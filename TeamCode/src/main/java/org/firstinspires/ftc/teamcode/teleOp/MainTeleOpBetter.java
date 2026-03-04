@@ -198,6 +198,7 @@ public class MainTeleOpBetter extends OpMode {
             if (counter > 5) {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, heading));
                 gamepad1.rumble(500);
+                light.setIndicatorLightSimple(0.66);
                 counter = 0;
             }
         }
