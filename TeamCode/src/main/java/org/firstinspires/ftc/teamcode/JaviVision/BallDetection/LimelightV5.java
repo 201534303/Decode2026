@@ -19,6 +19,7 @@ public class LimelightV5 {
     private final Limelight3A limelight;
     public ArrayList<Double> yaws = new ArrayList<>();
 
+
     public LimelightV5(HardwareMap hardwareMap, int pipeline) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(pipeline); // update Ball pipeline
@@ -79,15 +80,19 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<Double> updateBall2() {
+    public ArrayList<Object[]> updateBall2() {
         LLResult result = limelight.getLatestResult();
-        ArrayList<Double> detections = new ArrayList<>();
+        ArrayList<Object[]> detections = new ArrayList<>();
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
             double ty = detection.getTargetYDegrees();
             double tx = detection.getTargetXDegrees();
             double camZ = 7.5/Math.tan(Math.toRadians(ty));
             double camX = camZ*Math.tan(Math.toRadians(tx));
-            detections.add(camX);
+            double classId = detection.getClassId();
+            String className = detection.getClassName();
+            double confidence = detection.getConfidence();
+            Object[] ret = {camX, classId, className, confidence};
+            detections.add(ret);
         }
         return detections;
     }

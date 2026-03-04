@@ -22,11 +22,7 @@ public class ballcaller2 extends OpMode {
         dash = dashboard.getTelemetry();
     }
     public void loop() {// <-- This refreshes pose
-        ArrayList<Double> detections = ll.updateBall2();
-        for (double camX : detections) {
-            telemetry.addLine("----- NEW BALL -----");
-            telemetry.addData("X", camX);
-        }
+        ArrayList<Object[]> detections = ll.updateBall2();
         telemetry.update();
         dash.update();
     }

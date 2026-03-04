@@ -179,7 +179,16 @@ public class FarAutoAttempt2 extends OpMode {
 
                 //if(waitSecs(0.01)) {
                     if (!detectInitDone) {
-                        ArrayList<Double> results2 = limelight.updateBall2();
+                        ArrayList<Object[]> detections = limelight.updateBall2();
+                        ArrayList<Double> results2 = new ArrayList<>();
+                        for(int col = 0; col < detections.get(0).length; col++)
+                        {
+                            for(int row = 0; row < detections.size(); row++)
+                            {
+                                double ret = (double) detections.get(row)[col];
+                                results2.add(ret);
+                            }
+                        }
 
                         for (double results : results2) {
                             if (results > 0) {
