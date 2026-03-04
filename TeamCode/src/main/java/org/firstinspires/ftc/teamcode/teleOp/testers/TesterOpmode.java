@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.teleOp.testers;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 /*
  * This file contains an example of an iterative (Non-Linear) "OpMode".
@@ -48,18 +49,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 
 @TeleOp(name="testeropmode", group="Iterative OpMode")
-@Disabled
+//@Disabled
 public class TesterOpmode extends OpMode
 {
-    //CRServo hangRight, hangLeft;
+    DigitalChannel pin0, pin1;
 
     /*
      * Code to run ONCE when the driver hits INIT
      */
     @Override
     public void init() {
-       // hangLeft = hardwareMap.get(CRServo.class, "hangLeft");
-       // hangRight = hardwareMap.get(CRServo.class, "hangRight");
+        pin0 = hardwareMap.get(DigitalChannel.class, "pin0");
+        pin1 = hardwareMap.get(DigitalChannel.class, "pin1");
 
     }
 
@@ -84,8 +85,9 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void loop() {
-       // hangLeft.setPower(-1);
-       // hangRight.setPower(1);
+        telemetry.addData("digital 0", pin0.getState());
+        telemetry.addData("digital 1", pin1.getState());
+        telemetry.update();
 
     }
 
