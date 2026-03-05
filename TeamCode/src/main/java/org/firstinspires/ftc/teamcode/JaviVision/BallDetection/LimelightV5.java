@@ -82,9 +82,9 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<Object[]> updateBall2() {
+    public ArrayList<double[]> updateBall2() {
         LLResult result = limelight.getLatestResult();
-        ArrayList<Object[]> detections = new ArrayList<>();
+        ArrayList<double[]> detections = new ArrayList<>();
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
             double ty = detection.getTargetYDegrees();
             double tx = detection.getTargetXDegrees();
@@ -96,13 +96,13 @@ public class LimelightV5 {
             double confidence = detection.getConfidence();
             if (className.equals("green")) {
                 if (confidence >= greenLowerConf) {
-                    Object[] ret = {camX, distance, classId, className, confidence, distance};
+                    double[] ret = {camX, distance, classId, 0, confidence, distance};
                     detections.add(ret);
                 }
             }
             else if (className.equals("purple")) {
                 if (confidence >= purpleLowerConf) {
-                    Object[] ret = {camX, distance, classId, className, confidence, distance};
+                    double[] ret = {camX, distance, classId, 1, confidence, distance};
                     detections.add(ret);
                 }
             }

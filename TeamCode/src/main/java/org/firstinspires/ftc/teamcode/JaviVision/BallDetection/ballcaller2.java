@@ -33,14 +33,14 @@ public class ballcaller2 extends OpMode {
         timeDif = (nowTime - lastTime);
         lastTime = nowTime;
 
-        ArrayList<Object[]> detections = ll.updateBall2();
-        for (Object[] row : detections) {
-            String className = row[3].toString();
+        ArrayList<double[]> detections = ll.updateBall2();
+        for (double[] row : detections) {
+            double className = row[3];
             int id = (int) row[2];
             double camX = (double) row[0];
             double camY = (double) row[1];
             Double[] ret = {camX, camY};
-            if (className.equals("purple")) {
+            if (className == 1) {
                 if (id >= purpleBalls.size()) {
                     purpleBalls.add(ret);
                 }
