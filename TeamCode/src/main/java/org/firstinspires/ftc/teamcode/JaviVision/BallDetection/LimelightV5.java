@@ -18,7 +18,7 @@ public class LimelightV5 {
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
     private static final double greenLowerConf = 0.30;
-    private static final double purpleLowerConf = 0.65;
+    private static final double purpleLowerConf = 0.6;
     public ArrayList<Double> yaws = new ArrayList<>();
 
 
