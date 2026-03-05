@@ -18,10 +18,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "FarAuto")
@@ -178,36 +174,36 @@ public class FarAutoAttempt2 extends OpMode {
                 }
 
                 //if(waitSecs(0.01)) {
-                    if (!detectInitDone) {
+                    //if (!detectInitDone) {
                         ArrayList<Object[]> detections = limelight.updateBall2();
-                        ArrayList<Double> results2 = new ArrayList<>();
-                        for(int col = 0; col < detections.get(0).length; col++)
-                        {
-                            for(int row = 0; row < detections.size(); row++)
-                            {
-                                double ret = (double) detections.get(row)[col];
-                                results2.add(ret);
-                            }
-                        }
 
-                        for (double results : results2) {
-                            if (results > 0) {
-                                posCount++;
-                                posAverage += results;
+                        if (detections != null && !detections.isEmpty()) {
+                            ArrayList<Double> results = new ArrayList<>();
+
+                            for (Object[] row : detections) {
+                                telemetry.addData("row", row[0]);
+                                //double camX = (double) row[0];
+                                //results.add(camX);
+                            }
+
+                            for (double distance : results) {
+                                if (distance > 0) {
+                                    posCount++;
+                                    posAverage += distance;
+                                } else {
+                                    negCount++;
+                                    negAverage += distance;
+                                }
+                            }
+
+                            if (negCount > posCount) {
+                                average = (negCount > 0) ? negAverage / negCount : 0;
                             } else {
-                                negCount++;
-                                negAverage += results;
+                                average = (posCount > 0) ? posAverage / posCount : 0;
                             }
                         }
-
-                        if (negCount > posCount) {
-                            average = negAverage / negCount;
-                        } else {
-                            average = posAverage / posCount;
-                        }
-
                         detectInitDone = true;
-                    }
+                    //}
                 //}
 
                 if(!follower.isBusy() && !detectPathSet && detectInitDone){
