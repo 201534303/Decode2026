@@ -16,17 +16,22 @@ public class ClosePaths extends Paths{
     public Pose shootPose0 = makePos(85, 80, 35);
     public Pose shootPose = makePos(88, 85);
     public Pose shootPose2 = makePos(85, 90);
-    public Pose ballCollect1 = makePos(125, 60, 0);
+    public Pose ballCollect1 = makePos(128, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(132, 61, 35);//60
+    public Pose selfee = makePos(132, 60.5, 35);//130, 59.23
+    public Pose selfee2 = makePos(130, 60.5, 35);
     public Pose selfeeWiggle = makePos(127, 57, 35);
-    public Pose selfeeMid = new Pose(92.9805447470817, 47.437743190661486);
-    public Pose ballCollect2 = makePos(125, 90);
+    public Pose selfeeMid = new Pose(80, 47);
+    public Pose ballCollect2 = makePos(126, 90);
     public Pose park = makePos(110, 90, -2);
 
     public Pose reset = makePos(120, 72, 90);
     public Pose resetMiddle = new Pose(116.135, 74.992);
+
+    public Pose ballCollect3 = makePos(130, 40, 0);
+    public Pose ballCollect3Mid = new Pose(70, 27);
+
 
     public PathChain reset(){
         return bezierCurve(ballCollect1, resetMiddle, reset);
@@ -46,6 +51,8 @@ public class ClosePaths extends Paths{
             selfeeMid = selfeeMid.mirror();
             ballCollect2 = ballCollect2.mirror();
             park = park.mirror();
+            ballCollect3 = ballCollect3.mirror();
+            ballCollect3Mid = ballCollect3Mid.mirror();
             reset = reset.mirror();
             resetMiddle = resetMiddle.mirror();
 
@@ -95,10 +102,22 @@ public class ClosePaths extends Paths{
                 ballCollect1);
     }
 
+    public PathChain shootTo3(){
+        return bezierCurve(shootPose,
+                ballCollect3Mid,
+                ballCollect3);
+    }
+
     public PathChain shootToSelfee(){
         return bezierCurve(shootPose,
                 selfeeMid,
                 selfee);
+    }
+
+    public PathChain shootToSelfee2(){
+        return bezierCurve(shootPose,
+                selfeeMid,
+                selfee2);
     }
     public PathChain selfeeWiggle1(){
         return bezierLine(selfee, selfeeWiggle);
@@ -113,7 +132,20 @@ public class ClosePaths extends Paths{
     public PathChain _2ToShoot(){
         return bezierLine(ballCollect2, shootPose);
     }
+
+    public PathChain _3ToShoot(){
+        return bezierLine(ballCollect3, shootPose);
+    }
     public PathChain shootToPark(){
         return bezierLine(shootPose, park);
     }
+
+    public PathChain _ToPark(){
+        final Pose ballCollect = follower.getPose();
+        return follower.pathBuilder()
+                .addPath(new BezierLine(ballCollect, park))
+                .setLinearHeadingInterpolation(ballCollect.getHeading(), park.getHeading())
+                .build();
+    }
+
 }
