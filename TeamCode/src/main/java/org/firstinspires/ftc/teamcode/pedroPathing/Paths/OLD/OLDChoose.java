@@ -26,6 +26,8 @@ public class OLDChoose {
 
     private boolean wolfpack = false;
     private boolean wolfpackConfirmed = false;
+    private boolean fill = false;
+    private boolean fillConfirmed = false;
 
     public OLDChoose(Gamepad g1, Telemetry t) {
         telemetry = t;
@@ -50,6 +52,17 @@ public class OLDChoose {
             return false;
         } else {
             displayReadyTeleScreen();
+            return true;
+        }
+    }
+
+    public boolean fillInit(){
+        if (!fillConfirmed) {
+            handleFillSelection();
+            displayFillSelectionMenu();
+            return false;
+        } else {
+            displayReadyCloseScreen3();
             return true;
         }
     }
@@ -138,6 +151,30 @@ public class OLDChoose {
         }
     }
 
+
+    private void handleFillSelection() {
+        if (gamepad1.dpad_up && !dpadUpPressed) {
+            fill = true;
+            dpadUpPressed = true;
+        } else if (!gamepad1.dpad_up) {
+            dpadUpPressed = false;
+        }
+
+        if (gamepad1.dpad_down && !dpadDownPressed) {
+            fill = false;
+            dpadDownPressed = true;
+        } else if (!gamepad1.dpad_down) {
+            dpadDownPressed = false;
+        }
+
+        if (gamepad1.a && !aPressed) {
+            fillConfirmed = true;
+            aPressed = true;
+        } else if (!gamepad1.a) {
+            aPressed = false;
+        }
+    }
+
     private void displayNumSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("NUMBER OF TRIPS");
@@ -195,6 +232,25 @@ public class OLDChoose {
         }
     }
 
+    private void displayFillSelectionMenu() {
+        telemetry.addLine("=================================");
+        telemetry.addLine("FILL CLASSIFIER");
+        telemetry.addLine("=================================");
+        telemetry.addLine("");
+        telemetry.addLine("Use D-Pad Up/Down to adjust");
+        telemetry.addData("Fill:", fill);
+        telemetry.addLine("");
+        telemetry.addLine("---------------------------------");
+        telemetry.addData("Current Selection", fill);
+        telemetry.addData("Confirmed", fillConfirmed ? "YES" : "NO");
+        telemetry.addLine("---------------------------------");
+
+        if (!fillConfirmed) {
+            telemetry.addLine("");
+            telemetry.addLine("Press X to confirm selection");
+        }
+    }
+
     public void displayReady(Choices choices){
         telemetry.addLine("CONFIGURATION COMPLETE");
         telemetry.addLine("");
@@ -233,8 +289,17 @@ public class OLDChoose {
         telemetry.addLine("");
     }
 
+    public void displayReadyCloseScreen3() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
+        telemetry.addData("Alliance", selectedAlliance);
+        telemetry.addData("Fill Clasifier", fill);
+        telemetry.addLine("");
+    }
+
     public Alliance getSelectedAlliance() { return selectedAlliance; }
     public Boolean getSelectedWolfpack() { return wolfpack; }
+    public Boolean getFill() { return fill; }
     public int getMark() {
         return mark;
     }

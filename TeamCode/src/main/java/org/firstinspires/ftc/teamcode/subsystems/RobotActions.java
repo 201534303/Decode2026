@@ -25,7 +25,7 @@ public class RobotActions {
     //gamepads
     Gamepad gamepad1, gamepad2;
 
-    private PIDController rotationPID = new PIDController(1.5, 0, 0);
+    private PIDController rotationPID = new PIDController(0.9, 0, 0);
     private final double OFFSETROTATIONGATE = Math.toRadians(56);
     //telemetry`
     Telemetry telemetry;
@@ -168,6 +168,7 @@ public class RobotActions {
         intake.intakeMachine();
         if (intake.haveBall()){
             gamepad2.rumble(500);
+            //gamepad1.rumble(500);
         }
     }
 

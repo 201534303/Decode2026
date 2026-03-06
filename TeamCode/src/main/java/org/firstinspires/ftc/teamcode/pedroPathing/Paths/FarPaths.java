@@ -13,24 +13,20 @@ public class FarPaths extends Paths {
     }
 
     public Pose startPose = makePos(88, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(128, 37);
-    public Pose ballCollect1More = makePos(130, 37);
-    public Pose side = makePos(128, 28);
+    public Pose ballCollect1 = makePos(130, 37);
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
     public Pose shootPose = new Pose(93, 12, 0);
     public Pose shootPose2 = new Pose(89, 17, 0);
-    public Pose ballCollect2 = makePos(130, 9);
+    public Pose ballCollect2 = makePos(135, 9);
     public Pose ballCollect22 = makePos(133, 9);
     public Pose out = makePos(125, 9);
     public Pose park = makePos(105, 10, 0);
     public Pose midShoot4 = new Pose(85, 7);
-    //OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
-            //this.alliance = getAlliance;
             startPose = startPose.mirror();
             ballCollect1 = ballCollect1.mirror();
             ballCollect12 = ballCollect12.mirror();

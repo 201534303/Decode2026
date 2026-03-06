@@ -17,7 +17,10 @@ public class LimelightV5 {
     private static final double CONSTY = 14.375;
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
+    private static final double greenLowerConf = 0.30;
+    private static final double purpleLowerConf = 0.6;
     public ArrayList<Double> yaws = new ArrayList<>();
+
 
     public LimelightV5(HardwareMap hardwareMap, int pipeline) {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -79,15 +82,30 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<Double> updateBall2() {
+    public ArrayList<double[]> updateBall2() {
         LLResult result = limelight.getLatestResult();
-        ArrayList<Double> detections = new ArrayList<>();
+        ArrayList<double[]> detections = new ArrayList<>();
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
             double ty = detection.getTargetYDegrees();
             double tx = detection.getTargetXDegrees();
+            double distance = 5/Math.sqrt(detection.getTargetArea());
             double camZ = 7.5/Math.tan(Math.toRadians(ty));
             double camX = camZ*Math.tan(Math.toRadians(tx));
-            detections.add(camX);
+            double classId = detection.getClassId();
+            String className = detection.getClassName();
+            double confidence = detection.getConfidence();
+            if (className.equals("green")) {
+                if (confidence >= greenLowerConf) {
+                    double[] ret = {camX, distance, classId, 0, confidence, distance};
+                    detections.add(ret);
+                }
+            }
+            else if (className.equals("purple")) {
+                if (confidence >= purpleLowerConf) {
+                    double[] ret = {camX, distance, classId, 1, confidence, distance};
+                    detections.add(ret);
+                }
+            }
         }
         return detections;
     }

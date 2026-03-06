@@ -199,6 +199,7 @@ public class MainTeleOpBetter extends OpMode {
             if (counter > 5) {
                 follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, heading));
                 gamepad1.rumble(500);
+                light.setIndicatorLightSimple(0.66);
                 counter = 0;
             }
         }
@@ -246,13 +247,15 @@ public class MainTeleOpBetter extends OpMode {
 
 
         if(intake.haveBall()){
-            light.setIndicatorLight(new double[]{0.50}, 700);
+            //light.setIndicatorLight(new double[]{0.50}, 700);
+            light.setIndicatorLightSimple(0.5);
         }
         else {
-            light.setIndicatorLight(new double[]{0.28}, 700);
+            //light.setIndicatorLight(new double[]{0.28}, 700);
+            light.setIndicatorLightSimple(0.28);
         }
 
-        light.update();
+        //light.update();
         telemetry.update();
         dash.update();
 
