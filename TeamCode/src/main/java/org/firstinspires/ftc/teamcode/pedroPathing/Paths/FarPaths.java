@@ -19,7 +19,7 @@ public class FarPaths extends Paths {
     public Pose ballCollect1Mid = new Pose(83, 42);
     public Pose shootPose = new Pose(93, 12, 0);
     public Pose shootPose2 = new Pose(89, 17, 0);
-    public Pose ballCollect2 = makePos(131, 10);
+    public Pose ballCollect2 = makePos(135, 9);
     public Pose ballCollect22 = makePos(133, 9);
     public Pose out = makePos(125, 9);
     public Pose park = makePos(105, 10, 0);

@@ -49,7 +49,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, ONE_MORE_TIME, TEST
+        DETECT, ONE_MORE_TIME, TWO_MORE_TIME, TEST
     }
     PathState pathState = PathState.START;
 
@@ -148,7 +148,7 @@ public class FarAutoAttempt2 extends OpMode {
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.5) || waitSecs(4))) {
+                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(3) || waitSecs(3.5))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -173,56 +173,60 @@ public class FarAutoAttempt2 extends OpMode {
                     pathState = PathState.TO_SHOOT;
                 }
 
-                //if(waitSecs(0.01)) {
-                    //if (!detectInitDone) {
-                        ArrayList<Object[]> detections = limelight.updateBall2();
+                if (!detectInitDone) {
+                    ArrayList<double[]> detections = limelight.updateBall2();
 
-                        if (detections != null && !detections.isEmpty()) {
-                            ArrayList<Double> results = new ArrayList<>();
+                    if (detections != null && !detections.isEmpty()) {
+                        ArrayList<Double> results = new ArrayList<>();
 
-                            for (Object[] row : detections) {
-                                telemetry.addData("row", row[0]);
-                                //double camX = (double) row[0];
-                                //results.add(camX);
-                            }
+                        for (double[] row : detections) {
+                            double camX = row[0];
+                            results.add(camX);
+                        }
 
-                            for (double distance : results) {
-                                if (distance > 0) {
-                                    posCount++;
-                                    posAverage += distance;
-                                } else {
-                                    negCount++;
-                                    negAverage += distance;
-                                }
-                            }
-
-                            if (negCount > posCount) {
-                                average = (negCount > 0) ? negAverage / negCount : 0;
+                        for (double distance : results) {
+                            if (distance > 0) {
+                                posCount++;
+                                posAverage += distance;
                             } else {
-                                average = (posCount > 0) ? posAverage / posCount : 0;
+                                negCount++;
+                                negAverage += distance;
                             }
                         }
-                        detectInitDone = true;
-                    //}
-                //}
+
+                        if (negCount > posCount) {
+                            average = (negCount > 0) ? negAverage / negCount : 0;
+                        } else {
+                            average = (posCount > 0) ? posAverage / posCount : 0;
+                        }
+                    }
+                    detectInitDone = true;
+                }
 
                 if(!follower.isBusy() && !detectPathSet && detectInitDone){
                     detectPathSet = true;
 
-                    if (posCount == 0 && negCount == 0 /* || alliance == OLDChoose.Alliance.BLUE*/) {
+                    if (posCount == 0 && negCount == 0) {
                         if(spikeMark == 3 || spikeMark == 5){
                             follower.followPath(paths.shootTo3(), 0.9, true);
                         } else {
                             follower.followPath(paths.shootTo4(), 0.9, true);
                         }
                     } else {
+                        if (alliance == OLDChoose.Alliance.BLUE){
+                            average = -average;
+                        }
                         newY = paths.shootPose2.getY() + average;
                         if (newY < 9) { newY = 9; }
                         else if (newY > 35) { newY = 35; }
 
                         ballCollect = new Pose(130, newY, 0); // ADD THIS BACK
+                        if(alliance == OLDChoose.Alliance.BLUE){
+                            ballCollect = ballCollect.mirror();
+                        }
 
-                        if (newY < 12){ follower.followPath(paths.shootTo4(), 0.9, true); }
+                        double checkY = ballCollect.getY(); // use mirrored Y for the check
+                        if (checkY < 12){ follower.followPath(paths.shootTo4(), 0.9, true); }
                         else { follower.followPath(paths. to(ballCollect), 0.9, true); }
                     }
                 }
@@ -324,8 +328,8 @@ public class FarAutoAttempt2 extends OpMode {
 
         // setting shooter stuff
         if (isMirror) {
-            turnTableAngle = -74;
-            turnTableAngle2 = -75;
+            turnTableAngle = -70;
+            turnTableAngle2 = -68;
         }
         shooter.rotateTurret(turnTableAngle);
 
