@@ -72,6 +72,12 @@ public class RobotActions {
         light = li;
     }
 
+    public RobotActions (Shooter sh, Follower fo, Telemetry te){
+        shooter = sh;
+        follower = fo;
+        telemetry = te;
+    }
+
     public void setLocalizationBack() {
         follower.setPose(HOMING);
     }
@@ -240,7 +246,7 @@ public class RobotActions {
         telemetry.addData("virtualYchange", time*vel.getYComponent());
 
         if (turretOn){
-            updateTurret(currentColor, virtualX, virtualY, heading);
+                updateTurret(currentColor, virtualX, virtualY, heading);
         }
         if (!turretOn){
             shooter.rotateTurret(0);
@@ -295,7 +301,7 @@ public class RobotActions {
         noahMode = !noahMode;
     }
 
-    private void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
+    public void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
         double heading = Math.toDegrees(h);
@@ -436,6 +442,10 @@ public class RobotActions {
         if(dist > 120){//far zone
             shooter.setHood(0.20);
             speed = -1383 + 593.005*Math.log(dist);
+        }
+        else if(dist > 98){
+            shooter.setHood(0.20);
+            speed = 1096.99182 + 2.7835*dist;
         }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
             double hood = 5.84356*Math.pow(0.968317, dist);

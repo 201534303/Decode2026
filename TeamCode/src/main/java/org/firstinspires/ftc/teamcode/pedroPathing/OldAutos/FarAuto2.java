@@ -227,7 +227,7 @@ public class FarAuto2 extends OpMode {
         x = results[1];
         y = results[0];
 
-        ArrayList<Object[]> detections = limelight.updateBall2();
+        ArrayList<double[]> detections = limelight.updateBall2();
         ArrayList<Double> results2 = new ArrayList<>();
         for(int col = 0; col < detections.get(0).length; col++)
         {

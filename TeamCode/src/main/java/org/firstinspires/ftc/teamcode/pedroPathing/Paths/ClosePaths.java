@@ -28,7 +28,6 @@ public class ClosePaths extends Paths{
 
     public Pose reset = makePos(120, 72, 90);
     public Pose resetMiddle = new Pose(116.135, 74.992);
-
     public Pose ballCollect3 = makePos(130, 40, 0);
     public Pose ballCollect3Mid = new Pose(70, 27);
 
@@ -46,10 +45,11 @@ public class ClosePaths extends Paths{
             ballCollect1 = ballCollect1.mirror();
             ballCollectMid1 = ballCollectMid1.mirror();
             ballCollectMid2 = ballCollectMid2.mirror();
-            selfee = selfee.mirror();
+            selfee = new Pose(12, 60.5, Math.toRadians(145));
+            selfee2 = new Pose(10, 60.5, Math.toRadians(145));
             selfeeWiggle = selfeeWiggle.mirror();
             selfeeMid = selfeeMid.mirror();
-            ballCollect2 = ballCollect2.mirror();
+            ballCollect2 = new Pose(18, 90, Math.toRadians(180));
             park = park.mirror();
             ballCollect3 = ballCollect3.mirror();
             ballCollect3Mid = ballCollect3Mid.mirror();
