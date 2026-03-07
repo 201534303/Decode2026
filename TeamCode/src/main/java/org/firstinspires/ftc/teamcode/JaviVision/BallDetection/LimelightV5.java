@@ -27,6 +27,7 @@ public class LimelightV5 {
     private static final double greenLowerConf = 0.30;
     private static final double purpleLowerConf = 0.6;
     public ArrayList<Double> yaws = new ArrayList<>();
+    public ArrayList<Double> dists = new ArrayList<>();
     private ArrayList<Double[]> oldPurpleBalls = new ArrayList<>();
     private ArrayList<Double[]> oldGreenBalls = new ArrayList<>();
     public BallTracker trackerGreen;
@@ -159,7 +160,6 @@ public class LimelightV5 {
         }
         else if (results[0] == 1) {
             double x = results[1];
-            double y = results[2];
             double z = results[3];
             double yaw = results[4];
             double tx = results[6];
@@ -178,31 +178,66 @@ public class LimelightV5 {
                 else {
                     pose.median_yaw = (yaws.get(middle) + yaws.get(middle-1)) / 2;
                 }
+                dists.add(distance);
+                Collections.sort(dists);
+                middle = dists.size() / 2;
+                size = dists.size();
+                if (size % 2  == 1) {
+                    pose.median_distance = dists.get(middle);
+                }
+                else {
+                    pose.median_distance = (dists.get(middle) + dists.get(middle - 1))/2;
+                }
             }
             else {
                 yaws.clear();
                 pose.median_yaw = 0;
+                dists.clear();
+                pose.median_distance = 0;
             }
-            double heading = 0;
-            if (pose.median_yaw != 0) {
-                heading = KNOWN_ANGLE + Math.abs(pose.median_yaw);
-            }
-            else {
-                heading = KNOWN_ANGLE + Math.abs(yaw);
-            }
-            if (id == 20) {
-                heading = 180 - heading;
-            }
-            double theta = Math.toRadians(heading - tx);
+
+            double alpha = Math.atan(x/z);
             pose.yaw = yaw;
-            pose.heading = heading;
-            pose.tx = tx;
             pose.distance = distance;
-            pose.theta = theta;
+            if (pose.median_yaw != 0) {
+                yaw = pose.median_yaw;
+            }
+            if (pose.median_distance != 0)
+            {
+                distance = pose.median_distance;
+            }
+
+            double theta = Math.toRadians(90 - (KNOWN_ANGLE - yaw + alpha));
+
+            pose.heading = 90 - (KNOWN_ANGLE - yaw);
+
+            pose.rawX = distance*Math.cos(theta);
+            pose.rawY = distance*Math.sin(theta);
+
+            pose.tx = tx;
+
+            pose.distance = distance;
+            pose.theta = Math.toDegrees(theta);
+
+            double dx = 10*Math.cos(Math.toRadians(pose.heading));
+            double dy = 10*Math.sin(Math.toRadians(pose.heading));
+
+            pose.dx = dx;
+            pose.dy = dy;
+            pose.rawX += dx;
+            pose.rawY += dy;
+
+            if (id == 20) {
+                pose.posX = pose.rawX + CONSTX;
+                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
+            } else { // id == 24
+                pose.posX = FIELD_LENGTH - pose.rawX - CONSTX;
+                pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
+            }
+
             pose.id = id;
             pose.valid = true;
-            //telemetry.addData("X (cos):", distance*Math.cos(Math.toRadians(theta)));
-            //telemetry.addData("Z (sin):",  distance*Math.sin(Math.toRadians(theta)));
+
         }
     }
 }
