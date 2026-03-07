@@ -29,39 +29,15 @@ public class ballcaller2 extends OpMode {
         dash = dashboard.getTelemetry();
     }
     public void loop() {// <-- This refreshes pose
-        double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
-        timeDif = (nowTime - lastTime);
-        lastTime = nowTime;
-
         ArrayList<double[]> detections = ll.updateBall2();
-        for (double[] row : detections) {
-            double className = row[3];
-            int id = (int) row[2];
-            double camX = (double) row[0];
-            double camY = (double) row[1];
-            Double[] ret = {camX, camY};
-            if (className == 1) {
-                if (id >= purpleBalls.size()) {
-                    purpleBalls.add(ret);
-                }
-                else {
-                    double oldX = purpleBalls.get(id)[0];
-                    double oldY = purpleBalls.get(id)[1];
-                    purpleBalls.set(id, ret);
-                    double velX = (camX-oldX)/timeDif;
-                    double velY = (camY-oldY)/timeDif;
-                    telemetry.addData("VelX", velX);
-                    telemetry.addData("VelY", velY);
-                }
-            }
-            telemetry.addLine("----- New ball -----");
-            telemetry.addData("CamX", row[0]);
-            telemetry.addData("CamY", row[1]);
-            telemetry.addData("Class ID", row[2]);
-            telemetry.addData("Class Name", row[3]);
-            telemetry.addData("Confidence", row[4]);
-            telemetry.addData("Distance", row[5]);
+        for (double[] ball : detections) {
+            telemetry.addLine(" ---- BALL ----");
+            telemetry.addData("Ball x", ball[0]);
+            telemetry.addData("Ball y", ball[1]);
+            telemetry.addData("Vel x", ball[2]);
+            telemetry.addData("Vel y", ball[3]);
         }
+
         telemetry.update();
         dash.update();
     }
