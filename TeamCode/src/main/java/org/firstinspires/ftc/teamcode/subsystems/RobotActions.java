@@ -443,6 +443,10 @@ public class RobotActions {
             shooter.setHood(0.20);
             speed = -1383 + 593.005*Math.log(dist);
         }
+        else if(dist > 98){
+            shooter.setHood(0.20);
+            speed = 1096.99182 + 2.7835*dist;
+        }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
             double hood = 5.84356*Math.pow(0.968317, dist);
             shooter.setHood(hood);
