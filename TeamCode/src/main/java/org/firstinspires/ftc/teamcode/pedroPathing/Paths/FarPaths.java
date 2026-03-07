@@ -130,6 +130,6 @@ public class FarPaths extends Paths {
     }
 
     public PathChain inSet() {
-        return bezierLine(out, ballCollect22);
+        return bezierLine(out, ballCollect2);
     }
 }

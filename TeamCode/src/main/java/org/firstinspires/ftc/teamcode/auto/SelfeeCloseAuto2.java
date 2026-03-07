@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
+import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 
 @Autonomous(name = "SelfeeCloseAuto")
 
@@ -24,9 +25,10 @@ public class SelfeeCloseAuto2 extends OpMode {
     //ROBOT
     private IntakeAuto intake;
     private ShooterAuto shooter;
+    private RobotActions robotActions;
     private double turnTableAngle = 47;
     private double turnTableAngleFirst = 13;
-    private double hoodHeight = 0.50;//0.4;//
+    private double hoodHeight = 0.36;//0.4;//
     private int targetV = 1200;
     private double x = 0.0;
 
@@ -93,7 +95,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case TO_SHOOT:
-                shooter.rotateTurret(turnTableAngle);
+                //shooter.rotateTurret(turnTableAngle);
                 shooter.setHood(hoodHeight);
 
                 if (!follower.isBusy() && !toShootPathSet) {
@@ -220,6 +222,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
+        robotActions = new RobotActions(shooter, follower, telemetry);
 
         shooter.setHood(0.60);
     }
@@ -243,8 +246,8 @@ public class SelfeeCloseAuto2 extends OpMode {
         follower.setStartingPose(paths.startPose);//sets up the starting pose
 
         if(isMirror) {
-            turnTableAngleFirst = -13;
-            turnTableAngle = -47;
+            turnTableAngleFirst = -9;
+            turnTableAngle = -45;
         }//if it's mirrored turn the turntable
         shooter.rotateTurret(turnTableAngleFirst);
 
@@ -258,6 +261,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         if (spikeMark == 0 && !doneOne){
             shooter.closeMove(targetV);
         } else if (!done && doneOne) {
+            robotActions.updateTurret(alliance, follower.getPose().getX(), follower.getPose().getY(), follower.getHeading());
             shooter.close();
         }
         follower.update();
@@ -271,7 +275,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         telemetry.addData("alliance", alliance);
         telemetry.addData("runtime", overallTimer);
 
-        if(overallTimer.getElapsedTimeSeconds() > 28.5){
+        if(overallTimer.getElapsedTimeSeconds() > 29){
             pathState = TO_PARK;
         }
         //telemetry.addData("x", follower.getPose().getX());

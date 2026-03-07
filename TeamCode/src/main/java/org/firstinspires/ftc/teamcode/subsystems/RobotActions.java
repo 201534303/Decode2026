@@ -72,6 +72,12 @@ public class RobotActions {
         light = li;
     }
 
+    public RobotActions (Shooter sh, Follower fo, Telemetry te){
+        shooter = sh;
+        follower = fo;
+        telemetry = te;
+    }
+
     public void setLocalizationBack() {
         follower.setPose(HOMING);
     }
@@ -240,7 +246,7 @@ public class RobotActions {
         telemetry.addData("virtualYchange", time*vel.getYComponent());
 
         if (turretOn){
-            updateTurret(currentColor, virtualX, virtualY, heading);
+                updateTurret(currentColor, virtualX, virtualY, heading);
         }
         if (!turretOn){
             shooter.rotateTurret(0);
@@ -295,7 +301,7 @@ public class RobotActions {
         noahMode = !noahMode;
     }
 
-    private void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
+    public void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
         double heading = Math.toDegrees(h);
