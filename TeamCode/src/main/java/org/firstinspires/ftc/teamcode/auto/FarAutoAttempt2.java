@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -12,10 +15,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing.OldAutos.FarAuto;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
+import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +32,8 @@ public class FarAutoAttempt2 extends OpMode {
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private LimelightV5 limelight;
+    private RobotActions robotActions;
+
 
     // Timers
     private Timer actionTimer;
@@ -49,7 +56,8 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, ONE_MORE_TIME, TWO_MORE_TIME, TEST
+        DETECT, ONE_MORE_TIME, TWO_MORE_TIME, TEST,
+        OUT, IN
     }
     PathState pathState = PathState.START;
 
@@ -59,17 +67,19 @@ public class FarAutoAttempt2 extends OpMode {
     Pose ballCollect;
     private int shootCount = 0;
     private double turnTableAngle = 74;
-    private double turnTableAngle2 = 75;
     double newY;
     int posCount = 0;
     int negCount = 0;
     double average = 0;
     double posAverage = 0;
     double negAverage = 0;
+    double offset = 40;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
     private double lastTime;
+    private boolean outPathSet = false;
+    private boolean inPathSet = false;
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -80,7 +90,7 @@ public class FarAutoAttempt2 extends OpMode {
         switch (pathState) {
             case START:
                 shooter.far();
-                if (waitSecs(0.75)) { //1.25
+                if (waitSecs(1)) { //1.25
                     resetActionTimer(); // resets timer
                     pathState = PathState.SHOOT; // sets to shoot state
                 }
@@ -143,12 +153,12 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(3) || waitSecs(4))) {
+                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(1) || waitSecs(1.5))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
-                        pathState = PathState.TO_SHOOT;
-                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(3) || waitSecs(3.5))) {
+                        pathState = PathState.OUT;
+                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.5) || waitSecs(3))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -245,36 +255,67 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case TO_SHOOT:
-                    if (shootCount == 0) {
-                        intake.intakeIn();
-                        follower.followPath(paths.collectToShootNotSet(), 0.9, true);
-                        shootCount += 1;
-                    }
+                if (shootCount == 0) {
+                    intake.intakeIn();
+                    follower.followPath(paths.collectToShootNotSet(), 0.9, true);
+                    shootCount += 1;
+                }
 
-                    if (spikeMark == 1) {
-                        shooter.rotateTurret(turnTableAngle2);
-                    } else if (spikeMark == 2) {
-                        shooter.rotateTurret(turnTableAngle2);
-                        if (waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0.3);
-                        }
-                    } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
-                        shooter.rotateTurret(turnTableAngle);
-                        if (waitSecs(0.4)) {
-                            intake.setIntakeSpeed(0);
-                        }
-                    } else {
-                        shooter.rotateTurret(turnTableAngle2);
-
-                        if(waitSecs(0.5)) {
-                            intake.setIntakeSpeed(0);
-                        }
+                if (spikeMark == 2) {
+                    if (waitSecs(0.5)) {
+                        intake.setIntakeSpeed(0.3);
                     }
+                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
+                    if (waitSecs(0.4)) {
+                        intake.setIntakeSpeed(0);
+                    }
+                } else {
+                    if(waitSecs(0.5)) {
+                        intake.setIntakeSpeed(0);
+                    }
+                }
 
                 if (follower.atParametricEnd()) {
                     resetActionTimer();
                     shootCount = 0;
                     pathState = PathState.SHOOT;
+                }
+                break;
+
+            case OUT:
+                intake.setIntakeSpeed(-0.3);
+
+                if (intake.haveBall()){
+                    resetActionTimer();
+                    pathState = PathState.TO_SHOOT;
+                }
+                if (!outPathSet) {
+                    outPathSet = true;
+                    follower.followPath(paths.outSet(), 0.75, true);
+                }
+
+                if( (follower.atParametricEnd() && waitSecs(0.5)) || waitSecs(0.75) ){
+                    resetActionTimer();
+                    outPathSet = false;
+                    pathState = IN;
+                }
+                break;
+
+            case IN:
+                if (intake.haveBall()){
+                    resetActionTimer();
+                    pathState = PathState.TO_SHOOT;
+                }
+                intake.intakeIn();
+                if (!inPathSet) {
+                    inPathSet = true;
+                    follower.followPath(paths.inSet(), 0.75, true);
+                }
+
+                if((follower.atParametricEnd() && waitSecs(1)) || waitSecs(1.25)){
+                    resetActionTimer();
+                    inPathSet = false;
+                    pathState = TO_SHOOT;
                 }
                 break;
 
@@ -321,6 +362,7 @@ public class FarAutoAttempt2 extends OpMode {
         // path setting
         follower = Constants.createFollower(hardwareMap);
         paths = new FarPaths(follower);
+        robotActions = new RobotActions(shooter, follower, telemetry);
 
         // type auto setting
         isMirror = paths.bluePath(alliance);
@@ -328,8 +370,8 @@ public class FarAutoAttempt2 extends OpMode {
 
         // setting shooter stuff
         if (isMirror) {
-            turnTableAngle = -70;
-            turnTableAngle2 = -68;
+            offset = 0;
+            turnTableAngle = -71;
         }
         shooter.rotateTurret(turnTableAngle);
 
@@ -349,9 +391,14 @@ public class FarAutoAttempt2 extends OpMode {
         lastTime = nowTime;
         telemetry.addData("loop time", timeDif);
 
-        if(spikeMark == 0 && !done) { shooter.farFaster(); } // sets shooter speed
-        if(!done && spikeMark != 0) { shooter.far(); } // sets shooter speed
         follower.update(); // updates follower
+
+        if(spikeMark == 0 && !done) { shooter.farFaster(); } // sets shooter speed
+        if(!done && spikeMark != 0) {
+            shooter.far();
+            robotActions.updateTurret(alliance, (follower.getPose().getX() + offset), follower.getPose().getY(), follower.getHeading());
+        } // sets shooter speed
+
         autonomousPathUpdate();//main auto code
 
         telemetry.addData("average", average);
