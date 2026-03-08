@@ -184,7 +184,7 @@ public class FarAutoAttempt2 extends OpMode {
                 }
 
                 if (!detectInitDone) {
-                    ArrayList<double[]> detections = limelight.updateBall2();
+                    ArrayList<double[]> detections = limelight.updateBall2(timeDif);
 
                     if (detections != null && !detections.isEmpty()) {
                         ArrayList<Double> results = new ArrayList<>();

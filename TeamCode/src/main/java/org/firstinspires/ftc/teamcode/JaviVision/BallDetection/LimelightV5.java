@@ -11,12 +11,8 @@ import org.firstinspires.ftc.teamcode.JaviVision.Position.Pose.LimelightPose;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 public class LimelightV5 {
-    private ElapsedTime overallRuntime;
-    private double lastTime;
-    private double timeDif;
 
     public final LimelightPose pose = new LimelightPose();
     private final double KNOWN_ANGLE = 38;
@@ -25,7 +21,7 @@ public class LimelightV5 {
     private static final double FIELD_LENGTH = 144.0;
     private final Limelight3A limelight;
     private static final double greenLowerConf = 0.30;
-    private static final double purpleLowerConf = 0.6;
+    private static final double purpleLowerConf = 0.55;
     public ArrayList<Double> yaws = new ArrayList<>();
     public ArrayList<Double> dists = new ArrayList<>();
     private ArrayList<Double[]> oldPurpleBalls = new ArrayList<>();
@@ -96,12 +92,12 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<double[]> updateBall2() {
+    public ArrayList<double[]> updateBall2(double timeDif) {
         LLResult result = limelight.getLatestResult();
 
-        double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
+        /*double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
         timeDif = (nowTime - lastTime);
-        lastTime = nowTime;
+        lastTime = nowTime;*/
 
         ArrayList<double[]> newPurpleBalls = new ArrayList<>();
         ArrayList<double[]> newGreenBalls = new ArrayList<>();
@@ -113,45 +109,54 @@ public class LimelightV5 {
             double ty = detection.getTargetYDegrees();
             double tx = detection.getTargetXDegrees();
             double distance = 5/Math.sqrt(detection.getTargetArea());
-            double camZ = 7.5/Math.tan(Math.toRadians(ty));
+            double camZ = 6.5/Math.tan(Math.toRadians(ty));
             double camX = camZ*Math.tan(Math.toRadians(tx));
             int classId = detection.getClassId();
             String className = detection.getClassName();
             double confidence = detection.getConfidence();
 
-            double[] retList = {camX, distance};
+            double[] retList = {camX, camZ, 1, 0, 0};
+            double[] retForTest = {camX, camZ};
 
             if (className.equals("green")) {
                 if (confidence >= greenLowerConf) {
-                    double[] ret = {camX, distance, (double) classId, 0, confidence, distance};
-                    newGreenBalls.add(retList);
+                    double[] ret = {camX, camZ, (double) classId, 0, confidence, distance};
+                    newGreenBalls.add(retForTest);
+                    //output.add(retList);
                 }
             }
             else if (className.equals("purple")) {
                 if (confidence >= purpleLowerConf) {
-                    double[] ret = {camX, distance, (double) classId, 1, confidence, distance};
+                    double[] ret = {camX, camZ, (double) classId, 1, confidence, distance};
                     detections.add(ret);
-                    newPurpleBalls.add(retList);
+                    newPurpleBalls.add(retForTest);
+                    //output.add(retList);
                 }
             }// once at init
 
-            trackerGreen.update(newGreenBalls, timeDif); // timeDif in seconds
-            ArrayList<double[]> outputG = new ArrayList<>();
-            ArrayList<double[]> outputP = new ArrayList<>();
-            for (TrackedBall ball : trackerGreen.getAliveBalls()) {
-                double[] r = {ball.x, ball.y, ball.vx, ball.vy};
-                outputG.add(r);
-                // ball.x, ball.y  → position
-                // ball.vx, ball.vy → velocity in units/sec
-            }
-            for (TrackedBall ball : trackerPurple.getAliveBalls()) {
-                double[] r = {ball.x, ball.y, ball.vx, ball.vy};
-                outputP.add(r);
-            }
-            output.addAll(outputG);
-            output.addAll(outputP);
+            // timeDif in seconds
+
         }
-        return output;
+        trackerGreen.update(newGreenBalls, timeDif);
+        trackerPurple.update(newPurpleBalls, timeDif);
+
+// temp debug — add a fake entry with timeDif info
+        ArrayList<double[]> outputG = new ArrayList<>();
+        ArrayList<double[]> outputP = new ArrayList<>();
+
+        for (TrackedBall ball : trackerGreen.getAliveBalls()) {
+            double[] r = {ball.x, ball.y, ball.vx, ball.vy, ball.id};
+            outputG.add(r);
+            // ball.x, ball.y  → position
+            // ball.vx, ball.vy → velocity in units/sec
+        }
+        for (TrackedBall ball : trackerPurple.getAliveBalls()) {
+            double[] r = {ball.x, ball.y, ball.vx, ball.vy, ball.id};
+            outputP.add(r);
+        }
+        output.addAll(outputG);
+        output.addAll(outputP);
+        return detections;
     }
     public void updateHeading(boolean movingOrRotating) {
         double[] results = limelight.getLatestResult().getPythonOutput();

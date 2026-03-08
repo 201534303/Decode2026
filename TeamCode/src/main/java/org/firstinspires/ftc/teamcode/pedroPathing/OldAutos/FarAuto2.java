@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 //@Autonomous(name = "FarAuto")
 @Disabled
@@ -47,6 +48,10 @@ public class FarAuto2 extends OpMode {
     private boolean pathJustStarted = false;
     double x;
     double y;
+
+    private ElapsedTime overallRuntime;
+    private double lastTime;
+    private double timeDif;
 
     PathState pathState = PathState.START;
 
@@ -217,6 +222,9 @@ public class FarAuto2 extends OpMode {
 
     @Override
     public void loop() {
+        double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
+        timeDif = (nowTime - lastTime);
+        lastTime = nowTime;
         if (!done) { shooter.far(); }
 
         follower.update();
@@ -227,7 +235,7 @@ public class FarAuto2 extends OpMode {
         x = results[1];
         y = results[0];
 
-        ArrayList<double[]> detections = limelight.updateBall2();
+        ArrayList<double[]> detections = limelight.updateBall2(timeDif);
         ArrayList<Double> results2 = new ArrayList<>();
         for(int col = 0; col < detections.get(0).length; col++)
         {

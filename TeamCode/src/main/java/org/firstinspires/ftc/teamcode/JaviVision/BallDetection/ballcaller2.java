@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 public class ballcaller2 extends OpMode {
     private ElapsedTime overallRuntime;
     private double lastTime;
-    private double timeDif;
+    private double timeDif = 0.0;
     LimelightV5 ll;
     private Telemetry dash;
     private ArrayList<Double[]> purpleBalls = new ArrayList<>();
@@ -27,15 +27,35 @@ public class ballcaller2 extends OpMode {
         ll = new LimelightV5(hardwareMap, 2);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
+        overallRuntime = new ElapsedTime();
     }
     public void loop() {// <-- This refreshes pose
-        ArrayList<double[]> detections = ll.updateBall2();
+        double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
+        timeDif = (nowTime - lastTime);
+        lastTime = nowTime;
+        ArrayList<double[]> detections = ll.updateBall2(timeDif);
+// Before the detection loop
+        telemetry.addData("Total detections", detections.size());
+
+// Inside the loop, differentiate by id
         for (double[] ball : detections) {
-            telemetry.addLine(" ---- BALL ----");
-            telemetry.addData("Ball x", ball[0]);
-            telemetry.addData("Ball y", ball[1]);
-            telemetry.addData("Vel x", ball[2]);
-            telemetry.addData("Vel y", ball[3]);
+            telemetry.addLine("---- new Ball ----");
+            telemetry.addData("x ", ball[0]);
+            telemetry.addData("y ", ball[1]);
+            /*
+                // normal display code
+            if (ball[4] > 0) { // id > 0 means it's a tracked ball
+                telemetry.addLine("--- TRACKED ---");
+                telemetry.addData("id",    ball[4]);
+                telemetry.addData("vx",    ball[2]);
+                telemetry.addData("vy",    ball[3]);
+            } else {
+                telemetry.addLine("--- RAW ---");
+                telemetry.addData("camX",  ball[0]);
+
+                telemetry.addData("dist",  ball[1]);
+             }
+             */
         }
 
         telemetry.update();
