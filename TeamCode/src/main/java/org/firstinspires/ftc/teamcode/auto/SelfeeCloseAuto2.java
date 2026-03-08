@@ -96,7 +96,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
             case TO_SHOOT:
                 //shooter.rotateTurret(turnTableAngle);
-                shooter.setHood(hoodHeight);
+                //shooter.setHood(hoodHeight);
 
                 if (!follower.isBusy() && !toShootPathSet) {
                     toShootPathSet = true;
