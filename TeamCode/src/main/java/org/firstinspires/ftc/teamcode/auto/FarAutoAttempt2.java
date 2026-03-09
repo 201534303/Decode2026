@@ -395,9 +395,8 @@ public class FarAutoAttempt2 extends OpMode {
 
         if(spikeMark == 0 && !done) { shooter.farFaster(); } // sets shooter speed
         if(!done && spikeMark != 0) {
-            //shooter.far();
+            shooter.far();
             robotActions.updateTurret(alliance, (follower.getPose().getX() + offset), follower.getPose().getY(), follower.getHeading());
-            robotActions.updateShooter(alliance, (follower.getPose().getX()), follower.getPose().getY(), 0);
         } // sets shooter speed
 
         autonomousPathUpdate();//main auto code

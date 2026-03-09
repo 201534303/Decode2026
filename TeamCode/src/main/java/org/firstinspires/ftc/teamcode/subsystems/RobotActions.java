@@ -423,7 +423,7 @@ public class RobotActions {
     }
 
 
-    public void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
+    private void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
         double dist = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){

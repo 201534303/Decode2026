@@ -262,8 +262,7 @@ public class SelfeeCloseAuto2 extends OpMode {
             shooter.closeMove(targetV);
         } else if (!done && doneOne) {
             robotActions.updateTurret(alliance, follower.getPose().getX(), follower.getPose().getY(), follower.getHeading());
-            robotActions.updateShooter(alliance, (follower.getPose().getX()), follower.getPose().getY(), 0);
-            //shooter.close();
+            shooter.close();
         }
         follower.update();
 
