@@ -60,6 +60,7 @@ public class RobotActions {
     private final double fieldLength = 144;
     private double speedDif;
     private boolean noahMode = true;
+    private boolean liftMode = false;
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
         gamepad1 = g1;
         gamepad2 = g2;
@@ -300,6 +301,9 @@ public class RobotActions {
     public void toggleNoahMode(){
         noahMode = !noahMode;
     }
+    public void toggleLiftMode(){
+        liftMode = !liftMode;
+    }
 
     public void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
@@ -423,8 +427,9 @@ public class RobotActions {
     }
 
 
-    private void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
+    public void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
         double dist = 0;
+
 
         if(currentColor == OLDChoose.Alliance.BLUE){
             double delX = -posX;
@@ -437,28 +442,38 @@ public class RobotActions {
             dist = Math.hypot(delX, delY);
         }
 
+
         double speed = 0;
+        double hood = 0;
+
 
         if(dist > 120){//far zone
-            shooter.setHood(0.20);
-            speed = -1383 + 593.005*Math.log(dist);
+            hood = 0.0;
+            speed = 3.63909*dist+1114.64786;
         }
         else if(dist > 98){
-            shooter.setHood(0.20);
+            hood = 0.20;
             speed = 1096.99182 + 2.7835*dist;
         }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
-            double hood = 5.84356*Math.pow(0.968317, dist);
-            shooter.setHood(hood);
+            hood = 5.84356*Math.pow(0.968317, dist);
             speed = 5*dist+860;
         }
         else{
-            shooter.setHood(1);
+            hood = 1;
             speed = 1135;
         }
         if(speed < 0){
             speed = 0;
         }
+
+
+        if(liftMode){
+            hood = 1.0;
+        }
+
+
+        shooter.setHood(hood);
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
         speedDif = speed - shooter.getMotorVel();
     }
