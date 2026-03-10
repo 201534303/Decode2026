@@ -204,13 +204,6 @@ public class ShootingTeleOpTesting extends OpMode {
             shooterOff = !shooterOff;
         }
 
-        if(gamepad2.optionsWasPressed()) {
-            robot.DELETEBUTTHISISTURRETQUESTIONABLE += 0.0005;
-        }
-        if(gamepad2.shareWasPressed()) {
-            robot.DELETEBUTTHISISTURRETQUESTIONABLE -= 0.0005;
-        }
-        telemetry.addData("robot.DELETEBUTTHISISTURRETQUESTIONABLE", robot.DELETEBUTTHISISTURRETQUESTIONABLE);
 
 
         /*

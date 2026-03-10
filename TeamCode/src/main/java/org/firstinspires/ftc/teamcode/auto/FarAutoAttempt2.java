@@ -73,7 +73,7 @@ public class FarAutoAttempt2 extends OpMode {
     double average = 0;
     double posAverage = 0;
     double negAverage = 0;
-    double offset = 40;
+    //double offset = 40;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -349,7 +349,7 @@ public class FarAutoAttempt2 extends OpMode {
         dash = dashboard.getTelemetry();
         overallRuntime = new ElapsedTime();
 
-        shooter.setHood(0.2);
+        shooter.setHood(0);
     }
 
     public void init_loop(){
@@ -370,7 +370,6 @@ public class FarAutoAttempt2 extends OpMode {
 
         // setting shooter stuff
         if (isMirror) {
-            offset = 0;
             turnTableAngle = -71;
         }
         shooter.rotateTurret(turnTableAngle);
@@ -392,11 +391,18 @@ public class FarAutoAttempt2 extends OpMode {
         telemetry.addData("loop time", timeDif);
 
         follower.update(); // updates follower
+        Pose currentPose = follower.getPose();
 
-        if(spikeMark == 0 && !done) { shooter.farFaster(); } // sets shooter speed
+        if(alliance == OLDChoose.Alliance.RED){
+            currentPose = new Pose(currentPose.getX() + 42, currentPose.getY(), currentPose.getHeading());
+        }
+
+        if(spikeMark == 0 && !done) {
+            shooter.farFaster();
+        } // sets shooter speed
         if(!done && spikeMark != 0) {
             shooter.far();
-            robotActions.updateTurret(alliance, (follower.getPose().getX() + offset), follower.getPose().getY(), follower.getHeading());
+            robotActions.updateTurret(alliance, currentPose.getX() , currentPose.getY(), currentPose.getHeading());
         } // sets shooter speed
 
         autonomousPathUpdate();//main auto code
