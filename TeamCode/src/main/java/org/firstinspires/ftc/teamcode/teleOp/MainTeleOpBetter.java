@@ -235,6 +235,9 @@ public class MainTeleOpBetter extends OpMode {
         if(gamepad2.dpadUpWasPressed()){
             robot.toggleNoahMode();
         }
+        if(gamepad2.dpadDownWasPressed()){
+            robot.toggleLiftMode();
+        }
 
         /*
         --------------------------UPDATE--------------------------

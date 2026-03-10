@@ -139,7 +139,7 @@ public class Shooter {
         }
 
         //setting it
-        theta = 0.5025 /*center*/ + theta * (1.74 / (360.0) * 1.40);
+        theta = 0.50 /*center*/ + theta * (1.74 / (360.0) * 1.40);
         right.setPosition(theta);
         left.setPosition(theta);
         telemetry.addData("rawTurret", theta);
@@ -183,9 +183,6 @@ public class Shooter {
 
     public void setHood(double theta) {
         theta = 1 - theta;
-        if(theta < .2){
-            theta = 0.2;
-        }
         hood.setPosition(theta);
         telemetry.addData("raw hood", Math.round(theta * 100) / 100.0);
     }

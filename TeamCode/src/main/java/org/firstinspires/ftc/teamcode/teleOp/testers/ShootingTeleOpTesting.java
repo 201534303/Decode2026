@@ -168,6 +168,7 @@ public class ShootingTeleOpTesting extends OpMode {
 
         robot.updateIntake();
         robot.updateTransfer();
+
         if(gamepad2.leftBumperWasPressed()){
             robot.toggleNoahMode();
         }
@@ -178,21 +179,39 @@ public class ShootingTeleOpTesting extends OpMode {
         if(gamepad2.dpadDownWasPressed()){
             robot.DELETEBUTTHISISVEL -= 5;
         }
+
         if(gamepad2.dpadRightWasPressed()){
             robot.DELETEBUTTHISISHOOD += .05;
         }
         if(gamepad2.dpadLeftWasPressed()){
             robot.DELETEBUTTHISISHOOD -= .05;
         }
+
         if(gamepad2.yWasPressed()){
             robot.DELETEBUTTHISISTURRET += 0.0025;
         }
         if(gamepad2.aWasPressed()){
             robot.DELETEBUTTHISISTURRET -= 0.0025;
         }
+        if(gamepad2.bWasPressed()){
+            robot.DELETEBUTTHISISTURRET += 0.05;
+        }
+        if(gamepad2.xWasPressed()){
+            robot.DELETEBUTTHISISTURRET -= 0.05;
+        }
+
         if(gamepad2.rightBumperWasPressed()){
             shooterOff = !shooterOff;
         }
+
+        if(gamepad2.optionsWasPressed()) {
+            robot.DELETEBUTTHISISTURRETQUESTIONABLE += 0.0005;
+        }
+        if(gamepad2.shareWasPressed()) {
+            robot.DELETEBUTTHISISTURRETQUESTIONABLE -= 0.0005;
+        }
+        telemetry.addData("robot.DELETEBUTTHISISTURRETQUESTIONABLE", robot.DELETEBUTTHISISTURRETQUESTIONABLE);
+
 
         /*
         --------------------------UPDATE--------------------------
