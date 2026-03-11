@@ -28,7 +28,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private RobotActions robotActions;
     private double turnTableAngle = 47;
     private double turnTableAngleFirst = 13;
-    private double hoodHeight = 0.36;//0.4;//
+    private double hoodHeight = 0.44498;//0.4;//
     private int targetV = 1200;
     private double x = 0.0;
 
@@ -49,6 +49,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private boolean isMirror = false;
     private boolean readyAlliance = false;
     private boolean readyFill = false;
+    private boolean parkActions = false;
     private boolean done = false;
     private boolean ready = false;
     private boolean ran = false;
@@ -105,7 +106,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     } else if (spikeMark == 2 || (spikeMark == 4 && !fill) || spikeMark == 3) {
                         follower.followPath(paths.selfeeToShoot(), 0.9, true);
                     } else if(spikeMark == 4){
-                        follower.followPath(paths._2ToShoot(), 1, true);
+                        follower.followPath(paths._2ToShoot(), 0.9, true);
                     } else if (spikeMark == 5 && !fill) {
                         follower.followPath(paths._2ToShoot(), 0.9, true);
                     } else if (spikeMark == 5) {
@@ -181,7 +182,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.TO_SHOOT;
-                    } else if ( (spikeMark == 4 && fill) && (follower.atParametricEnd() || waitSecs(5))){
+                    } else if ( (spikeMark == 4 && fill) && (follower.atParametricEnd() && waitSecs(3.5) || waitSecs(4))){
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -196,6 +197,9 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case TO_PARK:
+                intake.off();
+                done = true;
+
                 if (!didParking) {
                     follower.followPath(paths._ToPark(), 0.6, true);
                     didParking = true;
@@ -204,7 +208,8 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case PARK:
-                if(!done) {
+                if(!parkActions) {
+                    parkActions = true;
                     done = true;
                     shooter.rotateTurret(0);
                     intake.transferOff();
@@ -235,6 +240,22 @@ public class SelfeeCloseAuto2 extends OpMode {
             fill = choose.getFill();
             readyFill = choose.fillInit();
         }
+
+        if(alliance == OLDChoose.Alliance.BLUE){
+            isMirror = true;
+        } else {
+            isMirror = false;
+        }
+
+        if (isMirror) {
+            turnTableAngleFirst = -9;
+            turnTableAngle = -45;
+        } else {
+            turnTableAngle = 47;
+            turnTableAngleFirst = 13;
+        }
+        shooter.rotateTurret(turnTableAngleFirst);
+
         telemetry.update();
     }
 

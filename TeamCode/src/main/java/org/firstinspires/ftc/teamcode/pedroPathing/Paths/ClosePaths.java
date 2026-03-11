@@ -15,12 +15,13 @@ public class ClosePaths extends Paths{
     public Pose startPose = makePos(126, 120, 35); // Start Pose of our robot.
     public Pose shootPose0 = makePos(85, 80, 35);
     public Pose shootPose = makePos(88, 85);
-    public Pose shootPose2 = makePos(85, 90);
+    public Pose shootPose2 = makePos(88, 80);
+
     public Pose ballCollect1 = makePos(128, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(132, 60.5, 35);//130, 59.23
-    public Pose selfee2 = makePos(130, 60.5, 35);
+    public Pose selfee = makePos(132, 59.5, 35);//132, 60.5, 35
+    public Pose selfee2 = makePos(132, 59.5, 35);
     public Pose selfeeWiggle = makePos(127, 57, 35);
     public Pose selfeeMid = new Pose(80, 47);
     public Pose ballCollect2 = makePos(126, 90);
@@ -41,7 +42,6 @@ public class ClosePaths extends Paths{
             startPose = startPose.mirror(); // Start Pose of our robot.
             shootPose0 = shootPose0.mirror();
             shootPose = shootPose.mirror();
-            shootPose2 = shootPose2.mirror();
             ballCollect1 = ballCollect1.mirror();
             ballCollectMid1 = ballCollectMid1.mirror();
             ballCollectMid2 = ballCollectMid2.mirror();

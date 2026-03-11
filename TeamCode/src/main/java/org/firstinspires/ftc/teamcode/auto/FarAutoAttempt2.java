@@ -153,12 +153,12 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(1) || waitSecs(1.5))) {
+                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(1) || waitSecs(1.25))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.OUT;
-                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.5) || waitSecs(3))) {
+                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.75) || waitSecs(3))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -241,7 +241,7 @@ public class FarAutoAttempt2 extends OpMode {
                     }
                 }
 
-                if (follower.atParametricEnd() && waitSecs(2) || waitSecs(3)) {//1.5/
+                if (follower.atParametricEnd() && waitSecs(2) || waitSecs(2.25)) {//1.5/
                     resetActionTimer();
                     detectInitDone = false;
                     detectPathSet = false;
@@ -355,6 +355,17 @@ public class FarAutoAttempt2 extends OpMode {
     public void init_loop(){
         choose.allianceInit(); // gets alliance
         alliance = choose.getSelectedAlliance(); // sets alliance
+        if(alliance == OLDChoose.Alliance.BLUE){
+            isMirror = true;
+        } else {
+            isMirror = false;
+        }
+
+        if (isMirror) {
+            turnTableAngle = -71;
+        } else { turnTableAngle = 74; }
+        shooter.rotateTurret(turnTableAngle);
+
         telemetry.update();
     }
 
@@ -369,10 +380,7 @@ public class FarAutoAttempt2 extends OpMode {
         follower.setStartingPose(paths.startPose);
 
         // setting shooter stuff
-        if (isMirror) {
-            turnTableAngle = -71;
-        }
-        shooter.rotateTurret(turnTableAngle);
+
 
         // resets timers
         runtime.reset();
