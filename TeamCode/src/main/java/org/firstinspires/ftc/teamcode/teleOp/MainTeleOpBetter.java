@@ -208,7 +208,7 @@ public class MainTeleOpBetter extends OpMode {
         }
 
         //turn turret on/off
-        if (gamepad1.y){
+        if (gamepad1.yWasPressed()){
             turretOn = !turretOn;
         }
 
