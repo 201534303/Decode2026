@@ -452,8 +452,9 @@ public class RobotActions {
             speed = 3.63909*dist+1114.64786;
         }
         else if(dist > 98){
-            hood = 0.20;
-            speed = 1096.99182 + 2.7835*dist;
+            hood = 0.15;
+            speed = 1096.99182 + 3.05*dist;
+            // 2.7835
         }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
             hood = 5.84356*Math.pow(0.968317, dist);
