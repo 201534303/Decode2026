@@ -16,12 +16,11 @@ public class ClosePaths extends Paths{
     public Pose shootPose0 = makePos(85, 80, 35);
     public Pose shootPose = makePos(88, 85);
     public Pose shootPose2 = makePos(88, 80);
-
     public Pose ballCollect1 = makePos(128, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(132, 59.5, 35);//132, 60.5, 35
-    public Pose selfee2 = makePos(132, 59.5, 35);
+    public Pose selfee = makePos(132, 60, 35);//132, 60.5, 35
+    public Pose selfee2 = makePos(132, 60, 35);
     public Pose selfeeWiggle = makePos(127, 57, 35);
     public Pose selfeeMid = new Pose(80, 47);
     public Pose ballCollect2 = makePos(126, 90);
@@ -45,8 +44,8 @@ public class ClosePaths extends Paths{
             ballCollect1 = ballCollect1.mirror();
             ballCollectMid1 = ballCollectMid1.mirror();
             ballCollectMid2 = ballCollectMid2.mirror();
-            selfee = new Pose(12, 60.5, Math.toRadians(145));
-            selfee2 = new Pose(10, 60.5, Math.toRadians(145));
+            selfee = new Pose(10, 61, Math.toRadians(145));
+            selfee2 = new Pose(10, 61, Math.toRadians(145));
             selfeeWiggle = selfeeWiggle.mirror();
             selfeeMid = selfeeMid.mirror();
             ballCollect2 = new Pose(18, 90, Math.toRadians(180));

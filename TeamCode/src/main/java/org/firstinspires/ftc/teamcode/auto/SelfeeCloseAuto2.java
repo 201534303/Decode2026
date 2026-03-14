@@ -28,7 +28,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private RobotActions robotActions;
     private double turnTableAngle = 47;
     private double turnTableAngleFirst = 13;
-    private double hoodHeight = 0.44498;//0.4;//
+    private double hoodHeight = 0.55;//44498
     private int targetV = 1200;
     private double x = 0.0;
 
@@ -248,7 +248,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         }
 
         if (isMirror) {
-            turnTableAngleFirst = -9;
+            turnTableAngleFirst = -5;
             turnTableAngle = -45;
         } else {
             turnTableAngle = 47;
@@ -296,9 +296,9 @@ public class SelfeeCloseAuto2 extends OpMode {
         telemetry.addData("alliance", alliance);
         telemetry.addData("runtime", overallTimer);
 
-        if(overallTimer.getElapsedTimeSeconds() > 29){
-            pathState = TO_PARK;
-        }
+//        if(overallTimer.getElapsedTimeSeconds() > 29){
+//            pathState = TO_PARK;
+//        }
         //telemetry.addData("x", follower.getPose().getX());
         //telemetry.addData("y", follower.getPose().getY());
         //telemetry.addData("heading", follower.getPose().getHeading());
