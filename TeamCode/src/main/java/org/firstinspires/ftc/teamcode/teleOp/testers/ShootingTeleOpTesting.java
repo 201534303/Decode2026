@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="Shooter Testing", group="Iterative OpMode")
 @Config
+@Disabled
 public class ShootingTeleOpTesting extends OpMode {
 
     //choose

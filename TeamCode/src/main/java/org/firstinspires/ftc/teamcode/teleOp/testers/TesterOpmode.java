@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  */
 
 @TeleOp(name="testeropmode", group="Iterative OpMode")
-//@Disabled
+@Disabled
 public class TesterOpmode extends OpMode
 {
     DigitalChannel pin0, pin1;

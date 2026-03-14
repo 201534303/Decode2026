@@ -168,9 +168,11 @@ public class RobotActions {
                 intake.setIntPower(0.1);
             }
         }
+
         else{
             intake.setIntPower(-gamepad2.right_stick_y + 0.1);
         }
+
         intake.intakeIn();
         intake.intakeMachine();
         if (intake.haveBall()){
@@ -246,13 +248,7 @@ public class RobotActions {
         telemetry.addData("virtualXchange", time*vel.getXComponent());
         telemetry.addData("virtualYchange", time*vel.getYComponent());
 
-        if (turretOn){
-                updateTurret(currentColor, virtualX, virtualY, heading);
-        }
-        if (!turretOn){
-            shooter.rotateTurret(0);
-        }
-
+        updateTurret(currentColor, virtualX, virtualY, heading);
         updateShooter(currentColor, virtualX, virtualY, vel.getMagnitude());
     }
 
@@ -299,7 +295,7 @@ public class RobotActions {
         }
     }
     public void toggleNoahMode(){
-        noahMode = !noahMode;
+        //noahMode = !noahMode;
     }
     public void toggleLiftMode(){
         liftMode = !liftMode;
@@ -456,7 +452,17 @@ public class RobotActions {
             speed = 1096.99182 + 3.05*dist;
             // 2.7835
         }
-        else if(dist > 60){ // close5.84356\cdot0.968317^{x}
+        else if(dist > 82){
+            hood = 0.000126391*dist*dist-0.0317782*dist+2.21627;
+            speed = 5*dist+860;
+            // 2.7835
+        }
+        else if(dist > 78){
+            hood = .475;
+            speed = 5*dist+860;
+            // 2.7835
+        }
+        else if(dist > 55){ // close5.84356\cdot0.968317^{x}
             hood = 5.84356*Math.pow(0.968317, dist);
             speed = 5*dist+860;
         }
