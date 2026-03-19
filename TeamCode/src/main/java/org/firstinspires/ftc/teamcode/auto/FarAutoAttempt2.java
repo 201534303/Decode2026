@@ -48,7 +48,6 @@ public class FarAutoAttempt2 extends OpMode {
     private Follower follower;
     private FarPaths paths;
     private Telemetry dash;
-    private Boolean timerOnce = false;
     private boolean detectInitDone = false;
     private boolean detectPathSet = false;
     private boolean intakePathSet = false;
@@ -100,30 +99,22 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case SHOOT:
-                if (!follower.isBusy()) {
-                    if(waitSecs(0.5)){
-                        intake.allTheWaySlow();// go all the way to shoot
+                if (!follower.isBusy() && waitSecs(0.5)) {
+                    intake.allTheWaySlow();// go all the way to shoot
 
-                        if (spikeMark == 0) {
-                            if (waitSecs(1.35)) {//1.75
-                                resetActionTimer();
-                                intakePathSet = false;
-                                pathState = PathState.INTAKE;
-                            }
-                        } else if (spikeMark == 1 || spikeMark == 5) {
-                            if (waitSecs(1.35)) {//2.5
-                                resetActionTimer();
-                                intakePathSet = false;
-                                pathState = PathState.INTAKE;
-                            }
-                        } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
-                            if (waitSecs(1.5)) { // waits 1 sec to wait for all balls to shoot
-                                resetActionTimer();
-                                spikeMark += 1;
-                                pathState = PathState.DETECT;
-                                detectInitDone = false;
-                                detectPathSet = false;
-                            }
+                    if (spikeMark == 0 || spikeMark == 1 || spikeMark == 5) {
+                        if (waitSecs(1.35)) {//1.75
+                            resetActionTimer();
+                            intakePathSet = false;
+                            pathState = PathState.INTAKE;
+                        }
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
+                        if (waitSecs(1.5)) { // waits 1 sec to wait for all balls to shoot
+                            resetActionTimer();
+                            spikeMark += 1;
+                            pathState = PathState.DETECT;
+                            detectInitDone = false;
+                            detectPathSet = false;
                         }
                     }
                 }
@@ -131,10 +122,10 @@ public class FarAutoAttempt2 extends OpMode {
 
             case INTAKE:
                 if (intake.haveBall() && waitSecs(0.5)){
-                    timerOnce = true;
                     resetActionTimer();
-                    spikeMark += 1;
+                    spikeMark ++;
                     pathState = PathState.TO_SHOOT;
+                    break;
                 } else if (!follower.isBusy()) {
                     intake.transferOff();
                     intake.intakeIn();
@@ -355,15 +346,10 @@ public class FarAutoAttempt2 extends OpMode {
     public void init_loop(){
         choose.allianceInit(); // gets alliance
         alliance = choose.getSelectedAlliance(); // sets alliance
-        if(alliance == OLDChoose.Alliance.BLUE){
-            isMirror = true;
-        } else {
-            isMirror = false;
-        }
 
-        if (isMirror) {
-            turnTableAngle = -71;
-        } else { turnTableAngle = 74; }
+        isMirror = (alliance == OLDChoose.Alliance.BLUE);
+
+        turnTableAngle = isMirror ? -71 : 74;
         shooter.rotateTurret(turnTableAngle);
 
         telemetry.update();
@@ -405,13 +391,14 @@ public class FarAutoAttempt2 extends OpMode {
             currentPose = new Pose(currentPose.getX() + 42, currentPose.getY(), currentPose.getHeading());
         }
 
-        if(spikeMark == 0 && !done) {
-            shooter.farFaster();
-        } // sets shooter speed
-        if(!done && spikeMark != 0) {
-            shooter.far();
-            robotActions.updateTurret(alliance, currentPose.getX() , currentPose.getY(), currentPose.getHeading());
-        } // sets shooter speed
+        if(!done) {
+            if (spikeMark == 0) {
+                shooter.farFaster();
+            } else {
+                shooter.far();
+                robotActions.updateTurret(alliance, currentPose.getX(), currentPose.getY(), currentPose.getHeading());
+            } // sets shooter speed
+        }
 
         autonomousPathUpdate();//main auto code
 
