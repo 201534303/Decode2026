@@ -197,11 +197,11 @@ public class RobotActions {
         }
 
         double dist = Math.hypot(delY, delX);
-        double speedMul = 0.80;
+        double speedMul = 5.0;
 
-        if(dist > 140){
-            speedMul = .56;
-        }
+        //if(dist > 140){
+          //  speedMul = 3.0;
+       // }
 
         telemetry.addData("moving mag", vel.getMagnitude());
         telemetry.addData("shooting dif", speedDif);
