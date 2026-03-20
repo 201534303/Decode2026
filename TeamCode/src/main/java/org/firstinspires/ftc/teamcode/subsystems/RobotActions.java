@@ -207,7 +207,7 @@ public class RobotActions {
         telemetry.addData("shooting dif", speedDif);
 
         if(noahMode){
-            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && !rotating && Math.abs(gamepad2.left_stick_y) > 0.05 && vel.getMagnitude() < 20 && Math.abs(turAngle) < 72 && dist >= 55){
+            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && Math.abs(gamepad2.left_stick_y) > 0.05 && Math.abs(turAngle) < 72 && dist >= 55){
                 intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
             }
             else{
@@ -239,7 +239,7 @@ public class RobotActions {
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
-        double time = 0;
+        double time = time(x,y);
 
         double virtualX = x + time*vel.getXComponent();
         double virtualY = y + time*vel.getYComponent();
@@ -273,11 +273,11 @@ public class RobotActions {
     }
 
     public double time(double x, double y){
-        double dist = Math.hypot(x, y);
-        if(dist < 140){
+        double dist = Math.hypot(144-x, 144-y);
+        if(dist < 135){
             return 0;
         }
-        double time = 0.00411765*dist+0.0894118;
+        double time = 0.00655284*dist-0.259554;
         return time;
     }
 

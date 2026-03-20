@@ -244,7 +244,7 @@ public class MainTeleOpBetter extends OpMode {
          */
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*100)/100.0);
-
+        telemetry.addData("dist", Math.round(100.0*Math.hypot(144-x, 144-y))/100.0);
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
 
