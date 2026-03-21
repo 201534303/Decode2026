@@ -89,8 +89,10 @@ public class Shooter {
         }
         shooterL.set(speed);
         shooterR.set(speed);
-        telemetry.addData("target velocity", Math.round(targetVelo * 100) / 100.0);
-        telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
+        telemetry.addData("target velocity", Math.round(targetVelo * 10000) / 10000.0);
+        telemetry.addData("current velocity", Math.round(currentVelo * 10000) / 10000.0);
+        telemetry.addData("velo difference", Math.round((currentVelo-targetVelo) * 10000) / 10000.0);
+
     }
 
     public void flywheelSpinDynamicLoop(){
@@ -116,16 +118,16 @@ public class Shooter {
             shooterR.set(speed);
         }
 
-        telemetry.addData("robot velocity", robotVel);
-        telemetry.addData("target velocity", Math.round(targetVelo * 100) / 100.0);
-        telemetry.addData("current velocity", Math.round(currentVelo * 100) / 100.0);
+        telemetry.addData("target velocity", Math.round(targetVelo * 10000) / 10000.0);
+        telemetry.addData("current velocity", Math.round(currentVelo * 10000) / 10000.0);
+        telemetry.addData("velo difference", Math.round((currentVelo-targetVelo) * 10000) / 10000.0);
         tv = targetVelo;
         cv = currentVelo;
         rv = robotVel;
     }
 
     public void rotateTurret(double theta) {
-        telemetry.addData("turret", Math.round(theta * 100) / 100.0);
+        telemetry.addData("setTurret", Math.round(theta * 100) / 100.0);
         theta = normalizeDeg(theta);
 
         thetaT = theta;

@@ -220,7 +220,7 @@ public class HoodTester extends OpMode {
         robot.updateIntake();
         robot.updateTransfer(currentColor, vel, x, y, rotating);
         if(gamepad2.leftBumperWasPressed()){
-            robot.toggleNoahMode();
+            robot.toggleSingleDriver();
         }
 
 

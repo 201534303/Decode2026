@@ -58,8 +58,7 @@ public class RobotActions {
     private final double CONSTX = 16;
     private final double CONSTY = 13.375;
     private final double fieldLength = 144;
-    private double speedDif;
-    private boolean noahMode = true;
+    private boolean singleDriver = false;
     private boolean liftMode = false;
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
         gamepad1 = g1;
@@ -104,7 +103,9 @@ public class RobotActions {
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
         double rot = 0;
-        if(gamepad1.left_bumper){
+
+        boolean doIt = (singleDriver && gamepad1.dpad_right) || (!singleDriver && gamepad1.left_bumper);
+        if(doIt){
             double idealRot = Math.PI/2;
             if(currentColor == OLDChoose.Alliance.RED){
                 idealRot -= OFFSETROTATIONGATE;
@@ -113,11 +114,8 @@ public class RobotActions {
                 idealRot += OFFSETROTATIONGATE;
             }
             double error = angleDiffRad(botHeadingaForMatrix, idealRot);
-            telemetry.addData("idealRot", idealRot);
-            telemetry.addData("error", error);
             rot = rotationPID.calculate(error);
-            telemetry.addData("rot", rot);
-        }
+         }
         else{
             rot = gamepad1.left_stick_x;
         }
@@ -160,17 +158,21 @@ public class RobotActions {
 
 
     public void updateIntake(){
-        if(noahMode){
+        if(singleDriver){
+            if(gamepad1.right_bumper){
+                intake.setIntPower(1);
+            }
+            else{
+                intake.setIntPower(.1);
+            }
+        }
+        else{
             if(gamepad2.right_stick_y > 0 || gamepad2.right_trigger > 0.8){
                 intake.setIntPower(gamepad2.right_stick_y + 0.1);
             }
             else{
                 intake.setIntPower(0.1);
             }
-        }
-
-        else{
-            intake.setIntPower(-gamepad2.right_stick_y + 0.1);
         }
 
         intake.intakeIn();
@@ -197,30 +199,24 @@ public class RobotActions {
         }
 
         double dist = Math.hypot(delY, delX);
-        double speedMul = 5.0;
 
         //if(dist > 140){
           //  speedMul = 3.0;
        // }
 
-        telemetry.addData("moving mag", vel.getMagnitude());
-        telemetry.addData("shooting dif", speedDif);
-
-        if(noahMode){
-            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && Math.abs(gamepad2.left_stick_y) > 0.05 && Math.abs(turAngle) < 72 && dist >= 55){
-                intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
+        if(singleDriver){
+            if(gamepad1.left_bumper){
+                intake.setTransferVelPID( 10000, intake.getTransferVel(), 0, 0);
             }
             else{
-                //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
                 intake.setTransferPower(0);
             }
         }
         else{
-            if(!rotating && Math.abs(gamepad2.left_stick_y) > 0.05 && vel.getMagnitude() < 20 && Math.abs(turAngle) < 72 && dist >= 66){
-                intake.setTransferVelPID(-gamepad2.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
+            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && Math.abs(gamepad2.left_stick_y) > 0.05 && Math.abs(turAngle) < 72 && dist >= 55){
+                intake.setTransferVelPID(-gamepad2.left_stick_y * 10000, intake.getTransferVel(), 0, 0);
             }
             else{
-                //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
                 intake.setTransferPower(0);
             }
         }
@@ -294,8 +290,8 @@ public class RobotActions {
             shooter.flywheelSpinBangBang(DELETEBUTTHISISVEL, shooter.getMotorVel(), 0);
         }
     }
-    public void toggleNoahMode(){
-        //noahMode = !noahMode;
+    public void toggleSingleDriver(){
+        singleDriver = !singleDriver;
     }
     public void toggleLiftMode(){
         liftMode = !liftMode;
@@ -337,7 +333,6 @@ public class RobotActions {
             delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
-        telemetry.addData("turretAngle", turretAngle);
 
         double filteredTurretAngle = rollingAverage4(turretAngle);
         shooter.rotateTurret(filteredTurretAngle);
@@ -445,30 +440,30 @@ public class RobotActions {
 
         if(dist > 120){//far zone
             hood = 0.0;
-            speed = 3.63909*dist+1114.64786;
+            speed = 3.63909*dist+1094.64786;
         }
         else if(dist > 98){
             hood = 0.25;
-            speed = 1096.99182 + 3.05*dist;
+            speed = 1086.99182 + 3.05*dist;
             // 2.7835
         }
         else if(dist > 82){
             hood = 0.000126391*dist*dist-0.0317782*dist+2.21627;
-            speed = 5*dist+860;
+            speed = 5*dist+850;
             // 2.7835
         }
         else if(dist > 78){
             hood = .475;
-            speed = 5*dist+860;
+            speed = 5*dist+850;
             // 2.7835
         }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
             hood = 5.84356*Math.pow(0.968317, dist);
-            speed = 5*dist+860;
+            speed = 5*dist+850;
         }
         else{
             hood = 1;
-            speed = 1135;
+            speed = 1125;
         }
         if(speed < 0){
             speed = 0;
@@ -482,6 +477,5 @@ public class RobotActions {
 
         shooter.setHood(hood);
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
-        speedDif = speed - shooter.getMotorVel();
     }
 }

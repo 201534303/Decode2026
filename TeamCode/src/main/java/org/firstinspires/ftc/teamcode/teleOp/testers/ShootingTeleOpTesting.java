@@ -170,9 +170,6 @@ public class ShootingTeleOpTesting extends OpMode {
         robot.updateIntake();
         robot.updateTransfer();
 
-        if(gamepad2.leftBumperWasPressed()){
-            robot.toggleNoahMode();
-        }
 
         if(gamepad2.dpadUpWasPressed()){
             robot.DELETEBUTTHISISVEL += 5;

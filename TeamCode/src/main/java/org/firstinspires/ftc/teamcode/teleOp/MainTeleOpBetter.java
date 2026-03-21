@@ -174,7 +174,6 @@ public class MainTeleOpBetter extends OpMode {
         } else {
             rotating = true;
         }
-        telemetry.addData("rotating", rotating);
         ll.updateTele(heading, 0, movingOrRotating);
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
@@ -232,8 +231,8 @@ public class MainTeleOpBetter extends OpMode {
 
         robot.updateIntake();
         robot.updateTransfer(currentColor, vel, x, y, rotating);
-        if(gamepad2.dpadUpWasPressed()){
-            robot.toggleNoahMode();
+        if(gamepad1.dpadLeftWasPressed()){
+            robot.toggleSingleDriver();
         }
         if(gamepad2.dpadDownWasPressed()){
             robot.toggleLiftMode();
