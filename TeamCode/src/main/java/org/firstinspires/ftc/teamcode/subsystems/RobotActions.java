@@ -206,7 +206,9 @@ public class RobotActions {
 
         if(singleDriver){
             if(gamepad1.left_bumper){
-                intake.setTransferVelPID( 10000, intake.getTransferVel(), 0, 0);
+                //intake.setTransferVelPID( 10000, intake.getTransferVel(), 0, 0);
+                intake.setTransferPower(1);
+
             }
             else{
                 intake.setTransferPower(0);
@@ -214,7 +216,8 @@ public class RobotActions {
         }
         else{
             if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && Math.abs(gamepad2.left_stick_y) > 0.05 && Math.abs(turAngle) < 72 && dist >= 55){
-                intake.setTransferVelPID(-gamepad2.left_stick_y * 10000, intake.getTransferVel(), 0, 0);
+                //intake.setTransferVelPID(-gamepad2.left_stick_y * 10000, intake.getTransferVel(), 0, 0);
+                intake.setTransferPower(-gamepad2.left_stick_y);
             }
             else{
                 intake.setTransferPower(0);
