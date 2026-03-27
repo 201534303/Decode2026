@@ -443,7 +443,9 @@ public class RobotActions {
 
         if(dist > 120){//far zone
             hood = 0.0;
-            speed = 3.63909*dist+1094.64786;
+            speed = 3.63909*dist+1048.14786;
+            //3.63909
+            //1094.64786
         }
         else if(dist > 98){
             hood = 0.25;

@@ -153,14 +153,14 @@ public class MainTeleOpBetter extends OpMode {
         /*
         --------------------------GRAB COORDINATES--------------------------
          */
-        shooter.flywheelSpinDynamicLoop();
+        //shooter.flywheelSpinDynamicLoop();
 
         Pose robotPos = follower.getPose();
         x = robotPos.getX();
         y = robotPos.getY();
         heading = robotPos.getHeading();
 
-        shooter.flywheelSpinDynamicLoop();
+        //shooter.flywheelSpinDynamicLoop();
 
         vel = follower.getVelocity();
 
