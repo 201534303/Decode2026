@@ -141,12 +141,18 @@ public class RobotActions {
         double frontRightPower = (rotedY - rotedX - rot);
         double backRightPower = (rotedY + rotedX - rot);
 
-        if (brake > 0.9){
-            drivetrain.setMotorPowers(frontLeftPower * 0.6, backLeftPower * 0.6, frontRightPower * 0.6, backRightPower * 0.6);
-        } else if (superBrake > 0.9) {
-            drivetrain.setMotorPowers(frontLeftPower * 0.25, backLeftPower * 0.25, frontRightPower * 0.25, backRightPower * 0.25);
-        } else{
-            drivetrain.setMotorPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+        if(gamepad1.right_bumper){
+            drivetrain.lock();
+        }
+        else{
+            drivetrain.unlock();
+            if (brake > 0.9){
+                drivetrain.setMotorPowers(frontLeftPower * 0.6, backLeftPower * 0.6, frontRightPower * 0.6, backRightPower * 0.6);
+            } else if (superBrake > 0.9) {
+                drivetrain.setMotorPowers(frontLeftPower * 0.25, backLeftPower * 0.25, frontRightPower * 0.25, backRightPower * 0.25);
+            } else{
+                drivetrain.setMotorPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
+            }
         }
     }
     public static double angleDiffRad(double fromRad, double toRad) {

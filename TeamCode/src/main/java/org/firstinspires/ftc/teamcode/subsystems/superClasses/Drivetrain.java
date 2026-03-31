@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -12,6 +13,7 @@ public class Drivetrain {
 
     //motors
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
+    protected Servo stopper1;
 
     //telemetry
     protected Telemetry telemetry;
@@ -36,6 +38,9 @@ public class Drivetrain {
 
         //telemetry
         telemetry = t;
+
+        //servo
+        stopper1 = hardwareMap.get(Servo.class, "stopper1");
     }
 
     public void driveRobot(double drive, double strafe, double turn) {
@@ -51,5 +56,16 @@ public class Drivetrain {
         backLeft.setPower(bl);
         frontRight.setPower(fr);
         backRight.setPower(br);
+    }
+
+    public void setStopper1Pos(double pos) {
+        stopper1.setPosition(pos);
+    }
+
+    public void lock() {
+        stopper1.setPosition(0.15);
+    }
+    public void unlock() {
+        stopper1.setPosition(0.5);
     }
 }
