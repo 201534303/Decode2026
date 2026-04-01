@@ -13,7 +13,7 @@ public class Drivetrain {
 
     //motors
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
-    protected Servo stopper1;
+    protected Servo stopperRight, stopperLeft;
 
     //telemetry
     protected Telemetry telemetry;
@@ -40,7 +40,9 @@ public class Drivetrain {
         telemetry = t;
 
         //servo
-        stopper1 = hardwareMap.get(Servo.class, "stopper1");
+        stopperRight = hardwareMap.get(Servo.class, "stopperRight");
+        stopperLeft = hardwareMap.get(Servo.class, "stopperLeft");
+
     }
 
     public void driveRobot(double drive, double strafe, double turn) {
@@ -59,13 +61,17 @@ public class Drivetrain {
     }
 
     public void setStopper1Pos(double pos) {
-        stopper1.setPosition(pos);
+        stopperRight.setPosition(pos);
     }
 
     public void lock() {
-        stopper1.setPosition(0.15);
+        stopperRight.setPosition(0.15);
+        stopperLeft.setPosition(0);
+
+
     }
     public void unlock() {
-        stopper1.setPosition(0.5);
+        stopperRight.setPosition(0.5);
+        stopperLeft.setPosition(0.5);
     }
 }
