@@ -100,16 +100,22 @@ public class FarAutoAttempt2 extends OpMode {
 
             case SHOOT:
                 if (!follower.isBusy() && waitSecs(0.5)) {
-                    intake.allTheWaySlow();// go all the way to shoot
+                    intake.allTheWay();// go all the way to shoot
 
-                    if (spikeMark == 0 || spikeMark == 1 || spikeMark == 5) {
-                        if (waitSecs(1.35)) {//1.75
+                    if (spikeMark == 0) {
+                        if (waitSecs(1.25)) {//1
                             resetActionTimer();
                             intakePathSet = false;
                             pathState = PathState.INTAKE;
                         }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4) {
-                        if (waitSecs(1.5)) { // waits 1 sec to wait for all balls to shoot
+                    } else if (spikeMark == 1 || spikeMark == 6) {
+                        if (waitSecs(1)) {//1
+                            resetActionTimer();
+                            intakePathSet = false;
+                            pathState = PathState.INTAKE;
+                        }
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
+                        if (waitSecs(1)) { // 1
                             resetActionTimer();
                             spikeMark += 1;
                             pathState = PathState.DETECT;
@@ -133,10 +139,10 @@ public class FarAutoAttempt2 extends OpMode {
                     if (!intakePathSet) {
                         intakePathSet = true;
                         if (spikeMark == 0) {
-                            follower.followPath(paths.shootTo1(), 0.9, true);
+                            follower.followPath(paths.shootTo1(), 1, true);
                         } else if (spikeMark == 1) {
-                            follower.followPath(paths.shootTo2(), 0.9, true);
-                        } else if (spikeMark == 5) {
+                            follower.followPath(paths.shootTo2(), 1, true);
+                        } else if (spikeMark == 6) {
                             park();
                             follower.followPath(paths.shootToPark(), 0.6, true);
                             pathState = PathState.PARK;
@@ -144,12 +150,12 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(1) || waitSecs(1.25))) {
+                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(0.54) || waitSecs(0.65))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
                         pathState = PathState.OUT;
-                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.75) || waitSecs(3))) {
+                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.15) || waitSecs(2.4))) {
                         spikeMark += 1;
                         intakePathSet = false;
                         resetActionTimer();
@@ -209,9 +215,9 @@ public class FarAutoAttempt2 extends OpMode {
 
                     if (posCount == 0 && negCount == 0) {
                         if(spikeMark == 3 || spikeMark == 5){
-                            follower.followPath(paths.shootTo3(), 0.9, true);
+                            follower.followPath(paths.shootTo3(), 1, true);
                         } else {
-                            follower.followPath(paths.shootTo4(), 0.9, true);
+                            follower.followPath(paths.shootTo4(), 1, true);
                         }
                     } else {
                         if (alliance == OLDChoose.Alliance.BLUE){
@@ -227,8 +233,8 @@ public class FarAutoAttempt2 extends OpMode {
                         }
 
                         double checkY = ballCollect.getY(); // use mirrored Y for the check
-                        if (checkY < 12){ follower.followPath(paths.shootTo4(), 0.9, true); }
-                        else { follower.followPath(paths. to(ballCollect), 0.9, true); }
+                        if (checkY < 12){ follower.followPath(paths.shootTo4(), 1, true); }
+                        else { follower.followPath(paths. to(ballCollect), 1, true); }
                     }
                 }
 
@@ -248,7 +254,7 @@ public class FarAutoAttempt2 extends OpMode {
             case TO_SHOOT:
                 if (shootCount == 0) {
                     intake.intakeIn();
-                    follower.followPath(paths.collectToShootNotSet(), 0.9, true);
+                    follower.followPath(paths.collectToShootNotSet(), 1, true);
                     shootCount += 1;
                 }
 
@@ -256,7 +262,7 @@ public class FarAutoAttempt2 extends OpMode {
                     if (waitSecs(0.5)) {
                         intake.setIntakeSpeed(0.3);
                     }
-                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
+                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6) {
                     if (waitSecs(0.4)) {
                         intake.setIntakeSpeed(0);
                     }
@@ -274,7 +280,7 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case OUT:
-                intake.setIntakeSpeed(-0.3);
+                //intake.setIntakeSpeed(-0.3);
 
                 if (intake.haveBall()){
                     resetActionTimer();
@@ -285,7 +291,7 @@ public class FarAutoAttempt2 extends OpMode {
                     follower.followPath(paths.outSet(), 0.75, true);
                 }
 
-                if( (follower.atParametricEnd() && waitSecs(0.5)) || waitSecs(0.75) ){
+                if( (follower.atParametricEnd() && waitSecs(0.25)) || waitSecs(0.5) ){
                     resetActionTimer();
                     outPathSet = false;
                     pathState = IN;
@@ -303,7 +309,7 @@ public class FarAutoAttempt2 extends OpMode {
                     follower.followPath(paths.inSet(), 0.75, true);
                 }
 
-                if((follower.atParametricEnd() && waitSecs(1)) || waitSecs(1.25)){
+                if((follower.atParametricEnd() && waitSecs(0.75)) || waitSecs(1)){
                     resetActionTimer();
                     inPathSet = false;
                     pathState = TO_SHOOT;

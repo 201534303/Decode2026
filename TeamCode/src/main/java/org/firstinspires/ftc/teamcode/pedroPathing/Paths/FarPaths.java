@@ -13,7 +13,7 @@ public class FarPaths extends Paths {
     }
 
     public Pose startPose = makePos(88, 8); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(130, 37);
+    public Pose ballCollect1 = makePos(130, 37); // 130
     public Pose ballCollect12 = makePos(133, 37);
     public Pose ballCollect1Out = makePos(120, 37);
     public Pose ballCollect1Mid = new Pose(83, 42);
