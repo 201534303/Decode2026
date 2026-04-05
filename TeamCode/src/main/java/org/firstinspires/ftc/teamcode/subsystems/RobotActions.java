@@ -26,6 +26,8 @@ public class RobotActions {
     private static final int MAX_LEAD_ITERATIONS = 4;
     private static final double LEAD_TIME_TOLERANCE_S = 1e-3;
 
+    private static final double FLANKPOSOTION = 20;
+
     //DELETE LATER
     public double DELETEBUTTHISISVEL = 1720;
     public double DELETEBUTTHISISHOOD = 0.3;
@@ -152,7 +154,8 @@ public class RobotActions {
         double frontRightPower = (rotedY - rotedX - rot);
         double backRightPower = (rotedY + rotedX - rot);
 
-        if(gamepad1.right_bumper){
+        boolean wheelsLocked = gamepad1.right_bumper;
+        if(wheelsLocked){
             drivetrain.lock();
         }
         else{
@@ -164,6 +167,10 @@ public class RobotActions {
             } else{
                 drivetrain.setMotorPowers(frontLeftPower, backLeftPower, frontRightPower, backRightPower);
             }
+        }
+
+        if (feedback != null) {
+            feedback.updateWheelLockState(wheelsLocked);
         }
     }
     public static double angleDiffRad(double fromRad, double toRad) {
@@ -227,13 +234,8 @@ public class RobotActions {
 
         double dist = Math.hypot(delY, delX);
 
-        //if(dist > 140){
-          //  speedMul = 3.0;
-       // }
-
         if(singleDriver){
             if(gamepad1.left_bumper){
-                //intake.setTransferVelPID( 10000, intake.getTransferVel(), 0, 0);
                 intake.setTransferPower(1);
 
             }
@@ -242,8 +244,7 @@ public class RobotActions {
             }
         }
         else{
-            if((-gamepad2.left_stick_y > 0 || gamepad2.right_trigger > 0.8) && Math.abs(gamepad2.left_stick_y) > 0.05 && Math.abs(turAngle) < 72 && dist >= 55){
-                //intake.setTransferVelPID(-gamepad2.left_stick_y * 10000, intake.getTransferVel(), 0, 0);
+            if(Math.abs(gamepad2.left_stick_y) > 0.05 && ((-gamepad2.left_stick_y > 0 && Math.abs(turAngle) < 72 && dist >= 55 && Math.abs(gamepad1.left_stick_x) < 0.15) || gamepad2.right_trigger > 0.8)){
                 intake.setTransferPower(-gamepad2.left_stick_y);
             }
             else{
@@ -274,6 +275,7 @@ public class RobotActions {
         telemetry.addData("virtualXchange", time*vel.getXComponent());
         telemetry.addData("virtualYchange", time*vel.getYComponent());
 
+        updateTransfer(currentColor, vel, virtualX, virtualY, false);
         updateTurret(currentColor, virtualX, virtualY, heading);
         updateShooter(currentColor, virtualX, virtualY, vel.getMagnitude());
     }
@@ -313,7 +315,7 @@ public class RobotActions {
 
     // Recompute flight time from the predicted future position a few times so
     // the moving-shot lead converges instead of relying on a single estimate.
-    private double calculateIterativeLeadTime(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
+    public double calculateIterativeLeadTime(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
         double flightTime = time(currentColor, x, y);
         if (flightTime <= 0.0) {
             return 0.0;
@@ -429,9 +431,9 @@ public class RobotActions {
         if(currentColor == OLDChoose.Alliance.BLUE){
             //targets (0, 124), (20, 144)
             double delX1 = 0 - posX;
-            double delY1 = 124 - posY;
+            double delY1 = 144 - FLANKPOSOTION - posY;
             double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = 20 - posX;
+            double delX2 = FLANKPOSOTION - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
@@ -440,9 +442,9 @@ public class RobotActions {
         if(currentColor == OLDChoose.Alliance.RED){
             //targets (144, 124), (124, 144)
             double delX1 = 144 - posX;
-            double delY1 = 124 - posY;
+            double delY1 = 144 - FLANKPOSOTION - posY;
             double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = 124 - posX;
+            double delX2 = 144 - FLANKPOSOTION - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);

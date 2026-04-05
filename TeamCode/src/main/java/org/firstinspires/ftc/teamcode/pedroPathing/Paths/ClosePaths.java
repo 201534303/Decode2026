@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
@@ -19,7 +18,7 @@ public class ClosePaths extends Paths{
     public Pose ballCollect1 = makePos(128, 60, 0);
     public Pose ballCollectMid1 = new Pose(90, 55);
     public Pose ballCollectMid2 = new Pose(126.74319066147861, 63.48054474708172);
-    public Pose selfee = makePos(132, 60, 35);//132, 60.5, 35
+    public Pose selfee = makePos(132, 60, 35);//132, 60, 35
     public Pose selfee2 = makePos(132, 60, 35);
     public Pose selfeeWiggle = makePos(127, 57, 35);
     public Pose selfeeMid = new Pose(80, 47);
@@ -38,22 +37,22 @@ public class ClosePaths extends Paths{
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
         if (alliance == OLDChoose.Alliance.BLUE) {
-            startPose = startPose.mirror(); // Start Pose of our robot.
-            shootPose0 = shootPose0.mirror();
-            shootPose = shootPose.mirror();
-            ballCollect1 = ballCollect1.mirror();
-            ballCollectMid1 = ballCollectMid1.mirror();
-            ballCollectMid2 = ballCollectMid2.mirror();
+            startPose = mirror(startPose); // Start Pose of our robot.
+            shootPose0 = mirror(shootPose0);
+            shootPose = mirror(shootPose);
+            ballCollect1 = mirror(ballCollect1);
+            ballCollectMid1 = mirror(ballCollectMid1);
+            ballCollectMid2 = mirror(ballCollectMid2);
             selfee = new Pose(10, 61, Math.toRadians(145));
             selfee2 = new Pose(10, 61, Math.toRadians(145));
-            selfeeWiggle = selfeeWiggle.mirror();
-            selfeeMid = selfeeMid.mirror();
+            selfeeWiggle = mirror(selfeeWiggle);
+            selfeeMid = mirror(selfeeMid);
             ballCollect2 = new Pose(18, 90, Math.toRadians(180));
-            park = park.mirror();
-            ballCollect3 = ballCollect3.mirror();
-            ballCollect3Mid = ballCollect3Mid.mirror();
-            reset = reset.mirror();
-            resetMiddle = resetMiddle.mirror();
+            park = mirror(park);
+            ballCollect3 = mirror(ballCollect3);
+            ballCollect3Mid = mirror(ballCollect3Mid);
+            reset = mirror(reset);
+            resetMiddle = mirror(resetMiddle);
 
             return true;
         }
@@ -61,21 +60,11 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain collectToShoot(){
-        final Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, shootPose))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose.getHeading())
-                .setTValueConstraint(.98)
-                .build();
+        return line(follower.getPose(), shootPose, .98);
     }
 
     public PathChain toStart(){
-        final Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, startPose))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), startPose.getHeading())
-                .setTValueConstraint(.98)
-                .build();
+        return line(follower.getPose(), startPose, .98);
     }
 
     public PathChain ballCollect1ToShoot(){
@@ -144,11 +133,7 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain _ToPark(){
-        final Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, park))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), park.getHeading())
-                .build();
+        return fromCurrentPose(park);
     }
 
 }

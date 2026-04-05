@@ -127,6 +127,10 @@ public class Shooter {
         rv = robotVel;
     }
 
+    public double getTargetVelocity(){
+        return tv;
+    }
+
     public void rotateTurret(double theta) {
         telemetry.addData("setTurret", Math.round(theta * 100) / 100.0);
         theta = normalizeDeg(theta);

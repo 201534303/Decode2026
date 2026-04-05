@@ -29,13 +29,6 @@ abstract class Paths {
                 .build();
     }
 
-    public PathChain bezierCurve(Pose pos1, Pose pos2, Pose pos3, Pose pos4, Pose pose5) {
-        return follower.pathBuilder()
-                .addPath(new BezierCurve(pos1, pos2, pos3, pos4, pose5))
-                .setLinearHeadingInterpolation(pos1.getHeading(), pose5.getHeading())
-                .build();
-    }
-
     public PathChain bezierLine(Pose pos1, Pose pos2){
         return follower.pathBuilder()
                 .addPath(new BezierLine(pos1, pos2))
@@ -43,12 +36,22 @@ abstract class Paths {
                 .build();
     }
 
+    protected PathChain fromCurrentPose(Pose pos1) {
+        return bezierLine(follower.getPose(), pos1);
+    }
+
+    protected PathChain line(Pose start, Pose end, double tValueConstraint) {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(start, end))
+                .setLinearHeadingInterpolation(start.getHeading(), end.getHeading())
+                .setTValueConstraint(tValueConstraint)
+                .build();
+    }
+
+    protected Pose mirror(Pose pose) {
+        return pose.mirror();
+    }
+
     public double getPosX(){ return follower.getPose().getX();}
     public double getPosY(){ return follower.getPose().getY(); }
-
-    public boolean inBetween(double pos, double lower, double higher){ return lower <= pos && pos <= higher; }
-    public boolean inBetween(double lowX, double hiX, double lowY, double hiY){
-        //return 80 <= 87 && 96 >= 87 && 74 <= 81, 90 >= 81
-        return lowX <= getPosX() && hiX >= getPosX() && lowY <= getPosY() && hiY >= getPosY() ;
-    }
 }

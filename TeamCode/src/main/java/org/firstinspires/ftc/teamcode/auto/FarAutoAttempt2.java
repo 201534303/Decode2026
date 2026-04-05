@@ -9,13 +9,13 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.OldAutos.FarAuto;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
@@ -28,11 +28,15 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "FarAuto")
 
 public class FarAutoAttempt2 extends OpMode {
+    private static final double AUTO_BLUE_LIGHT = 0.63;
+    private static final double AUTO_RED_LIGHT = 0.28;
+
     // Robot Subsystems
     private IntakeAuto intake;
     private ShooterAuto shooter;
     private LimelightV5 limelight;
     private RobotActions robotActions;
+    private Servo indicatorLight;
 
 
     // Timers
@@ -66,7 +70,6 @@ public class FarAutoAttempt2 extends OpMode {
     Pose ballCollect;
     private int shootCount = 0;
     private double turnTableAngle = 74;
-    double newY;
     int posCount = 0;
     int negCount = 0;
     double average = 0;
@@ -84,18 +87,79 @@ public class FarAutoAttempt2 extends OpMode {
     public void resetActionTimer(){ actionTimer.resetTimer(); }
     public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
 
+    private void resetDetectionState() {
+        detectInitDone = false;
+        detectPathSet = false;
+        average = 0;
+        posCount = 0;
+        posAverage = 0;
+        negCount = 0;
+        negAverage = 0;
+    }
+
+    private void transitionTo(PathState newState) {
+        resetActionTimer();
+        pathState = newState;
+    }
+
+    private boolean waitForPathEndOrTimeout(double endDelaySecs, double timeoutSecs) {
+        return (follower.atParametricEnd() && waitSecs(endDelaySecs)) || waitSecs(timeoutSecs);
+    }
+
+    private void stopIntakeAndTransfer() {
+        intake.transferOff();
+        intake.intakeIn();
+    }
+
+    private double detectionAverageOffset() {
+        return alliance == OLDChoose.Alliance.BLUE ? -average : average;
+    }
+
+    private void followDetectionPath() {
+        if (posCount == 0 && negCount == 0) {
+            follower.followPath(spikeMark == 3 || spikeMark == 5 ? paths.shootTo3() : paths.shootTo4(), 1, true);
+            return;
+        }
+
+        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
+        if (paths.shouldUseDetectionFallback(ballCollect)) {
+            follower.followPath(paths.shootTo4(), 1, true);
+        } else {
+            follower.followPath(paths.to(ballCollect), 1, true);
+        }
+    }
+
+    private void updateDetectionAverage(ArrayList<double[]> detections) {
+        ArrayList<Double> results = new ArrayList<>();
+        for (double[] row : detections) {
+            results.add(row[0]);
+        }
+
+        for (double distance : results) {
+            if (distance > 0) {
+                posCount++;
+                posAverage += distance;
+            } else {
+                negCount++;
+                negAverage += distance;
+            }
+        }
+
+        if (negCount > posCount) {
+            average = (negCount > 0) ? negAverage / negCount : 0;
+        } else {
+            average = (posCount > 0) ? posAverage / posCount : 0;
+        }
+    }
+
     // Main Auto Code
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
                 shooter.far();
                 if (waitSecs(1)) { //1.25
-                    resetActionTimer(); // resets timer
-                    pathState = PathState.SHOOT; // sets to shoot state
+                    transitionTo(PathState.SHOOT);
                 }
-                break;
-
-            case TEST:
                 break;
 
             case SHOOT:
@@ -104,23 +168,19 @@ public class FarAutoAttempt2 extends OpMode {
 
                     if (spikeMark == 0) {
                         if (waitSecs(1.25)) {//1
-                            resetActionTimer();
                             intakePathSet = false;
-                            pathState = PathState.INTAKE;
+                            transitionTo(PathState.INTAKE);
                         }
                     } else if (spikeMark == 1 || spikeMark == 6) {
                         if (waitSecs(1)) {//1
-                            resetActionTimer();
                             intakePathSet = false;
-                            pathState = PathState.INTAKE;
+                            transitionTo(PathState.INTAKE);
                         }
                     } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
                         if (waitSecs(1)) { // 1
-                            resetActionTimer();
                             spikeMark += 1;
-                            pathState = PathState.DETECT;
-                            detectInitDone = false;
-                            detectPathSet = false;
+                            resetDetectionState();
+                            transitionTo(PathState.DETECT);
                         }
                     }
                 }
@@ -128,13 +188,11 @@ public class FarAutoAttempt2 extends OpMode {
 
             case INTAKE:
                 if (intake.haveBall() && waitSecs(0.5)){
-                    resetActionTimer();
                     spikeMark ++;
-                    pathState = PathState.TO_SHOOT;
+                    transitionTo(PathState.TO_SHOOT);
                     break;
                 } else if (!follower.isBusy()) {
-                    intake.transferOff();
-                    intake.intakeIn();
+                    stopIntakeAndTransfer();
 
                     if (!intakePathSet) {
                         intakePathSet = true;
@@ -150,16 +208,14 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && (follower.atParametricEnd() && waitSecs(0.54) || waitSecs(0.65))) {
+                    if (spikeMark == 1 && waitForPathEndOrTimeout(0.54, 0.65)) {
                         spikeMark += 1;
                         intakePathSet = false;
-                        resetActionTimer();
-                        pathState = PathState.OUT;
-                    } else if (spikeMark == 0 && (follower.atParametricEnd() && waitSecs(2.15) || waitSecs(2.4))) {
+                        transitionTo(PathState.OUT);
+                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(2.15, 2.4)) {
                         spikeMark += 1;
                         intakePathSet = false;
-                        resetActionTimer();
-                        pathState = PathState.TO_SHOOT;
+                        transitionTo(PathState.TO_SHOOT);
                     }
                 }
                 break;
@@ -169,85 +225,27 @@ public class FarAutoAttempt2 extends OpMode {
                 intake.transferOff();
 
                 if (intake.haveBall() && waitSecs(0.5)){
-                    resetActionTimer();
-                    detectInitDone = false;
-                    detectPathSet = false;
-                    average = 0;
-                    posCount = 0;
-                    posAverage = 0;
-                    negCount = 0;
-                    negAverage = 0;
-                    pathState = PathState.TO_SHOOT;
+                    resetDetectionState();
+                    transitionTo(PathState.TO_SHOOT);
                 }
 
                 if (!detectInitDone) {
                     ArrayList<double[]> detections = limelight.updateBall2(timeDif);
 
                     if (detections != null && !detections.isEmpty()) {
-                        ArrayList<Double> results = new ArrayList<>();
-
-                        for (double[] row : detections) {
-                            double camX = row[0];
-                            results.add(camX);
-                        }
-
-                        for (double distance : results) {
-                            if (distance > 0) {
-                                posCount++;
-                                posAverage += distance;
-                            } else {
-                                negCount++;
-                                negAverage += distance;
-                            }
-                        }
-
-                        if (negCount > posCount) {
-                            average = (negCount > 0) ? negAverage / negCount : 0;
-                        } else {
-                            average = (posCount > 0) ? posAverage / posCount : 0;
-                        }
+                        updateDetectionAverage(detections);
                     }
                     detectInitDone = true;
                 }
 
                 if(!follower.isBusy() && !detectPathSet && detectInitDone){
                     detectPathSet = true;
-
-                    if (posCount == 0 && negCount == 0) {
-                        if(spikeMark == 3 || spikeMark == 5){
-                            follower.followPath(paths.shootTo3(), 1, true);
-                        } else {
-                            follower.followPath(paths.shootTo4(), 1, true);
-                        }
-                    } else {
-                        if (alliance == OLDChoose.Alliance.BLUE){
-                            average = -average;
-                        }
-                        newY = paths.shootPose2.getY() + average;
-                        if (newY < 9) { newY = 9; }
-                        else if (newY > 35) { newY = 35; }
-
-                        ballCollect = new Pose(130, newY, 0); // ADD THIS BACK
-                        if(alliance == OLDChoose.Alliance.BLUE){
-                            ballCollect = ballCollect.mirror();
-                        }
-
-                        double checkY = ballCollect.getY(); // use mirrored Y for the check
-                        if (checkY < 12){ follower.followPath(paths.shootTo4(), 1, true); }
-                        else { follower.followPath(paths. to(ballCollect), 1, true); }
-                    }
+                    followDetectionPath();
                 }
 
-                if (follower.atParametricEnd() && waitSecs(2) || waitSecs(2.25)) {//1.5/
-                    resetActionTimer();
-                    detectInitDone = false;
-                    detectPathSet = false;
-                    average = 0;
-                    posCount = 0;
-                    posAverage = 0;
-                    negCount = 0;
-                    negAverage = 0;
-                    pathState = PathState.TO_SHOOT;
+                if (waitForPathEndOrTimeout(2, 2.25)) {//1.5/
+                    resetDetectionState();
+                    transitionTo(PathState.TO_SHOOT);
                 }
                 break;
 
@@ -283,25 +281,22 @@ public class FarAutoAttempt2 extends OpMode {
                 //intake.setIntakeSpeed(-0.3);
 
                 if (intake.haveBall()){
-                    resetActionTimer();
-                    pathState = PathState.TO_SHOOT;
+                    transitionTo(PathState.TO_SHOOT);
                 }
                 if (!outPathSet) {
                     outPathSet = true;
                     follower.followPath(paths.outSet(), 0.75, true);
                 }
 
-                if( (follower.atParametricEnd() && waitSecs(0.25)) || waitSecs(0.5) ){
-                    resetActionTimer();
+                if(waitForPathEndOrTimeout(0.25, 0.5)){
                     outPathSet = false;
-                    pathState = IN;
+                    transitionTo(IN);
                 }
                 break;
 
             case IN:
                 if (intake.haveBall()){
-                    resetActionTimer();
-                    pathState = PathState.TO_SHOOT;
+                    transitionTo(PathState.TO_SHOOT);
                 }
                 intake.intakeIn();
                 if (!inPathSet) {
@@ -309,10 +304,9 @@ public class FarAutoAttempt2 extends OpMode {
                     follower.followPath(paths.inSet(), 0.75, true);
                 }
 
-                if((follower.atParametricEnd() && waitSecs(0.75)) || waitSecs(1)){
-                    resetActionTimer();
+                if(waitForPathEndOrTimeout(0.75, 1)){
                     inPathSet = false;
-                    pathState = TO_SHOOT;
+                    transitionTo(TO_SHOOT);
                 }
                 break;
 
@@ -342,6 +336,7 @@ public class FarAutoAttempt2 extends OpMode {
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
         shooter = new ShooterAuto(hardwareMap, telemetry, runtime);
         limelight = new LimelightV5(hardwareMap, 2);
+        indicatorLight = hardwareMap.get(Servo.class, "taillight");
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
         overallRuntime = new ElapsedTime();
@@ -354,6 +349,7 @@ public class FarAutoAttempt2 extends OpMode {
         alliance = choose.getSelectedAlliance(); // sets alliance
 
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
+        indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
         turnTableAngle = isMirror ? -71 : 74;
         shooter.rotateTurret(turnTableAngle);

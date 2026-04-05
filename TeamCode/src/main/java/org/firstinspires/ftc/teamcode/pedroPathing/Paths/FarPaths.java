@@ -8,6 +8,10 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 
 public class FarPaths extends Paths {
+    private static final double DETECTION_COLLECT_Y_MIN = 9.0;
+    private static final double DETECTION_COLLECT_Y_MAX = 35.0;
+    private static final double DETECTION_FALLBACK_Y = 12.0;
+
     public FarPaths(Follower follower) {
         this.follower = follower;
     }
@@ -27,18 +31,18 @@ public class FarPaths extends Paths {
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
-            startPose = startPose.mirror();
-            ballCollect1 = ballCollect1.mirror();
-            ballCollect12 = ballCollect12.mirror();
-            ballCollect1Out = ballCollect1Out.mirror();
-            ballCollect1Mid = ballCollect1Mid.mirror();
-            shootPose = shootPose.mirror();
-            shootPose2 = shootPose2.mirror();
-            ballCollect2 = ballCollect2.mirror();
-            ballCollect22 = ballCollect22.mirror();
-            out = out.mirror();
-            park = park.mirror();
-            midShoot4 = midShoot4.mirror();
+            startPose = mirror(startPose);
+            ballCollect1 = mirror(ballCollect1);
+            ballCollect12 = mirror(ballCollect12);
+            ballCollect1Out = mirror(ballCollect1Out);
+            ballCollect1Mid = mirror(ballCollect1Mid);
+            shootPose = mirror(shootPose);
+            shootPose2 = mirror(shootPose2);
+            ballCollect2 = mirror(ballCollect2);
+            ballCollect22 = mirror(ballCollect22);
+            out = mirror(out);
+            park = mirror(park);
+            midShoot4 = mirror(midShoot4);
             return true;
         }
         return false;
@@ -52,11 +56,7 @@ public class FarPaths extends Paths {
     }
 
     public PathChain collectToShootNotSet() {
-        Pose ballCollect = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(ballCollect, shootPose2))
-                .setLinearHeadingInterpolation(ballCollect.getHeading(), shootPose2.getHeading())
-                .build();
+        return fromCurrentPose(shootPose2);
     }
 
     public PathChain collectToShoot2() {
@@ -74,11 +74,7 @@ public class FarPaths extends Paths {
     }
 
     public PathChain fromTo(Pose pos) {
-        Pose currPos = follower.getPose();
-        return follower.pathBuilder()
-                .addPath(new BezierLine(currPos, pos))
-                .setLinearHeadingInterpolation(currPos.getHeading(), pos.getHeading())
-                .build();
+        return fromCurrentPose(pos);
     }
 
     public PathChain to(Pose pos1, Pose pos2) {
@@ -108,8 +104,7 @@ public class FarPaths extends Paths {
     }
 
     public PathChain shootTo3NotSet() {
-        Pose currPos = follower.getPose();
-        return bezierLine(currPos, ballCollect12);
+        return fromCurrentPose(ballCollect12);
     }
 
     public PathChain shootTo4() { //return bezierLine(shootPose2, ballCollect2);
@@ -117,8 +112,7 @@ public class FarPaths extends Paths {
     }
 
     public PathChain shootTo4NotSet() { //return bezierLine(shootPose2, ballCollect2);
-        Pose currPos = follower.getPose();
-        return bezierCurve(currPos, midShoot4, ballCollect2);
+        return bezierCurve(follower.getPose(), midShoot4, ballCollect2);
     }
 
     public PathChain shootToPark() {
@@ -131,5 +125,22 @@ public class FarPaths extends Paths {
 
     public PathChain inSet() {
         return bezierLine(out, ballCollect2);
+    }
+
+    public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance) {
+        double collectY = clamp(shootPose2.getY() + averageOffset, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        Pose collectPose = new Pose(130, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
+
+    public boolean shouldUseDetectionFallback(Pose collectPose) {
+        return collectPose.getY() < DETECTION_FALLBACK_Y;
+    }
+
+    private double clamp(double value, double lower, double upper) {
+        return Math.max(lower, Math.min(upper, value));
     }
 }

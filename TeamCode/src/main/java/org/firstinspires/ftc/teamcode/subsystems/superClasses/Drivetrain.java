@@ -53,6 +53,23 @@ public class Drivetrain {
         backRight.setPower((drive + strafe - turn) * -1);
     }
 
+    public void driveRobotHeading(double drive, double idealHeading, double heading) {
+        double error = 2*angleDiffRad(heading, idealHeading);
+        double den = Math.abs(error) + Math.abs(drive);
+        frontLeft.setPower((drive - error)/den);
+        frontRight.setPower((drive + error)/den);
+        backLeft.setPower((drive - error)/den);
+        backRight.setPower((drive + error)/den);
+    }
+
+    public static double angleDiffRad(double fromRad, double toRad) {
+        double diff = (toRad - fromRad) % (2.0 * Math.PI);
+        if (diff > Math.PI) diff -= 2.0 * Math.PI;
+        if (diff < -Math.PI) diff += 2.0 * Math.PI;
+        return diff; // range: [-PI, PI]
+    }
+
+
     public void setMotorPowers(double fl, double bl, double fr, double br) {
         frontLeft.setPower(fl);
         backLeft.setPower(bl);
