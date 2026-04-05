@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.superClasses.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 
@@ -78,7 +78,7 @@ public class TransferTester extends OpMode {
         telemetry.addData("Status", "Initialized");
 
         //robot
-        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, new Lights(hardwareMap, new ElapsedTime(), telemetry));
+        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, new Feedback(hardwareMap, new ElapsedTime(), telemetry, gamepad1, gamepad2));
 
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();

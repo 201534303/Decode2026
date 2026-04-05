@@ -1,3 +1,4 @@
+// codex was here lmao
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -9,12 +10,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.superClasses.Lights;
-import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 public class RobotActions {
+    private static final double GRAVITY_IN_PER_S2 = -386.09;
+    private static final double BASE_LAUNCH_ANGLE_DEG = 40.80591944;
+    private static final double HOOD_ANGLE_SCALE_DEG = 21.54833298;
+    private static final double BASE_LAUNCH_HEIGHT_IN = 11.56594488;
+    private static final double LAUNCH_HEIGHT_SIN_SCALE_IN = 4.3897638;
+    private static final double TARGET_HEIGHT_SLOPE = -0.0571429;
+    private static final double TARGET_HEIGHT_INTERCEPT_IN = 51.14286;
+    private static final int MAX_LEAD_ITERATIONS = 4;
+    private static final double LEAD_TIME_TOLERANCE_S = 1e-3;
 
     //DELETE LATER
     public double DELETEBUTTHISISVEL = 1720;
@@ -37,7 +47,7 @@ public class RobotActions {
     private Drivetrain drivetrain;
     private Intake intake;
     private Shooter shooter;
-    private Lights light;
+    private Feedback feedback;
 
     //localization
     private Follower follower;
@@ -60,7 +70,7 @@ public class RobotActions {
     private final double fieldLength = 144;
     private boolean singleDriver = false;
     private boolean liftMode = false;
-    public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Lights li){
+    public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Feedback fe){
         gamepad1 = g1;
         gamepad2 = g2;
         drivetrain = dt;
@@ -69,7 +79,7 @@ public class RobotActions {
         follower = fo;
         overallRuntime = ru;
         telemetry = te;
-        light = li;
+        feedback = fe;
     }
 
     public RobotActions (Shooter sh, Follower fo, Telemetry te){
@@ -79,14 +89,14 @@ public class RobotActions {
     }
 
     public void setLocalizationBack() {
-        follower.setPose(HOMING);
+        setLocalizationPose(HOMING);
     }
     public void setLocalizationOurSide(OLDChoose.Alliance currentColor) {
         if (currentColor == OLDChoose.Alliance.RED){
-            follower.setPose(HOMINGRED);
+            setLocalizationPose(HOMINGRED);
         }
         else{
-            follower.setPose(HOMINGBLUE);
+            setLocalizationPose(HOMINGBLUE);
         }
     }
 
@@ -99,10 +109,11 @@ public class RobotActions {
         }
     }
 
-    public void fieldCentricDrive(OLDChoose.Alliance currentColor, double botHeadingaForMatrix){
+    public void fieldCentricDrive(OLDChoose.Alliance currentColor, double botHeadingaForMatrix, Vector vel){
         double yMove = -gamepad1.right_stick_y; //Y stick value is reversed
         double xMove = gamepad1.right_stick_x;
         double rot = 0;
+        double robotSpeed = vel != null ? vel.getMagnitude() : 0.0;
 
         boolean doIt = (singleDriver && gamepad1.dpad_right) || (!singleDriver && gamepad1.left_bumper);
         if(doIt){
@@ -162,6 +173,20 @@ public class RobotActions {
         return diff; // range: [-PI, PI]
     }
 
+    private void setLocalizationPose(Pose targetPose) {
+        boolean changed = !isSamePose(follower.getPose(), targetPose);
+        follower.setPose(targetPose);
+        if (changed && feedback != null) {
+            feedback.notifyRelocalized();
+        }
+    }
+
+    private boolean isSamePose(Pose a, Pose b) {
+        return Math.abs(a.getX() - b.getX()) < 0.01
+                && Math.abs(a.getY() - b.getY()) < 0.01
+                && Math.abs(angleDiffRad(a.getHeading(), b.getHeading())) < Math.toRadians(0.5);
+    }
+
 
     public void updateIntake(){
         if(singleDriver){
@@ -183,10 +208,6 @@ public class RobotActions {
 
         intake.intakeIn();
         intake.intakeMachine();
-        if (intake.haveBall()){
-            gamepad2.rumble(500);
-            //gamepad1.rumble(500);
-        }
     }
 
     public void updateTransfer(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY, boolean rotating) {
@@ -244,7 +265,7 @@ public class RobotActions {
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
-        double time = time(x,y);
+        double time = calculateIterativeLeadTime(currentColor, x, y, vel);
 
         double virtualX = x + time*vel.getXComponent();
         double virtualY = y + time*vel.getYComponent();
@@ -258,7 +279,7 @@ public class RobotActions {
     }
 
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
-        double time = time(x, y) * 2.0;
+        double time = calculateIterativeLeadTime(currentColor, x, y, vel) * 2.0;
 
         double virtualX = x + time * vel.getXComponent();
         double virtualY = y + time * vel.getYComponent();
@@ -278,12 +299,103 @@ public class RobotActions {
     }
 
     public double time(double x, double y){
-        double dist = Math.hypot(144-x, 144-y);
-        if(dist < 135){
-            return 0;
+        return time(OLDChoose.Alliance.RED, x, y);
+    }
+
+    public double time(OLDChoose.Alliance currentColor, double x, double y){
+        double dist = distanceToTarget(currentColor, x, y);
+        double flightTime = noDragBallTime(dist);
+        if (!Double.isFinite(flightTime) || flightTime < 0.0) {
+            return 0.0;
         }
-        double time = 0.00655284*dist-0.259554;
-        return time;
+        return flightTime;
+    }
+
+    // Recompute flight time from the predicted future position a few times so
+    // the moving-shot lead converges instead of relying on a single estimate.
+    private double calculateIterativeLeadTime(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
+        double flightTime = time(currentColor, x, y);
+        if (flightTime <= 0.0) {
+            return 0.0;
+        }
+
+        for (int i = 0; i < MAX_LEAD_ITERATIONS; i++) {
+            double virtualX = x + flightTime * vel.getXComponent();
+            double virtualY = y + flightTime * vel.getYComponent();
+            double nextFlightTime = time(currentColor, virtualX, virtualY);
+
+            if (nextFlightTime <= 0.0) {
+                return flightTime;
+            }
+            if (Math.abs(nextFlightTime - flightTime) < LEAD_TIME_TOLERANCE_S) {
+                return nextFlightTime;
+            }
+
+            flightTime = nextFlightTime;
+        }
+
+        return flightTime;
+    }
+
+    private double noDragBallTime(double distance) {
+        if (!Double.isFinite(distance)) {
+            return Double.NaN;
+        }
+
+        double hood = lookupHood(distance);
+        double thetaDeg = BASE_LAUNCH_ANGLE_DEG + hood * HOOD_ANGLE_SCALE_DEG;
+        double thetaRad = Math.toRadians(thetaDeg);
+        double cosTheta = Math.cos(thetaRad);
+        if (Math.abs(cosTheta) < 1e-9) {
+            return Double.NaN;
+        }
+
+        double tanTheta = Math.tan(thetaRad);
+        double launchHeightIn = launchHeightForTheta(thetaDeg);
+        double targetHeightIn = targetHeightForDistance(distance);
+        double verticalDisplacementIn = targetHeightIn - launchHeightIn;
+
+        double tSquared = (2.0 * (verticalDisplacementIn - distance * tanTheta)) / GRAVITY_IN_PER_S2;
+        if (tSquared <= 0.0) {
+            return Double.NaN;
+        }
+
+        return Math.sqrt(tSquared);
+    }
+
+    private double lookupHood(double distance) {
+        if (distance > 120.0) {
+            return 0.0;
+        }
+        if (distance > 98.0) {
+            return 0.25;
+        }
+        if (distance > 82.0) {
+            return 0.000126391 * distance * distance - 0.0317782 * distance + 2.21627;
+        }
+        if (distance > 78.0) {
+            return 0.475;
+        }
+        if (distance > 55.0) {
+            return 5.84356 * Math.pow(0.968317, distance);
+        }
+        return 1.0;
+    }
+
+    private double launchHeightForTheta(double thetaDeg) {
+        return BASE_LAUNCH_HEIGHT_IN
+                + LAUNCH_HEIGHT_SIN_SCALE_IN * Math.sin(Math.toRadians(90.0 - thetaDeg));
+    }
+
+    private double targetHeightForDistance(double distance) {
+        return TARGET_HEIGHT_SLOPE * distance + TARGET_HEIGHT_INTERCEPT_IN;
+    }
+
+    private double distanceToTarget(OLDChoose.Alliance currentColor, double posX, double posY) {
+        if(currentColor == OLDChoose.Alliance.BLUE){
+            return Math.hypot(-posX, 144 - posY);
+        }
+        return Math.hypot(144 - posX, 144 - posY);
     }
 
     public void updateShooterTesting(boolean shooterOff) {
@@ -309,7 +421,9 @@ public class RobotActions {
     public void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
+
         double heading = Math.toDegrees(h);
+
         double turretAngle = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){
@@ -321,10 +435,6 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
-            rawX = posX - CONSTX;
-            rawY = fieldLength - posY - CONSTY;
-            idealAngle = Math.atan(rawY/rawX);
-            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
         if(currentColor == OLDChoose.Alliance.RED){
@@ -336,10 +446,6 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
-            rawX = fieldLength - posX - CONSTX;
-            rawY = fieldLength - posY - CONSTY;
-            idealAngle = Math.atan(rawY/rawX);
-            delAngle = Math.toDegrees(Math.atan(delY1/delX1) - idealAngle);
         }
 
 
@@ -428,52 +534,34 @@ public class RobotActions {
 
 
     public void updateShooter(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel) {
-        double dist = 0;
-
-
-        if(currentColor == OLDChoose.Alliance.BLUE){
-            double delX = -posX;
-            double delY = 144-posY;
-            dist = Math.hypot(delX, delY);
-        }
-        if(currentColor == OLDChoose.Alliance.RED){
-            double delX = 144-posX;
-            double delY = 144-posY;
-            dist = Math.hypot(delX, delY);
-        }
+        double dist = distanceToTarget(currentColor, posX, posY);
 
 
         double speed = 0;
-        double hood = 0;
+        double hood = lookupHood(dist);
 
 
         if(dist > 120){//far zone
-            hood = 0.0;
             speed = 3.63909*dist+1048.14786;
             //3.63909
             //1094.64786
         }
         else if(dist > 98){
-            hood = 0.25;
             speed = 1086.99182 + 3.05*dist;
             // 2.7835
         }
         else if(dist > 82){
-            hood = 0.000126391*dist*dist-0.0317782*dist+2.21627;
             speed = 5*dist+850;
             // 2.7835
         }
         else if(dist > 78){
-            hood = .475;
             speed = 5*dist+850;
             // 2.7835
         }
         else if(dist > 55){ // close5.84356\cdot0.968317^{x}
-            hood = 5.84356*Math.pow(0.968317, dist);
             speed = 5*dist+850;
         }
         else{
-            hood = 1;
             speed = 1125;
         }
         if(speed < 0){

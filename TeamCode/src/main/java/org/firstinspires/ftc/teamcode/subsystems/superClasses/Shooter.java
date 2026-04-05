@@ -100,7 +100,7 @@ public class Shooter {
     }
     public void flywheelSpinDynamic(double targetVelo, double currentVelo, double robotVel) {
 
-        if (robotVel > 4){
+        if (currentVelo > targetVelo + 60){
             shooterR.setRunMode(MotorEx.RunMode.VelocityControl);
             shooterL.setRunMode(MotorEx.RunMode.VelocityControl);
             double speedPID = PIDF(targetVelo-currentVelo, targetVelo, 12,0,0.1,0.59);
@@ -118,7 +118,6 @@ public class Shooter {
             shooterR.set(speed);
         }
 
-        telemetry.addData("robot vel", robotVel);
         telemetry.addData("target velocity", Math.round(targetVelo * 10000) / 10000.0);
         telemetry.addData("current velocity", Math.round(currentVelo * 10000) / 10000.0);
 

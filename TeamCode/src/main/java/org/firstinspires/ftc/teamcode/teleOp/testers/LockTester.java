@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.superClasses.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 import java.util.concurrent.TimeUnit;
@@ -42,7 +42,7 @@ public class LockTester extends OpMode {
     private Drivetrain drivetrain;
     private Intake intake;
     private Shooter shooter;
-    private Lights light;
+    private Feedback feedback;
 
     //localization
     private Follower follower;
@@ -86,13 +86,13 @@ public class LockTester extends OpMode {
         drivetrain = new Drivetrain(hardwareMap, telemetry);
         intake = new Intake(hardwareMap, telemetry, overallRuntime);
         shooter = new Shooter(hardwareMap, telemetry, overallRuntime);
-        light = new Lights(hardwareMap, overallRuntime, telemetry);
+        feedback = new Feedback(hardwareMap, overallRuntime, telemetry, gamepad1, gamepad2);
 
         //telemetry
         telemetry.addData("Status", "Initialized");
 
         //robot
-        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, light);
+        robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, feedback);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
     }
@@ -190,26 +190,8 @@ public class LockTester extends OpMode {
         if (gamepad1.options){
             robot.setIMUZero(x, y, currentColor);
         }
-        /*
-        //reset position to corner
-        if (gamepad1.dpad_down){
-        if (gamepad1.dpad_down){
-            robot.setLocalizationOurSide(currentColor);
-        }
-
-        if (gamepad1.dpad_up && ll.pose.valid && !rotating && !moving) {
-            if (counter > 5) {
-                follower.setPose(new Pose(ll.pose.posX, ll.pose.posY, heading));
-                gamepad1.rumble(500);
-                light.setIndicatorLightSimple(0.66);
-                counter = 0;
-            }
-        }
-
-         */
-        else {
-            counter++;
-        }
+        // Camera relocalization is intentionally disabled in this tester.
+        counter++;
 
         //turn turret on/off
         if (gamepad1.yWasPressed()){
@@ -227,7 +209,7 @@ public class LockTester extends OpMode {
         }
 
         //drive
-        robot.fieldCentricDrive(currentColor, heading);
+        robot.fieldCentricDrive(currentColor, heading, vel);
 
 
         /*
@@ -260,16 +242,7 @@ public class LockTester extends OpMode {
         follower.update();
 
 
-        if(intake.haveBall()){
-            //light.setIndicatorLight(new double[]{0.50}, 700);
-            light.setIndicatorLightSimple(0.5);
-        }
-        else {
-            //light.setIndicatorLight(new double[]{0.28}, 700);
-            light.setIndicatorLightSimple(0.28);
-        }
-
-        //light.update();
+        feedback.updateBallState(intake.haveBall());
         telemetry.update();
         dash.update();
 
