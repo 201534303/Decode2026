@@ -117,7 +117,7 @@ public class FarAutoAttempt2 extends OpMode {
 
     private void followDetectionPath() {
         if (posCount == 0 && negCount == 0) {
-            follower.followPath(spikeMark == 3 || spikeMark == 5 ? paths.shootTo3() : paths.shootTo4(), 1, true);
+            follower.followPath(spikeMark == 3 ? paths.shootTo3() : paths.shootTo4(), 1, true);
             return;
         }
 
@@ -157,7 +157,7 @@ public class FarAutoAttempt2 extends OpMode {
         switch (pathState) {
             case START:
                 shooter.far();
-                if (waitSecs(1)) { //1.25
+                if (waitSecs(1.25)) { //1.25
                     transitionTo(PathState.SHOOT);
                 }
                 break;
@@ -200,7 +200,7 @@ public class FarAutoAttempt2 extends OpMode {
                             follower.followPath(paths.shootTo1(), 1, true);
                         } else if (spikeMark == 1) {
                             follower.followPath(paths.shootTo2(), 1, true);
-                        } else if (spikeMark == 6) {
+                        } else if (spikeMark == 5) {
                             park();
                             follower.followPath(paths.shootToPark(), 0.6, true);
                             pathState = PathState.PARK;
@@ -250,6 +250,8 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case TO_SHOOT:
+                intake.intakeIn();
+
                 if (shootCount == 0) {
                     intake.intakeIn();
                     follower.followPath(paths.collectToShootNotSet(), 1, true);
@@ -258,15 +260,15 @@ public class FarAutoAttempt2 extends OpMode {
 
                 if (spikeMark == 2) {
                     if (waitSecs(0.5)) {
-                        intake.setIntakeSpeed(0.3);
+                       // intake.setIntakeSpeed(0.3);
                     }
-                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6) {
+                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
                     if (waitSecs(0.4)) {
-                        intake.setIntakeSpeed(0);
+                        //intake.setIntakeSpeed(0);
                     }
                 } else {
                     if(waitSecs(0.5)) {
-                        intake.setIntakeSpeed(0);
+                        //intake.setIntakeSpeed(0);
                     }
                 }
 
@@ -390,7 +392,7 @@ public class FarAutoAttempt2 extends OpMode {
         Pose currentPose = follower.getPose();
 
         if(alliance == OLDChoose.Alliance.RED){
-            currentPose = new Pose(currentPose.getX() + 42, currentPose.getY(), currentPose.getHeading());
+            currentPose = new Pose(currentPose.getX() /*+ 42*/, currentPose.getY(), currentPose.getHeading());
         }
 
         if(!done) {

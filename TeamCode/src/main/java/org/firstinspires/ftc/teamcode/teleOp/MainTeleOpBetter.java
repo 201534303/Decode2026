@@ -234,9 +234,6 @@ public class MainTeleOpBetter extends OpMode {
         if(gamepad1.dpadLeftWasPressed()){
             robot.toggleSingleDriver();
         }
-        if(gamepad1.dpadRightWasPressed()){
-            follower.recalibrateIMU();
-        }
         if(gamepad2.dpadDownWasPressed()){
             robot.toggleLiftMode();
         }

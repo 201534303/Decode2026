@@ -44,6 +44,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private OLDChoose choose;
     private Timer actionTimer;
     private Timer overallTimer;
+    private Timer timerTimer;
     private int spikeMark = 0;
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT, TO_PARK
@@ -63,6 +64,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private boolean intakePathSet = false;
     private boolean didParking = false;
     private boolean shootMove;
+    private boolean onceTimer;
 
     private double x, y, heading;
 
@@ -133,22 +135,12 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case FIRST_SHOOT:
-                shootMove = true;
-
                 if(!follower.isBusy() && !firstShootPathSet) {
                     firstShootPathSet = true;
-                    follower.followPath(paths.firstToShoot(), 0.9, false);
-                }
-
-                if (shooter.getMotorVel() > shooter.getTargetVelocity() - 30){
-                    intake.allTheWay();
-                }
-                else{
-                    intake.off();
+                    follower.followPath(paths.firstToShoot(), 0.95, false);
                 }
 
                 if (follower.atParametricEnd() && firstShootPathSet) {
-                    shootMove = false;
                     doneOne = true;
                     firstShootPathSet = false;
                     transitionTo(PathState.SHOOT);
@@ -156,19 +148,24 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case TO_SHOOT:
-                //shooter.rotateTurret(turnTableAngle);
                 shooter.setHood(hoodHeight);
 
                 if (!follower.isBusy() && !toShootPathSet) {
                     toShootPathSet = true;
-                    follower.followPath(selectToShootPath(), 0.9, true);
+                    follower.followPath(selectToShootPath(), 0.95, true);
                 }
                 if (toShootPathSet) {
-                    if (spikeMark >= 2 && waitSecs(0.75)) {
+                    if(spikeMark == 4){
+                        shootMove = true;
+                        if(y > x){
+                            intake.allTheWay();
+                        }
+                    } else if (spikeMark >= 2 && waitSecs(0.75)) {
                         intake.setIntakeSpeed(0.3);
                     }
                     if (follower.atParametricEnd()) {
                         toShootPathSet = false;
+                        shootMove = false;
                         transitionTo(PathState.SHOOT);
                     }
                 }
@@ -198,11 +195,20 @@ public class SelfeeCloseAuto2 extends OpMode {
 
                     if (!intakePathSet) {
                         intakePathSet = true;
-                        follower.followPath(selectIntakePath(), spikeMark == 5 ? 0.6 : 0.9, true);
+                        follower.followPath(selectIntakePath(), spikeMark == 5 ? 0.6 : 0.95, true);
                     }
 
                     if(isCloseSelfeeCycle() && intakePathSet && follower.atParametricEnd()){
-                        drivetrain.driveRobotHeading(0.7, Math.toRadians(35), heading);
+                        if(onceTimer){
+                            timerTimer.resetTimer();
+                            onceTimer = false;
+                        }
+                        if(timerTimer.getElapsedTimeSeconds() >= 3) {
+                            drivetrain.driveRobot(0, 0, 0);
+                        } else {
+                            drivetrain.driveRobotHeading(0.57, Math.toRadians(35), heading);
+                        }
+
                     }
 
                     if (spikeMark == 0 && waitForPathEndOrTimeout(1, 2)) {
@@ -256,6 +262,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     public void init() {
         actionTimer = new Timer();
         overallTimer = new Timer();
+        timerTimer = new Timer();
 
         choose = new OLDChoose(gamepad1, telemetry);
         intake = new IntakeAuto(hardwareMap, telemetry, runtime);
@@ -312,6 +319,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
         runtime.reset();//resets overall timer
         overallTimer.resetTimer();
+        timerTimer.resetTimer();
         actionTimer.resetTimer();
         pathState = PathState.START;//sets the path state
     }
