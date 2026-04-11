@@ -28,6 +28,7 @@ public class FarPaths extends Paths {
     public Pose out = makePos(125, 9);
     public Pose park = makePos(105, 10, 0);
     public Pose midShoot4 = new Pose(85, 7);
+    private Pose outForDeteciton = new Pose();
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
@@ -121,6 +122,15 @@ public class FarPaths extends Paths {
 
     public PathChain outSet() {
         return bezierLine(ballCollect2, out);
+    }
+
+    public PathChain outNotSet(Pose ballCollect) {
+        outForDeteciton = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
+        return bezierLine(ballCollect, out);
+    }
+
+    public PathChain inNotSet(Pose ballCollect) {
+        return bezierLine(outForDeteciton, ballCollect);
     }
 
     public PathChain inSet() {

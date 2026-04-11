@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.PARK;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -117,6 +118,11 @@ public class FarAutoAttempt2 extends OpMode {
 
     private void followDetectionPath() {
         if (posCount == 0 && negCount == 0) {
+            if(spikeMark == 3) {
+                ballCollect = paths.ballCollect12;
+            } else {
+                ballCollect = paths.ballCollect2;
+            }
             follower.followPath(spikeMark == 3 ? paths.shootTo3() : paths.shootTo4(), 1, true);
             return;
         }
@@ -171,12 +177,12 @@ public class FarAutoAttempt2 extends OpMode {
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 1 || spikeMark == 6) {
+                    } else if (spikeMark == 1 || spikeMark == 5) {
                         if (waitSecs(1)) {//1
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 ) {
                         if (waitSecs(1)) { // 1
                             spikeMark += 1;
                             resetDetectionState();
@@ -243,9 +249,10 @@ public class FarAutoAttempt2 extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(2, 2.25)) {//1.5/
+                if (waitForPathEndOrTimeout(1.75, 2)) {//2, 2.25
                     resetDetectionState();
-                    transitionTo(PathState.TO_SHOOT);
+                    transitionTo(PathState.OUT);
+                    //transitionTo(PathState.TO_SHOOT);
                 }
                 break;
 
@@ -262,7 +269,7 @@ public class FarAutoAttempt2 extends OpMode {
                     if (waitSecs(0.5)) {
                        // intake.setIntakeSpeed(0.3);
                     }
-                } else if (spikeMark == 3 || spikeMark == 4 || spikeMark == 5) {
+                } else if (spikeMark == 3 || spikeMark == 4) {
                     if (waitSecs(0.4)) {
                         //intake.setIntakeSpeed(0);
                     }
@@ -280,14 +287,16 @@ public class FarAutoAttempt2 extends OpMode {
                 break;
 
             case OUT:
-                //intake.setIntakeSpeed(-0.3);
-
                 if (intake.haveBall()){
                     transitionTo(PathState.TO_SHOOT);
                 }
                 if (!outPathSet) {
                     outPathSet = true;
-                    follower.followPath(paths.outSet(), 0.75, true);
+                    if(spikeMark == 2) {
+                        follower.followPath(paths.outSet(), 0.75, true);
+                    } else{
+                        follower.followPath(paths.outNotSet(ballCollect), 0.75, true);
+                    }
                 }
 
                 if(waitForPathEndOrTimeout(0.25, 0.5)){
@@ -303,7 +312,12 @@ public class FarAutoAttempt2 extends OpMode {
                 intake.intakeIn();
                 if (!inPathSet) {
                     inPathSet = true;
-                    follower.followPath(paths.inSet(), 0.75, true);
+                    if(spikeMark == 2) {
+                        follower.followPath(paths.inSet(), 0.75, true);
+                    } else{
+                        follower.followPath(paths.inNotSet(ballCollect), 0.75, true);
+
+                    }
                 }
 
                 if(waitForPathEndOrTimeout(0.75, 1)){
@@ -353,7 +367,7 @@ public class FarAutoAttempt2 extends OpMode {
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -71 : 74;
+        turnTableAngle = isMirror ? -71 : 72;
         shooter.rotateTurret(turnTableAngle);
 
         telemetry.update();
@@ -391,8 +405,9 @@ public class FarAutoAttempt2 extends OpMode {
         follower.update(); // updates follower
         Pose currentPose = follower.getPose();
 
+
         if(alliance == OLDChoose.Alliance.RED){
-            currentPose = new Pose(currentPose.getX() /*+ 42*/, currentPose.getY(), currentPose.getHeading());
+            currentPose = new Pose(currentPose.getX() + 45, currentPose.getY(), currentPose.getHeading());
         }
 
         if(!done) {
@@ -400,6 +415,9 @@ public class FarAutoAttempt2 extends OpMode {
                 shooter.farFaster();
             } else {
                 shooter.far();
+                if(alliance == OLDChoose.Alliance.RED){
+
+                }
                 robotActions.updateTurret(alliance, currentPose.getX(), currentPose.getY(), currentPose.getHeading());
             } // sets shooter speed
         }
