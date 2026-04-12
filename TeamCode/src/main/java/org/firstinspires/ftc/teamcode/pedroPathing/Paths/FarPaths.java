@@ -17,15 +17,15 @@ public class FarPaths extends Paths {
     }
 
     public Pose startPose = makePos(89.7, 5.6); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(130, 37); // 130
-    public Pose ballCollect12 = makePos(133, 37);
-    public Pose ballCollect1Out = makePos(120, 37);
+    public Pose ballCollect1 = makePos(134, 30); // 130
+    public Pose ballCollect12 = makePos(133, 33);
+    public Pose ballCollect1Out = makePos(120, 34);
     public Pose ballCollect1Mid = new Pose(83, 42);
     public Pose shootPose = new Pose(93, 12, 0);
     public Pose shootPose2 = new Pose(89, 17, 0);
-    public Pose ballCollect2 = makePos(135, 9);
-    public Pose ballCollect22 = makePos(133, 9);
-    public Pose out = makePos(125, 9);
+    public Pose ballCollect2 = makePos(135, 7);
+    public Pose ballCollect22 = makePos(135, 7);
+    public Pose out = makePos(125, 7);
     public Pose park = makePos(105, 10, 0);
     public Pose midShoot4 = new Pose(85, 7);
     private Pose outForDeteciton = new Pose();
@@ -143,7 +143,7 @@ public class FarPaths extends Paths {
 
     public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance) {
         double collectY = clamp(shootPose2.getY() + averageOffset, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
-        Pose collectPose = new Pose(130, collectY, 0);
+        Pose collectPose = new Pose(135, collectY, 0);
         if (alliance == OLDChoose.Alliance.BLUE) {
             collectPose = mirror(collectPose);
         }

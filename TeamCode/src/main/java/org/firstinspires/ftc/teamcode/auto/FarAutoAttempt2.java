@@ -163,14 +163,13 @@ public class FarAutoAttempt2 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                shooter.far();
-                if (waitSecs(1.25)) { //1.25
+                if (waitSecs(1.5)) { //1.25
                     transitionTo(PathState.SHOOT);
                 }
                 break;
 
             case SHOOT:
-                if (!follower.isBusy() && waitSecs(0.5)) {
+                if (!follower.isBusy() /*&& waitSecs(0.5)*/) {
                     intake.allTheWay();// go all the way to shoot
 
                     if (spikeMark == 0) {

@@ -53,6 +53,7 @@ public class ClosePaths extends Paths{
             ballCollect3Mid = mirror(ballCollect3Mid);
             reset = mirror(reset);
             resetMiddle = mirror(resetMiddle);
+            shootPose2 = mirror(shootPose2);
 
             return true;
         }
