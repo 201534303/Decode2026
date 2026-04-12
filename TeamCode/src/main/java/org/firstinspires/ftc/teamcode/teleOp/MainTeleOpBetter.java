@@ -66,7 +66,7 @@ public class MainTeleOpBetter extends OpMode {
     private double timeDif = 1.0;
     private double oldHeading = 0;
 
-
+//89.7,5.6
     @Override
     public void init() {
         ll = new LimelightProcessor_v3Tele(hardwareMap);

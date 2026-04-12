@@ -141,14 +141,6 @@ public class Shooter {
 
         thetaT = theta;
 
-        //hard stops
-        if (theta > 73) {//72
-            theta = 73;
-        }
-        if (theta < -73) {
-            theta = -73;
-        }
-
         //setting it
         theta = 0.50 /*center*/ + theta * (1.74 / (360.0) * 1.40);
         right.setPosition(theta);
