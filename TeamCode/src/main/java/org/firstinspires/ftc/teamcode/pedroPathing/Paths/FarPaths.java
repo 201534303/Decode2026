@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.Paths;
+package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 
 public class FarPaths extends Paths {
     private static final double DETECTION_COLLECT_Y_MIN = 9.0;

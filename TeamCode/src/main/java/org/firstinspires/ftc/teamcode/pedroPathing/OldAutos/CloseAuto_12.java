@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos.CloseAuto_15.PathState.OFF;
-import static org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos.CloseAuto_15.PathState.SHOOT;
+import static org.firstinspires.ftc.teamcode.pedroPathing.OldAutos.CloseAuto_12.PathState.OFF;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -11,15 +10,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "15 Close")
+@Autonomous(name = "12 Close")
 @Disabled
 
-public class CloseAuto_15 extends OpMode {
+public class CloseAuto_12 extends OpMode {
     private Follower follower;
     private Timer pathTimer, actionTimer;
     private OLDClosePaths paths;
@@ -33,7 +32,7 @@ public class CloseAuto_15 extends OpMode {
     private boolean reset = false;
     public enum PathState {
         COLLECT_SHOOT, SHOOT_COLLECT, SHOOT,
-        OFF, RESET, START, BACK, UP
+        OFF, RESET, START
     }
     PathState pathState = PathState.START;
 
@@ -41,9 +40,10 @@ public class CloseAuto_15 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START://start state
+                //intake.setIntakeSpeed(0.4);
                 follower.followPath(paths.startToShoot(), 0.7, true);
                 resetActionTimer();
-                pathState = SHOOT;
+                pathState = PathState.SHOOT;
                 break;
 
             case SHOOT:
@@ -75,14 +75,6 @@ public class CloseAuto_15 extends OpMode {
                         resetActionTimer();
                         pathState = PathState.COLLECT_SHOOT;
                     }
-                    else if (spikeMark < 4){//change back to 5
-                        intake.intakeIn();
-                        intake.transferOff();
-                        follower.followPath(collectPath, 0.9, true);
-                        resetActionTimer();
-                        pathState = PathState.BACK;
-                        //pathState = PathState.COLLECT_SHOOT;
-                    }
                     else { pathState = OFF; }
                 }
                 break;
@@ -99,46 +91,15 @@ public class CloseAuto_15 extends OpMode {
                         follower.followPath(paths.collectToShoot(), 0.8, true);
                         spikeMark++;
                         resetActionTimer();
-                        pathState = SHOOT;
-                    }
-                    else if (spikeMark < 4){
-                        follower.followPath(paths.collectToShoot(), 0.9, true);
-                        spikeMark++;
-                        resetActionTimer();
-                        pathState = PathState.UP;
-                        //pathState = PathState.SHOOT;
+                        pathState = PathState.SHOOT;
                     }
                     else { pathState = OFF; }
                 }
                 break;
 
-//            case BACK:
-//                if (!follower.isBusy()) {
-//                    follower.followPath(paths.down(), 0.6, true);
-//                    resetActionTimer();
-//                    reset = true;
-//                    pathState = PathState.UP;
-//                }
-//                break;
-
-            case UP:
-                if (!follower.isBusy()) {
-                    //if (spikeMark == 4){
-                    follower.followPath(paths.shootTo4(), 0.6, true);
-                    //pathState = PathState.BACK;
-                    pathState = SHOOT;
-                    //}
-//                    else {
-//                        follower.followPath(paths.up(), 0.6, true);
-//                        pathState = PathState.COLLECT_SHOOT;
-//                    }
-                }
-                break;
-
             case RESET:
-                //intake.intakeIn();
                 if(!follower.isBusy()) {
-                    if(waitSecs(2.25)){
+                    if(waitSecs(2.0)){//2.25
                         resetActionTimer();
                         reset = false;
                         pathState = PathState.COLLECT_SHOOT;
@@ -172,7 +133,6 @@ public class CloseAuto_15 extends OpMode {
             case 1: return paths.shootTo2();
             case 2: return paths.shootTo3();
             case 3: return paths.shootTo4Mid();
-            //case 4: return paths.shootTo5();
             default: return null;
         }
     }
@@ -197,14 +157,12 @@ public class CloseAuto_15 extends OpMode {
         setUp();
     }
     public void init_loop(){
-        //shooter.setTurretpos(1);
+
     }
 
     public void loop() {
         shooter.close();
         follower.update();
-
-
 
         autonomousPathUpdate();//main auto code
 

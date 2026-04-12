@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.DrivetrainAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;

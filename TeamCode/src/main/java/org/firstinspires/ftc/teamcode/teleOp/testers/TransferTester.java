@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleOp.testers;
 
-import static org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose.Alliance.BLUE;
-import static org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose.Alliance.RED;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.BLUE;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose.Alliance.RED;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.Position.FinalPositionV3.LimelightProcessor_v3Tele;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;

@@ -8,9 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 

@@ -1,5 +1,5 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.Paths;
-import static org.firstinspires.ftc.teamcode.pedroPathing2.Paths.Choose.Choices.NONE;
+package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Paths.Choose.Choices.NONE;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;

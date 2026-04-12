@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.Config;
+package org.firstinspires.ftc.teamcode.pedroPathing.Config;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.HardwareMap;

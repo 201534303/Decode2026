@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;

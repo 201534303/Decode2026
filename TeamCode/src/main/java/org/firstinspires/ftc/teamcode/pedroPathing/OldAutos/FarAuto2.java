@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos;
+package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.FarPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
