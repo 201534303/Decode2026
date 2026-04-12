@@ -51,6 +51,10 @@ public class Shooter {
         //invertMotor
         shooterR.setInverted(true);
 
+        shooterL.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+        shooterR.setZeroPowerBehavior(Motor.ZeroPowerBehavior.FLOAT);
+
+
 
 
         telemetry = t;

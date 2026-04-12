@@ -241,9 +241,14 @@ public class MainTeleOpBetter extends OpMode {
         /*
         --------------------------UPDATE--------------------------
          */
+        //double currentVel = shooter.getMotorVel();
+        //double targetVel = shooter.getTargetVelocity();
         telemetry.addData("alliance Color", currentColor);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*10000)/10000.0);
         telemetry.addData("dist", Math.round(100.0*Math.hypot(144-x, 144-y))/100.0);
+        //dash.addData("current wheel speed", currentVel);
+       // dash.addData("target wheel speed", targetVel);
+       // dash.addData("shooter deviation", currentVel-targetVel);
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
         follower.update();
 
