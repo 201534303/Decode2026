@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
@@ -374,7 +374,7 @@ public class FarAutoAttempt2 extends OpMode {
 
     public void start() { // on start
         // path setting
-        follower = OLDConstants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         paths = new FarPaths(follower);
         robotActions = new RobotActions(shooter, follower, telemetry);
 

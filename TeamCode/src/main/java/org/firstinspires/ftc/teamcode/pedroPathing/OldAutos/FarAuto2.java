@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
@@ -265,7 +265,7 @@ public class FarAuto2 extends OpMode {
     }
 
     public void start() {
-        follower = OLDConstants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         paths = new FarPaths(follower);
 
         isMirror = paths.bluePath(alliance);

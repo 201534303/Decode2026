@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
@@ -210,7 +210,7 @@ public class SelfeeCloseAuto extends OpMode {
     }
 
     public void start() {
-        follower = OLDConstants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         paths = new ClosePaths(follower);
 
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue

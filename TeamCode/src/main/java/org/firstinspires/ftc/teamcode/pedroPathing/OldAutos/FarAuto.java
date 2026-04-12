@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDFarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
@@ -191,7 +191,7 @@ public class FarAuto extends OpMode {
     }
 
     public void start() {
-        follower = OLDConstants.createFollower(hardwareMap);
+        follower = Constants.createFollower(hardwareMap);
         paths = new OLDFarPaths(follower);
 
         isMirror = paths.bluePath(alliance);
