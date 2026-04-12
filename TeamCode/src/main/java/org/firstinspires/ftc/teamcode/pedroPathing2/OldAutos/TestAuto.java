@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
+package org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
 
 @Autonomous
 @Disabled
@@ -85,7 +85,7 @@ public class TestAuto extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
-        follower = Constants.createFollower(hardwareMap);
+        follower = OLDConstants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
     }

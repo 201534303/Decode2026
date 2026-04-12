@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.PARK;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -16,9 +15,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -375,7 +374,7 @@ public class FarAutoAttempt2 extends OpMode {
 
     public void start() { // on start
         // path setting
-        follower = Constants.createFollower(hardwareMap);
+        follower = OLDConstants.createFollower(hardwareMap);
         paths = new FarPaths(follower);
         robotActions = new RobotActions(shooter, follower, telemetry);
 

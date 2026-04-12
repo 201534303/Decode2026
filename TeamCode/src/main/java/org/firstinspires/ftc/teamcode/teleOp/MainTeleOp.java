@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
 import org.firstinspires.ftc.teamcode.subsystems.OldTele.DrivetrainTele;
 import org.firstinspires.ftc.teamcode.subsystems.OldTele.IntakeTele;
 import org.firstinspires.ftc.teamcode.subsystems.OldTele.ShooterTele;
@@ -39,7 +39,7 @@ public class MainTeleOp extends OpMode {
     @Override
     public void init() {
         telemetry.addData("Status", "Initialized");
-        follower = Constants.createFollower(hardwareMap);
+        follower = OLDConstants.createFollower(hardwareMap);
 
         dt = new DrivetrainTele(hardwareMap, gamepad1, gamepad2, telemetry);
         intake = new IntakeTele(hardwareMap, gamepad1, gamepad2, telemetry, runtime);

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import static org.firstinspires.ftc.teamcode.auto.SelfeeCloseAuto2.PathState.PARK;
-import static org.firstinspires.ftc.teamcode.auto.SelfeeCloseAuto2.PathState.TO_PARK;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -14,9 +13,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.ClosePaths;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.ClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -304,7 +303,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     }
 
     public void start() {
-        follower = Constants.createFollower(hardwareMap);
+        follower = OLDConstants.createFollower(hardwareMap);
         paths = new ClosePaths(follower);
 
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue

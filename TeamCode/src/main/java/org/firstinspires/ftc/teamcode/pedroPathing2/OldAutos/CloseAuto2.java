@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
+package org.firstinspires.ftc.teamcode.pedroPathing2.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Config.OLDConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing2.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
@@ -208,7 +208,7 @@ public class CloseAuto2 extends OpMode {
     }
 
     public void start() {
-        follower = Constants.createFollower(hardwareMap);
+        follower = OLDConstants.createFollower(hardwareMap);
         paths = new OLDClosePaths(follower);
 
         isMirror = paths.bluePath(alliance);//mirrors the paths if blue
