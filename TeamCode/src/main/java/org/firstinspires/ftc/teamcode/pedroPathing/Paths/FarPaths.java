@@ -124,9 +124,13 @@ public class FarPaths extends Paths {
         return bezierLine(ballCollect2, out);
     }
 
-    public PathChain outNotSet(Pose ballCollect) {
-        outForDeteciton = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
-        return bezierLine(ballCollect, out);
+    public PathChain outNotSet(Pose ballCollect, OLDChoose.Alliance alliance) {
+        if(alliance == OLDChoose.Alliance.BLUE) {
+            outForDeteciton = new Pose(ballCollect.getX() + 10, ballCollect.getY(), ballCollect.getHeading());
+        } else {
+            outForDeteciton = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
+        }
+        return bezierLine(ballCollect, outForDeteciton);
     }
 
     public PathChain inNotSet(Pose ballCollect) {
