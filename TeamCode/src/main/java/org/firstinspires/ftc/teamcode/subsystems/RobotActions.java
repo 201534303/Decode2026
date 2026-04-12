@@ -157,6 +157,7 @@ public class RobotActions {
         boolean wheelsLocked = gamepad1.right_bumper;
         if(wheelsLocked){
             drivetrain.lock();
+            drivetrain.setMotorPowers(0,0,0,0);
         }
         else{
             drivetrain.unlock();
