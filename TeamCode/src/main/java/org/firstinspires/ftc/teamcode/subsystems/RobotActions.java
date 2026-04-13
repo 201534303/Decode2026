@@ -25,6 +25,10 @@ public class RobotActions {
     private static final double TARGET_HEIGHT_INTERCEPT_IN = 51.14286;
     private static final int MAX_LEAD_ITERATIONS = 4;
     private static final double LEAD_TIME_TOLERANCE_S = 1e-3;
+    private static final double UNLOCK_ASSIST_MS = 40.0;
+    private static final double FAR_ZONE_DISTANCE_IN = 130.0;
+    private static final double MAX_SHOT_LEAD_SPEED_FAR_IN_PER_S = 8.0;
+    private static final double MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S = 16.0;
 
     private static final double FLANKPOSOTION = 20;
 
@@ -39,6 +43,8 @@ public class RobotActions {
 
     private PIDController rotationPID = new PIDController(0.9, 0, 0);
     private final double OFFSETROTATIONGATE = Math.toRadians(56);
+    private boolean wheelsLocked = false;
+    private double unlockAssistUntilMs = Double.NEGATIVE_INFINITY;
     //telemetry`
     Telemetry telemetry;
 
@@ -154,14 +160,26 @@ public class RobotActions {
         double frontRightPower = (rotedY - rotedX - rot);
         double backRightPower = (rotedY + rotedX - rot);
 
-        boolean wheelsLocked = gamepad1.right_bumper;
+        if (gamepad1.rightBumperWasPressed()){
+            wheelsLocked = true;
+            unlockAssistUntilMs = Double.NEGATIVE_INFINITY;
+        }
+        else if (gamepad1.rightBumperWasReleased()){
+            wheelsLocked = false;
+            if (overallRuntime != null) {
+                unlockAssistUntilMs = overallRuntime.milliseconds() + UNLOCK_ASSIST_MS;
+            }
+        }
+        
         if(wheelsLocked){
             drivetrain.lock();
             drivetrain.setMotorPowers(0,0,0,0);
         }
         else{
             drivetrain.unlock();
-            if (brake > 0.9){
+            if (isUnlockAssistActive()) {
+                drivetrain.setMotorPowers(1,-1,1,-1);
+            } else if (brake > 0.9){
                 drivetrain.setMotorPowers(frontLeftPower * 0.6, backLeftPower * 0.6, frontRightPower * 0.6, backRightPower * 0.6);
             } else if (superBrake > 0.9) {
                 drivetrain.setMotorPowers(frontLeftPower * 0.25, backLeftPower * 0.25, frontRightPower * 0.25, backRightPower * 0.25);
@@ -174,6 +192,11 @@ public class RobotActions {
             feedback.updateWheelLockState(wheelsLocked);
         }
     }
+
+    private boolean isUnlockAssistActive() {
+        return overallRuntime != null && overallRuntime.milliseconds() < unlockAssistUntilMs;
+    }
+
     public static double angleDiffRad(double fromRad, double toRad) {
         double diff = (toRad - fromRad) % (2.0 * Math.PI);
         if (diff > Math.PI) diff -= 2.0 * Math.PI;
@@ -267,18 +290,35 @@ public class RobotActions {
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
-        double time = calculateIterativeLeadTime(currentColor, x, y, vel);
+        double dist = distanceToTarget(currentColor, x, y);
+        double usedVelX = vel != null ? vel.getXComponent() : 0.0;
+        double usedVelY = vel != null ? vel.getYComponent() : 0.0;
+        double usedRobotSpeed = vel != null ? vel.getMagnitude() : 0.0;
+        double maxLeadSpeed = dist > FAR_ZONE_DISTANCE_IN
+                ? MAX_SHOT_LEAD_SPEED_FAR_IN_PER_S
+                : MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S;
 
-        double virtualX = x + time*vel.getXComponent();
-        double virtualY = y + time*vel.getYComponent();
+        // Cap the moving-shot lead so fast drive corrections do not over-predict.
+        if (usedRobotSpeed > maxLeadSpeed && usedRobotSpeed > 1e-6) {
+            double scale = maxLeadSpeed / usedRobotSpeed;
+            usedVelX *= scale;
+            usedVelY *= scale;
+            usedRobotSpeed = maxLeadSpeed;
+        }
+
+        double time = calculateIterativeLeadTime(currentColor, x, y, usedVelX, usedVelY);
+
+        double virtualX = x + time * usedVelX;
+        double virtualY = y + time * usedVelY;
         telemetry.addData("virtualX", virtualX);
         telemetry.addData("virtualY", virtualY);
-        telemetry.addData("virtualXchange", time*vel.getXComponent());
-        telemetry.addData("virtualYchange", time*vel.getYComponent());
+        telemetry.addData("virtualXchange", time * usedVelX);
+        telemetry.addData("virtualYchange", time * usedVelY);
+        telemetry.addData("leadVelocityMagnitude", usedRobotSpeed);
 
         updateTransfer(currentColor, vel, virtualX, virtualY, false);
         updateTurret(currentColor, virtualX, virtualY, heading);
-        updateShooter(currentColor, virtualX, virtualY, vel.getMagnitude());
+        updateShooter(currentColor, virtualX, virtualY, usedRobotSpeed);
     }
 
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
@@ -317,14 +357,20 @@ public class RobotActions {
     // Recompute flight time from the predicted future position a few times so
     // the moving-shot lead converges instead of relying on a single estimate.
     public double calculateIterativeLeadTime(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
+        double velX = vel != null ? vel.getXComponent() : 0.0;
+        double velY = vel != null ? vel.getYComponent() : 0.0;
+        return calculateIterativeLeadTime(currentColor, x, y, velX, velY);
+    }
+
+    private double calculateIterativeLeadTime(OLDChoose.Alliance currentColor, double x, double y, double velX, double velY) {
         double flightTime = time(currentColor, x, y);
         if (flightTime <= 0.0) {
             return 0.0;
         }
 
         for (int i = 0; i < MAX_LEAD_ITERATIONS; i++) {
-            double virtualX = x + flightTime * vel.getXComponent();
-            double virtualY = y + flightTime * vel.getYComponent();
+            double virtualX = x + flightTime * velX;
+            double virtualY = y + flightTime * velY;
             double nextFlightTime = time(currentColor, virtualX, virtualY);
 
             if (nextFlightTime <= 0.0) {
