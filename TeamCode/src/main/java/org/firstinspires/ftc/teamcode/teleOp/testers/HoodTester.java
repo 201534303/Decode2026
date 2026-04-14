@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="turret test", group="Iterative OpMode")
 @Config
-@Disabled
 public class HoodTester extends OpMode {
 
     //choose

@@ -30,7 +30,7 @@ public class RobotActions {
     private static final double MAX_SHOT_LEAD_SPEED_FAR_IN_PER_S = 8.0;
     private static final double MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S = 16.0;
 
-    private static final double FLANKPOSOTION = 20;
+    private static final double FLANKPOSOTION = 12;
 
     //DELETE LATER
     public double DELETEBUTTHISISVEL = 1720;
@@ -414,7 +414,7 @@ public class RobotActions {
 
     private double lookupHood(double distance) {
         if (distance > 120.0) {
-            return 0.0;
+            return 0.55;
         }
         if (distance > 98.0) {
             return 0.25;
@@ -591,7 +591,8 @@ public class RobotActions {
 
 
         if(dist > 120){//far zone
-            speed = 3.63909*dist+1048.14786;
+            speed = 3.63909*dist+922.1305;
+            //1186.66887
             //3.63909
             //1048.1478
         }
