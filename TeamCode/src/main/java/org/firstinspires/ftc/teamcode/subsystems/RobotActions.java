@@ -31,6 +31,14 @@ public class RobotActions {
     private static final double MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S = 16.0;
 
     private static final double FLANKPOSOTION = 12;
+    private double shooterVelocityOffset = 0.0;
+    private double hoodOffset = 0.0;
+    private double flankPositionOffset = 0.0;
+    private double lastBaseShooterVelocity = 0.0;
+    private double lastAppliedShooterVelocity = 0.0;
+    private double lastBaseHood = 0.0;
+    private double lastAppliedHood = 0.0;
+    private double lastAppliedFlankPosition = FLANKPOSOTION;
 
     //DELETE LATER
     public double DELETEBUTTHISISVEL = 1720;
@@ -467,20 +475,70 @@ public class RobotActions {
         liftMode = !liftMode;
     }
 
+    public void adjustShooterVelocityOffset(double delta) {
+        shooterVelocityOffset += delta;
+    }
+
+    public void adjustHoodOffset(double delta) {
+        hoodOffset += delta;
+    }
+
+    public void adjustFlankPositionOffset(double delta) {
+        flankPositionOffset += delta;
+    }
+
+    public double getShooterVelocityOffset() {
+        return shooterVelocityOffset;
+    }
+
+    public double getHoodOffset() {
+        return hoodOffset;
+    }
+
+    public double getFlankPositionOffset() {
+        return flankPositionOffset;
+    }
+
+    public double getBaseFlankPosition() {
+        return FLANKPOSOTION;
+    }
+
+    public double getLastBaseShooterVelocity() {
+        return lastBaseShooterVelocity;
+    }
+
+    public double getLastAppliedShooterVelocity() {
+        return lastAppliedShooterVelocity;
+    }
+
+    public double getLastBaseHood() {
+        return lastBaseHood;
+    }
+
+    public double getLastAppliedHood() {
+        return lastAppliedHood;
+    }
+
+    public double getLastAppliedFlankPosition() {
+        return lastAppliedFlankPosition;
+    }
+
     public void updateTurret(OLDChoose.Alliance currentColor, double posX, double posY, double h){
         this.posX = posX;
         this.posY = posY;
 
         double heading = Math.toDegrees(h);
+        double flankPosition = FLANKPOSOTION + flankPositionOffset;
+        lastAppliedFlankPosition = flankPosition;
 
         double turretAngle = 0;
 
         if(currentColor == OLDChoose.Alliance.BLUE){
             //targets (0, 124), (20, 144)
             double delX1 = 0 - posX;
-            double delY1 = 144 - FLANKPOSOTION - posY;
+            double delY1 = 144 - flankPosition - posY;
             double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = FLANKPOSOTION - posX;
+            double delX2 = flankPosition - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
@@ -489,9 +547,9 @@ public class RobotActions {
         if(currentColor == OLDChoose.Alliance.RED){
             //targets (144, 124), (124, 144)
             double delX1 = 144 - posX;
-            double delY1 = 144 - FLANKPOSOTION - posY;
+            double delY1 = 144 - flankPosition - posY;
             double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
-            double delX2 = 144 - FLANKPOSOTION - posX;
+            double delX2 = 144 - flankPosition - posX;
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
@@ -591,7 +649,7 @@ public class RobotActions {
 
 
         if(dist > 120){//far zone
-            speed = 3.63909*dist+922.1305;
+            speed = 6*dist+526.46763;
             //1186.66887
             //3.63909
             //1048.1478
@@ -623,8 +681,20 @@ public class RobotActions {
             hood = 1.0;
         }
 
+        lastBaseShooterVelocity = speed;
+        lastBaseHood = hood;
+
+        speed = Math.max(0, speed + shooterVelocityOffset);
+        hood = clamp(hood + hoodOffset, 0.0, 1.0);
+
+        lastAppliedShooterVelocity = speed;
+        lastAppliedHood = hood;
 
         shooter.setHood(hood);
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
+    }
+
+    private double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
     }
 }
