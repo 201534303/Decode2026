@@ -12,7 +12,7 @@ public class ClosePaths extends Paths{
     }
 
     public Pose startPose = new Pose(121, 113, 0.6987); // 126, 120
-    public Pose shootPose0 = makePos(80, 73, 35);
+    public Pose shootPose0 = makePos(86, 73, 35); // 80, 73
     public Pose shootPose = makePos(83, 78);
     public Pose shootPose2 = makePos(85, 103);
     public Pose ballCollect1 = makePos(131.17, 54.87, 0);

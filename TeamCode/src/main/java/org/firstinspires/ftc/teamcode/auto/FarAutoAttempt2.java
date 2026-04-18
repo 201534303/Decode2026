@@ -250,8 +250,8 @@ public class FarAutoAttempt2 extends OpMode {
 
                 if (waitForPathEndOrTimeout(1.75, 2)) {//2, 2.25
                     resetDetectionState();
-                    transitionTo(PathState.OUT);
-                    //transitionTo(PathState.TO_SHOOT);
+                    //transitionTo(PathState.OUT);
+                    transitionTo(PathState.TO_SHOOT);
                 }
                 break;
 

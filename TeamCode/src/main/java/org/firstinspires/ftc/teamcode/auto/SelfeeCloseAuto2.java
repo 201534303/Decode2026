@@ -34,7 +34,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private Drivetrain drivetrain;
     private Servo indicatorLight;
     private double turnTableAngle = 47;
-    private double turnTableAngleFirst = 13;
+    private double turnTableAngleFirst = 20; //13
     private double hoodHeight = 0.44498;//0.4;//
 
     //AUTO
@@ -83,6 +83,10 @@ public class SelfeeCloseAuto2 extends OpMode {
         return (follower.atParametricEnd() && waitSecs(timeoutSecs));
     }
 
+    private boolean waitForPathEndOrTimeout(double timeoutSecs) {
+        return (follower.atParametricEnd() || waitSecs(timeoutSecs));
+    }
+
     private void clearNavigationFlags() {
         intakePathSet = false;
         toShootPathSet = false;
@@ -128,19 +132,17 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case FIRST_SHOOT:
-                if(waitSecs(0.3) && !firstShootPathSet){
+                if(waitSecs(0.3) && !firstShootPathSet){//0.3
                     firstShootPathSet = true;
-                    shootMove = true;
+                    //shootMove = true;
                     follower.followPath(paths.firstToShoot(), 1, false);
                 }
 
-                if(waitSecs(1.3)){
+                if(waitSecs(1.25)){
                     intake.allTheWay();
                 }
 
-                if (follower.atPose(paths.shootPose0, 8, 8)) {
-                    doneOne = true;
-                    shootMove = false;
+                if (follower.atPose(paths.shootPose0, 5, 5)) {
                     firstShootPathSet = false;
                     transitionTo(PathState.SHOOT);
                 }
@@ -149,13 +151,16 @@ public class SelfeeCloseAuto2 extends OpMode {
             case TO_SHOOT:
                 shooter.setHood(hoodHeight);
 
+                if(spikeMark == 6) {
+                    shootMove = true;
+                }
+
                 if (!toShootPathSet) {
                     toShootPathSet = true;
                     follower.followPath(selectToShootPath(), 1, false);
                 }
                 if (toShootPathSet) {
                     if(spikeMark == 6){
-                        shootMove = true;
                         if(y > x){
                             intake.allTheWay();
                         }
@@ -164,14 +169,12 @@ public class SelfeeCloseAuto2 extends OpMode {
                     }
 
                     if(spikeMark == 6){
-                        //shootMove = true;
-                        if(follower.atPose(paths.shootPose2, 10, 10)) {
+                        if(follower.atPose(paths.shootPose2, 15, 15)) {
                             toShootPathSet = false;
                             transitionTo(PathState.SHOOT);
                         }
-                    } else if (follower.atPose(paths.shootPose, 8, 8)) {
+                    } else if (follower.atPose(paths.shootPose, 10, 10)) {
                         toShootPathSet = false;
-                        shootMove = false;
                         transitionTo(PathState.SHOOT);
                     }
                 }
@@ -179,50 +182,77 @@ public class SelfeeCloseAuto2 extends OpMode {
 
             case SHOOT:
                 intake.allTheWay();
-                if (waitSecs(0.6)) {//0.6
+
+                if(spikeMark == 0){
                     clearNavigationFlags();
+                    doneOne = true;
                     transitionTo(PathState.INTAKE);
+                } else {
+                    intake.allTheWay();
+                    if (waitSecs(0.6)) {//0.6
+                        clearNavigationFlags();
+                        transitionTo(PathState.INTAKE);
+                    }
                 }
                 break;
 
             case INTAKE:
-                if(intake.haveBall() && waitSecs(0.1)){
+                if(waitSecs(1)) {
+                    intake.transferOff();
+                    intake.intakeIn();
+                }
+
+                if(intake.haveBall() && waitSecs(1)){
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
                     break;
                 }
 
-                if (!follower.isBusy()) {
-                    intake.transferOff();
-                    intake.intakeIn();
-
+                if(spikeMark == 0 || spikeMark == 3){
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, false);
                     }
+                }
 
-                    if (spikeMark == 0 && waitSecs(0.3)) {
-                        spikeMark += 1;
+                if (spikeMark == 0 && waitForPathEndOrTimeout(3.1)) {
+                    spikeMark += 1;
+                    intakePathSet = false;
+                    transitionTo(PathState.TO_SHOOT);
+                } else if (spikeMark == 3 && waitForPathEndOrTimeout(2.75)) {
+                    spikeMark += 1;
+                    intakePathSet = false;
+                    transitionTo(PathState.TO_SHOOT);
+                } else if(spikeMark == 1){
+                    if (!intakePathSet) {
+                        intakePathSet = true;
+                        follower.followPath(selectIntakePath(), 1, true);
+                    } else if(waitForPathEndAndTimeout(3)){
+                        //spikeMark += 1;
                         intakePathSet = false;
-                        transitionTo(PathState.TO_SHOOT);
+                        //transitionTo(PathState.TO_SHOOT);
+                    }
+                }
+
+                if (!follower.isBusy()) {
+                    /*if (!intakePathSet) {
+                        intakePathSet = true;
+                        follower.followPath(selectIntakePath(), 1, true);
                     } else if (isCloseSelfeeCycle() && waitForPathEndAndTimeout(3)) { // 3.75
-                        spikeMark += 1;
-                        intakePathSet = false;
-                        transitionTo(PathState.TO_SHOOT);
-                    } else if (spikeMark == 3 && waitSecs(0.3)) {
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
                     } else if (spikeMark == 6 && follower.atParametricEnd()) {
                         intakePathSet = false;
                         transitionTo(PathState.PARK);
-                    }
+                    }*/
                 }
                 break;
 
             case PARK:
                 if(!parkActions) {
+                    shootMove = false;
                     parkActions = true;
                     done = true;
                     shooter.rotateTurret(0);
@@ -319,7 +349,7 @@ public class SelfeeCloseAuto2 extends OpMode {
             robotActions.updateTurret(alliance, x, y, heading);
             shooter.close();
         } else {
-            shooter.close();
+            shooter.closeFaster();
         }
         follower.update();
 
