@@ -49,7 +49,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
  */
 
 @TeleOp(name="testeropmode", group="Iterative OpMode")
-@Disabled
+//@Disabled
 public class TesterOpmode extends OpMode
 {
     DigitalChannel pin0, pin1;
@@ -59,8 +59,7 @@ public class TesterOpmode extends OpMode
      */
     @Override
     public void init() {
-        pin0 = hardwareMap.get(DigitalChannel.class, "pin0");
-        pin1 = hardwareMap.get(DigitalChannel.class, "pin1");
+        pin0 = hardwareMap.get(DigitalChannel.class, "colorLeft");
 
     }
 
@@ -86,7 +85,6 @@ public class TesterOpmode extends OpMode
     @Override
     public void loop() {
         telemetry.addData("digital 0", pin0.getState());
-        telemetry.addData("digital 1", pin1.getState());
         telemetry.update();
 
     }

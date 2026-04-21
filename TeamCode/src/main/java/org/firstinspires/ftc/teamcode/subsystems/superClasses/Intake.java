@@ -26,7 +26,7 @@ public class Intake {
 
     protected DcMotorEx intake;
     protected MotorEx transfer;
-    DigitalChannel right,left, front1, front2;
+    DigitalChannel right,left, front1, front2, distFront;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
     protected Telemetry telemetry;
@@ -43,6 +43,7 @@ public class Intake {
         left = hardwareMap.get(DigitalChannel.class, "distLeft");
         front1 = hardwareMap.get(DigitalChannel.class, "colorRight");
         front2 = hardwareMap.get(DigitalChannel.class, "colorLeft");
+        distFront = hardwareMap.get(DigitalChannel.class, "distFront");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         transfer.setInverted(true);
@@ -114,7 +115,7 @@ public class Intake {
 
     public boolean haveBall(){
         if (left.getState() || right.getState()){
-            if (front1.getState() || front2.getState()){
+            if (distFront.getState() || front1.getState()){
                 return true;
             } else {
                 return false;

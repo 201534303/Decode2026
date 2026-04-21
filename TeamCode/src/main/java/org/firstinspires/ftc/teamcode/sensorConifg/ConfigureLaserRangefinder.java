@@ -15,8 +15,8 @@ public class ConfigureLaserRangefinder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         LaserRangefinder lrf = new LaserRangefinder(hardwareMap.get(RevColorSensorV3.class, "Laser"));
-        lrf.setPin0Digital(0, 40);
-        lrf.setPin1Digital(0, 40);
+        lrf.setPin0Digital(0, 60);
+        lrf.setPin1Digital(0, 60);
         lrf.setDistanceMode(LaserRangefinder.DistanceMode.SHORT);
 
         telemetry.addData("Pin0", lrf.getPin0Mode());
