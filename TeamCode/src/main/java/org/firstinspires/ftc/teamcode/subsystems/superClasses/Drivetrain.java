@@ -47,10 +47,10 @@ public class Drivetrain {
 
     public void driveRobot(double drive, double strafe, double turn) {
         double denominator = Math.max(Math.abs(drive) + Math.abs(strafe) + Math.abs(turn), 1);
-        frontLeft.setPower((drive + strafe + turn) * -1);
-        frontRight.setPower((drive - strafe - turn) * -1);
-        backLeft.setPower((drive - strafe + turn) * -1);
-        backRight.setPower((drive + strafe - turn) * -1);
+        frontLeft.setPower((drive + strafe + turn)/ denominator);
+        frontRight.setPower((drive - strafe - turn)/ denominator);
+        backLeft.setPower((drive - strafe + turn)/ denominator);
+        backRight.setPower((drive + strafe - turn)/ denominator);
     }
 
     public void driveRobotHeading(double drive, double idealHeading, double heading) {

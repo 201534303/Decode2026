@@ -33,8 +33,7 @@ public class SelfeeCloseAuto2 extends OpMode {
     private RobotActions robotActions;
     private Drivetrain drivetrain;
     private Servo indicatorLight;
-    private double turnTableAngle = 47;
-    private double turnTableAngleFirst = 20; //13
+    private double turnTableAngleFirst = 15;
     private double hoodHeight = 0.44498;//0.4;//
 
     //AUTO
@@ -46,7 +45,8 @@ public class SelfeeCloseAuto2 extends OpMode {
     private Timer timerTimer;
     private int spikeMark = 0;
     public enum PathState {
-        START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT, TO_PARK
+        START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT, TO_PARK,
+        TEST
     }
     PathState pathState = PathState.START;
     private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
@@ -134,7 +134,7 @@ public class SelfeeCloseAuto2 extends OpMode {
             case FIRST_SHOOT:
                 if(waitSecs(0.3) && !firstShootPathSet){//0.3
                     firstShootPathSet = true;
-                    //shootMove = true;
+                    shootMove = false;
                     follower.followPath(paths.firstToShoot(), 1, false);
                 }
 
@@ -143,6 +143,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                 }
 
                 if (follower.atPose(paths.shootPose0, 5, 5)) {
+                    shooter.rotateTurret(20);
                     firstShootPathSet = false;
                     transitionTo(PathState.SHOOT);
                 }
@@ -169,7 +170,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     }
 
                     if(spikeMark == 6){
-                        if(follower.atPose(paths.shootPose2, 15, 15)) {
+                        if(follower.atPose(paths.shootPose2, 20, 20)) {
                             toShootPathSet = false;
                             transitionTo(PathState.SHOOT);
                         }
@@ -185,11 +186,10 @@ public class SelfeeCloseAuto2 extends OpMode {
 
                 if(spikeMark == 0){
                     clearNavigationFlags();
-                    doneOne = true;
                     transitionTo(PathState.INTAKE);
                 } else {
                     intake.allTheWay();
-                    if (waitSecs(0.6)) {//0.6
+                    if (waitSecs(0.55)) {//0.6
                         clearNavigationFlags();
                         transitionTo(PathState.INTAKE);
                     }
@@ -203,6 +203,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                 }
 
                 if(intake.haveBall() && waitSecs(1)){
+                    doneOne = true;
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
@@ -216,37 +217,32 @@ public class SelfeeCloseAuto2 extends OpMode {
                     }
                 }
 
-                if (spikeMark == 0 && waitForPathEndOrTimeout(3.1)) {
+                if (spikeMark == 0 && waitForPathEndOrTimeout(2.5)) {
                     spikeMark += 1;
+                    doneOne = true;
+                    shootMove = false;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
                 } else if (spikeMark == 3 && waitForPathEndOrTimeout(2.75)) {
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
-                } else if(spikeMark == 1){
+                } else if(spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 5){
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, true);
                     } else if(waitForPathEndAndTimeout(3)){
-                        //spikeMark += 1;
-                        intakePathSet = false;
-                        //transitionTo(PathState.TO_SHOOT);
+                        //drivetrain.driveRobot(0.3, 0, 0);
+                        //if(waitSecs(3)) {
+                            spikeMark += 1;
+                            intakePathSet = false;
+                            transitionTo(PathState.TO_SHOOT);
+                       // }
                     }
-                }
-
-                if (!follower.isBusy()) {
-                    /*if (!intakePathSet) {
-                        intakePathSet = true;
-                        follower.followPath(selectIntakePath(), 1, true);
-                    } else if (isCloseSelfeeCycle() && waitForPathEndAndTimeout(3)) { // 3.75
-                        spikeMark += 1;
-                        intakePathSet = false;
-                        transitionTo(PathState.TO_SHOOT);
-                    } else if (spikeMark == 6 && follower.atParametricEnd()) {
-                        intakePathSet = false;
-                        transitionTo(PathState.PARK);
-                    }*/
+                } else if (spikeMark == 6){
+                    spikeMark += 1;
+                    intakePathSet = false;
+                    transitionTo(PARK);
                 }
                 break;
 
@@ -276,7 +272,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         drivetrain = new Drivetrain(hardwareMap, telemetry);
         indicatorLight = hardwareMap.get(Servo.class, "taillight");
 
-        shooter.setHood(0.60);
+        shooter.setHood(0.40); // 0.6
     }
 
     public void init_loop(){
@@ -296,11 +292,9 @@ public class SelfeeCloseAuto2 extends OpMode {
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
         if (isMirror) {
-            turnTableAngleFirst = -5;
-            turnTableAngle = -45;
+            turnTableAngleFirst = -9;
         } else {
-            turnTableAngle = 47;
-            turnTableAngleFirst = 13;
+            turnTableAngleFirst = 11;
         }
 
         shooter.rotateTurret(turnTableAngleFirst);
@@ -317,7 +311,6 @@ public class SelfeeCloseAuto2 extends OpMode {
 
         if(isMirror) {
             turnTableAngleFirst = -9;
-            turnTableAngle = -45;
         }//if it's mirrored turn the turntable
 
         shooter.rotateTurret(turnTableAngleFirst);

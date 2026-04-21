@@ -12,13 +12,14 @@ public class ClosePaths extends Paths{
     }
 
     public Pose startPose = new Pose(121, 113, 0.6987); // 126, 120
-    public Pose shootPose0 = makePos(86, 73, 35); // 80, 73
-    public Pose shootPose = makePos(83, 78);
+    public Pose shootPose0 = makePos(86, 73, 35);
+    public Pose shootPose = makePos(86, 75); // 83, 78
     public Pose shootPose2 = makePos(85, 103);
     public Pose ballCollect1 = makePos(131.17, 54.87, 0);
     public Pose ballCollectMid1 = new Pose(85, 53); // 55
+    public Pose ballCollectMid12 = new Pose(94.72697795071335, 56.30350194552529); // 55
     public Pose ballCollectMid2 = new Pose(121.74319066147861, 56.48054474708172);
-    public Pose selfee = new Pose(129.68, 54, 0.6192);//132, 60, 35
+    public Pose selfee = new Pose(130, 54, Math.toRadians(30));//129, 54, Math.toRadians(30)
     public Pose selfeeMid = new Pose(90, 48);// 90, 55
     public Pose ballCollect2 = new Pose(123.56, 80.42, 0);
     public Pose park = makePos(85, 103);
@@ -58,7 +59,7 @@ public class ClosePaths extends Paths{
     public PathChain ballCollect1ToShoot(){
         return bezierCurve(ballCollect1,
                 ballCollectMid2,
-                ballCollectMid1,
+                ballCollectMid12,
                 shootPose);
     }
     public PathChain selfeeToShoot(){
