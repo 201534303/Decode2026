@@ -98,12 +98,10 @@ public class ClosePaths extends Paths{
     public PathChain _2ToShoot(){
         return bezierLine(ballCollect2, shootPose);
     }
+
+    public PathChain _2ToShoot2(){ return bezierLine(ballCollect2, shootPose2); }
     public PathChain selfeeToShoot2(){
         return bezierLine(selfee, shootPose2);
-    }
-
-    public PathChain _2ToShoot2(){
-        return bezierLine(ballCollect2, shootPose2);
     }
 
     public PathChain _3ToShoot(){

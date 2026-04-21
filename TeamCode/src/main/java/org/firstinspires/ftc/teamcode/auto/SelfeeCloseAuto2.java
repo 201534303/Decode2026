@@ -44,9 +44,9 @@ public class SelfeeCloseAuto2 extends OpMode {
     private Timer overallTimer;
     private Timer timerTimer;
     private int spikeMark = 0;
+    private boolean last;
     public enum PathState {
-        START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT, TO_PARK,
-        TEST
+        START, TO_SHOOT, SHOOT, INTAKE, PARK, FIRST_SHOOT
     }
     PathState pathState = PathState.START;
     private OLDChoose.Alliance alliance = OLDChoose.Alliance.RED;
@@ -93,21 +93,18 @@ public class SelfeeCloseAuto2 extends OpMode {
     }
 
     private boolean isCloseSelfeeCycle() {
-        return spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 5;
+        return spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 3;
     }
 
     private PathChain selectToShootPath() {
         if (spikeMark == 1) {
             return paths.ballCollect1ToShoot();
         }
-        if (spikeMark == 2 || spikeMark == 3 || spikeMark == 5) {
+        if (spikeMark == 2 || spikeMark == 3 || spikeMark == 5 || spikeMark == 4) {
             return paths.selfeeToShoot();
         }
-        if (spikeMark == 4) {
-            return paths._2ToShoot();
-        }
         if (spikeMark == 6) {
-            return paths.selfeeToShoot2();
+            return paths._2ToShoot2();
         }
         return paths._3ToShoot();
     }
@@ -116,10 +113,10 @@ public class SelfeeCloseAuto2 extends OpMode {
         if (spikeMark == 0) {
             return paths.shootTo1();
         }
-        if (spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 5) {
+        if (spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 3) {
             return paths.shootToSelfee();
         }
-        if (spikeMark == 3) {
+        if (spikeMark == 5) {
             return paths.shootTo2();
         }
         return paths.shootToPark();
@@ -150,10 +147,8 @@ public class SelfeeCloseAuto2 extends OpMode {
                 break;
 
             case TO_SHOOT:
-                shooter.setHood(hoodHeight);
-
-                if(spikeMark == 6) {
-                    shootMove = true;
+                if(spikeMark != 6) {
+                    shooter.setHood(hoodHeight);
                 }
 
                 if (!toShootPathSet) {
@@ -210,7 +205,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     break;
                 }
 
-                if(spikeMark == 0 || spikeMark == 3){
+                if(spikeMark == 0 || spikeMark == 5){
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, false);
@@ -223,21 +218,21 @@ public class SelfeeCloseAuto2 extends OpMode {
                     shootMove = false;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
-                } else if (spikeMark == 3 && waitForPathEndOrTimeout(2.75)) {
+                } else if (spikeMark == 5 && waitForPathEndOrTimeout(2.75)) {
+                    shooter.rotateTurret(30);
+                    shooter.setHood(1);
+                    last = true;
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
-                } else if(spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 5){
+                } else if(spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 3){
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, true);
                     } else if(waitForPathEndAndTimeout(3)){
-                        //drivetrain.driveRobot(0.3, 0, 0);
-                        //if(waitSecs(3)) {
-                            spikeMark += 1;
-                            intakePathSet = false;
-                            transitionTo(PathState.TO_SHOOT);
-                       // }
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
                     }
                 } else if (spikeMark == 6){
                     spikeMark += 1;
@@ -338,11 +333,14 @@ public class SelfeeCloseAuto2 extends OpMode {
 
             robotActions.updateShooter(alliance, virtualX, virtualY, 0);
 
-        } else if (!done && doneOne) {
+        } else if (!done && doneOne && !last) {
             robotActions.updateTurret(alliance, x, y, heading);
             shooter.close();
-        } else {
+        }
+        if (!doneOne) {
             shooter.closeFaster();
+        } else if (last){
+            shooter.set(1150);
         }
         follower.update();
 
