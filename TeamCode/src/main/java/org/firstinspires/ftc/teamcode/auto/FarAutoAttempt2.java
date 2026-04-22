@@ -107,6 +107,14 @@ public class FarAutoAttempt2 extends OpMode {
         return (follower.atParametricEnd() && waitSecs(endDelaySecs)) || waitSecs(timeoutSecs);
     }
 
+    private boolean waitForPathEndOrTimeout(double timeoutSecs) {
+        return (follower.atParametricEnd() || waitSecs(timeoutSecs));
+    }
+
+    private boolean waitForPathEndAndTimeout(double timeoutSecs) {
+        return (follower.atParametricEnd() && waitSecs(timeoutSecs));
+    }
+
     private void stopIntakeAndTransfer() {
         intake.transferOff();
         intake.intakeIn();
@@ -163,32 +171,32 @@ public class FarAutoAttempt2 extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                if (waitSecs(1.5)) { //1.25
+                if (waitSecs(1.25)) { //1.25
                     transitionTo(PathState.SHOOT);
                 }
                 break;
 
             case SHOOT:
-                if (!follower.isBusy() /*&& waitSecs(0.5)*/) {
+                //if (!follower.isBusy() /*&& waitSecs(0.5)*/) {
                     intake.allTheWay();// go all the way to shoot
 
                     if (spikeMark == 0) {
-                        if (waitSecs(1.25)) {//1
+                        if (waitSecs(0.4)) {//0.6
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 1 || spikeMark == 5) {
-                        if (waitSecs(1)) {//1
+                    } else if (spikeMark == 1 || spikeMark == 8) {
+                        if (waitSecs(0.5)) {//1
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 ) {
-                        if (waitSecs(1)) { // 1
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 || spikeMark == 7) {
+                        if (waitSecs(0.5)) { // 1
                             spikeMark += 1;
                             resetDetectionState();
                             transitionTo(PathState.DETECT);
                         }
-                    }
+                    //}
                 }
                 break;
 
@@ -198,14 +206,16 @@ public class FarAutoAttempt2 extends OpMode {
                     spikeMark ++;
                     transitionTo(PathState.TO_SHOOT);
                     break;
-                } else if (!follower.isBusy()) {
+                }
+
+                //else if (!follower.isBusy()) {
                     if (!intakePathSet) {
                         intakePathSet = true;
                         if (spikeMark == 0) {
-                            follower.followPath(paths.shootTo1(), 1, true);
+                            follower.followPath(paths.shootTo1(), 1, false);
                         } else if (spikeMark == 1) {
-                            follower.followPath(paths.shootTo2(), 1, true);
-                        } else if (spikeMark == 5) {
+                            follower.followPath(paths.shootTo2(), 1, false);
+                        } else if (spikeMark == 8) {
                             park();
                             follower.followPath(paths.shootToPark(), 0.6, true);
                             pathState = PathState.PARK;
@@ -213,16 +223,16 @@ public class FarAutoAttempt2 extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && waitForPathEndOrTimeout(0.54, 0.65)) {
+                    if (spikeMark == 1 && waitForPathEndOrTimeout(1.5)) { // 3
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.OUT);
-                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(2.15, 2.4)) {
+                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(4.25)) {
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
                     }
-                }
+                //}
                 break;
 
             case DETECT:
@@ -248,14 +258,14 @@ public class FarAutoAttempt2 extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(1.75, 2)) {//2, 2.25
+                if (waitForPathEndOrTimeout(1.75)) {//2, 2.25
                     resetDetectionState();
-                    //transitionTo(PathState.OUT);
                     transitionTo(PathState.TO_SHOOT);
                 }
                 break;
 
             case TO_SHOOT:
+                intake.intakeIn();
 
                 if (shootCount == 0) {
                     intake.intakeIn();
@@ -263,21 +273,7 @@ public class FarAutoAttempt2 extends OpMode {
                     shootCount += 1;
                 }
 
-                if (spikeMark == 2) {
-                    if (waitSecs(0.5)) {
-                       intake.setIntakeSpeed(0.3);
-                    }
-                } else if (spikeMark == 3 || spikeMark == 4) {
-                    if (waitSecs(0.4)) {
-                        intake.setIntakeSpeed(0);
-                    }
-                } else {
-                    if(waitSecs(0.5)) {
-                        intake.setIntakeSpeed(0);
-                    }
-                }
-
-                if (follower.atParametricEnd()) {
+                if (follower.atParametricEnd() || follower.atPose(paths.shootPose2, 2, 2)) {
                     resetActionTimer();
                     shootCount = 0;
                     pathState = PathState.SHOOT;
@@ -291,13 +287,13 @@ public class FarAutoAttempt2 extends OpMode {
                 if (!outPathSet) {
                     outPathSet = true;
                     if(spikeMark == 2) {
-                        follower.followPath(paths.outSet(), 0.75, true);
+                        follower.followPath(paths.outSet(), 0.75, false);
                     } else{
-                        follower.followPath(paths.outNotSet(ballCollect, alliance), 0.75, true);
+                        follower.followPath(paths.outNotSet(ballCollect, alliance), 0.75, false);
                     }
                 }
 
-                if(waitForPathEndOrTimeout(0.25, 0.5)){
+                if(waitForPathEndOrTimeout(0.25)){
                     outPathSet = false;
                     transitionTo(IN);
                 }
@@ -311,14 +307,14 @@ public class FarAutoAttempt2 extends OpMode {
                 if (!inPathSet) {
                     inPathSet = true;
                     if(spikeMark == 2) {
-                        follower.followPath(paths.inSet(), 0.75, true);
+                        follower.followPath(paths.inSet(), 0.75, false);
                     } else{
-                        follower.followPath(paths.inNotSet(ballCollect), 0.75, true);
+                        follower.followPath(paths.inNotSet(ballCollect), 0.75, false);
 
                     }
                 }
 
-                if(waitForPathEndOrTimeout(0.75, 1)){
+                if(waitForPathEndOrTimeout(0.75)){
                     inPathSet = false;
                     transitionTo(TO_SHOOT);
                 }

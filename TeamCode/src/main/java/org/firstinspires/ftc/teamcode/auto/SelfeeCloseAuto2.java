@@ -100,7 +100,7 @@ public class SelfeeCloseAuto2 extends OpMode {
         if (spikeMark == 1) {
             return paths.ballCollect1ToShoot();
         }
-        if (spikeMark == 2 || spikeMark == 3 || spikeMark == 5 || spikeMark == 4) {
+        if (spikeMark == 2 || spikeMark == 3 || (spikeMark == 5 && !fill) || spikeMark == 4) {
             return paths.selfeeToShoot();
         }
         if (spikeMark == 6) {
@@ -210,7 +210,9 @@ public class SelfeeCloseAuto2 extends OpMode {
                 }
 
                 if(intake.haveBall() && waitSecs(1)){
-                    doneOne = true;
+                    if(spikeMark != 0) {
+                        doneOne = true;
+                    }
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
@@ -229,8 +231,8 @@ public class SelfeeCloseAuto2 extends OpMode {
                 }
 
                 if(spikeMark == 0 && waitSecs(1.5)){
-                    shooter.rotateTurret(40);
                     doneOne = false;
+                    shooter.rotateTurret(40);
                 }
 
                 if (spikeMark == 0 && waitForPathEndOrTimeout(2.5)) {
@@ -246,7 +248,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
-                } else if(spikeMark == 1 || spikeMark == 2 || spikeMark == 4 || spikeMark == 3){
+                } else if(spikeMark == 1 || spikeMark == 2 || (spikeMark == 4 && !fill) || spikeMark == 3){
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, true);
@@ -258,7 +260,17 @@ public class SelfeeCloseAuto2 extends OpMode {
                             transitionTo(PathState.TO_SHOOT);
                         }
                     }
-                } else if (spikeMark == 6){
+                } else if(spikeMark == 4 && fill){
+                    if (!intakePathSet) {
+                        intakePathSet = true;
+                        follower.followPath(paths.shootTo3(), 1, false);
+                    } else if(waitForPathEndOrTimeout(3)){
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    }
+                }
+                else if (spikeMark == 6){
                     //shootMove = false;
                     spikeMark += 1;
                     intakePathSet = false;
