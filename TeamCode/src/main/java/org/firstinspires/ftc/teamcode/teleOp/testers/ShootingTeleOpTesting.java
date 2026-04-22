@@ -178,10 +178,10 @@ public class ShootingTeleOpTesting extends OpMode {
         }
 
         if(gamepad2.dpadRightWasPressed()){
-            robot.DELETEBUTTHISISHOOD += .05;
+            robot.DELETEBUTTHISISHOOD += .01;
         }
         if(gamepad2.dpadLeftWasPressed()){
-            robot.DELETEBUTTHISISHOOD -= .05;
+            robot.DELETEBUTTHISISHOOD -= .01;
         }
 
         if(gamepad2.yWasPressed()){
@@ -191,10 +191,10 @@ public class ShootingTeleOpTesting extends OpMode {
             robot.DELETEBUTTHISISTURRET -= 0.0025;
         }
         if(gamepad2.bWasPressed()){
-            robot.DELETEBUTTHISISTURRET += 0.05;
+            robot.DELETEBUTTHISISHOOD += 0.05;
         }
         if(gamepad2.xWasPressed()){
-            robot.DELETEBUTTHISISTURRET -= 0.05;
+            robot.DELETEBUTTHISISHOOD -= 0.05;
         }
 
         if(gamepad2.rightBumperWasPressed()){

@@ -421,20 +421,11 @@ public class RobotActions {
     }
 
     private double lookupHood(double distance) {
-        if (distance > 120.0) {
+        if (distance > 133.0) {
             return 0.55;
         }
-        if (distance > 98.0) {
-            return 0.25;
-        }
-        if (distance > 82.0) {
-            return 0.000126391 * distance * distance - 0.0317782 * distance + 2.21627;
-        }
-        if (distance > 78.0) {
-            return 0.475;
-        }
-        if (distance > 55.0) {
-            return 5.84356 * Math.pow(0.968317, distance);
+        if (distance > 55) {
+            return -0.00470013*distance+1.25855;
         }
         return 1.0;
     }
@@ -648,34 +639,22 @@ public class RobotActions {
         double hood = lookupHood(dist);
 
 
-        if(dist > 120){//far zone
+        if(dist > 133){//far zone
             speed = 6*dist+526.46763;
             //1186.66887
             //3.63909
             //1048.1478
         }
-        else if(dist > 98){
-            speed = 1086.99182 + 3.05*dist;
-            // 2.7835
-        }
-        else if(dist > 82){
-            speed = 5*dist+850;
-            // 2.7835
-        }
-        else if(dist > 78){
-            speed = 5*dist+850;
-            // 2.7835
-        }
-        else if(dist > 55){ // close5.84356\cdot0.968317^{x}
-            speed = 5*dist+850;
+        else if(dist > 55){
+            speed = 0.0813636*dist*dist-11.36087*dist+1487.29396;
         }
         else{
-            speed = 1125;
+            speed = 1108.571;
         }
+
         if(speed < 0){
             speed = 0;
         }
-
 
         if(liftMode){
             hood = 1.0;

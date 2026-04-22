@@ -355,7 +355,7 @@ public class FarAutoAttempt2 extends OpMode {
         dash = dashboard.getTelemetry();
         overallRuntime = new ElapsedTime();
 
-        shooter.setHood(0);
+        shooter.setHood(.55);
     }
 
     public void init_loop(){

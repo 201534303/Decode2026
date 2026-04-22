@@ -18,7 +18,7 @@ public class ShooterAuto extends Shooter {
 
     public void close(){
         //runFlywheel(getMotorVel(), 1250, 0);//1300
-        runFlywheel(getMotorVel(), 1220, 0);//1266
+        runFlywheel(getMotorVel(), 1124.31822703, 0);//1266
     }
     public void closeFaster(){
         //runFlywheel(getMotorVel(), 1250, 0);//1300
@@ -39,11 +39,11 @@ public class ShooterAuto extends Shooter {
         runFlywheel(getMotorVel(), targetV, 0);//1300
     }
     public void far(){
-        runFlywheel(getMotorVel(), 1580, 0);//1610
+        runFlywheel(getMotorVel(), 1356.85549118, 0);//1610
     }
 
     public void farFaster(){
-        runFlywheel(getMotorVel(), 1600, 0);//1610
+        runFlywheel(getMotorVel(), 1418.49330227, 0);//1610
     }
 
     public void off(){
