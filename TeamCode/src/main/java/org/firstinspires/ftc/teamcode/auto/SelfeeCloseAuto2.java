@@ -219,7 +219,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     break;
                 }
 
-                if(! (spikeMark == 0)) {
+                if(!(spikeMark == 0)) {
                     doneOne = true;
                 }
 
@@ -232,7 +232,7 @@ public class SelfeeCloseAuto2 extends OpMode {
 
                 if(spikeMark == 0 && waitSecs(1.5)){
                     doneOne = false;
-                    shooter.rotateTurret(40);
+                    shooter.rotateTurret(50);
                 }
 
                 if (spikeMark == 0 && waitForPathEndOrTimeout(2.5)) {
@@ -252,7 +252,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     if (!intakePathSet) {
                         intakePathSet = true;
                         follower.followPath(selectIntakePath(), 1, true);
-                    } else if(waitForPathEndOrTimeout(2.5)){
+                    } else if(waitForPathEndOrTimeout(2.75)){
                         drivetrain1.driveRobotHeadingAndLine(.3, Math.toRadians(30), heading, x, y, 130,53);
                         if(waitSecs(3)) {
                             spikeMark += 1;

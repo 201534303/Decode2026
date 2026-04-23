@@ -185,12 +185,12 @@ public class FarAutoAttempt2 extends OpMode {
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 1 || spikeMark == 8) {
+                    } else if (spikeMark == 1 || spikeMark == 7) {
                         if (waitSecs(0.5)) {//1
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 || spikeMark == 7) {
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 /*|| spikeMark == 7*/) {
                         if (waitSecs(0.5)) { // 1
                             spikeMark += 1;
                             resetDetectionState();
@@ -215,7 +215,7 @@ public class FarAutoAttempt2 extends OpMode {
                             follower.followPath(paths.shootTo1(), 1, false);
                         } else if (spikeMark == 1) {
                             follower.followPath(paths.shootTo2(), 1, false);
-                        } else if (spikeMark == 8) {
+                        } else if (spikeMark == 7) {
                             park();
                             follower.followPath(paths.shootToPark(), 0.6, true);
                             pathState = PathState.PARK;
