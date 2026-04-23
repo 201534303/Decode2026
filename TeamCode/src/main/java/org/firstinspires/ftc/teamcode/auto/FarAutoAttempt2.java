@@ -86,7 +86,8 @@ public class FarAutoAttempt2 extends OpMode {
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
-    public boolean waitSecs(double seconds){ return actionTimer.getElapsedTimeSeconds() > seconds; }
+    public boolean waitSecs(double seconds){
+ return actionTimer.getElapsedTimeSeconds() > seconds; }
 
     private void resetDetectionState() {
         detectInitDone = false;
@@ -96,6 +97,10 @@ public class FarAutoAttempt2 extends OpMode {
         posAverage = 0;
         negCount = 0;
         negAverage = 0;
+    }
+
+    public double dist(int[] a, int[] b) {
+        return Math.sqrt(Math.pow((a[0]-b[0]),2) + Math.pow((a[1]-b[1]),2));
     }
 
     private void transitionTo(PathState newState) {
