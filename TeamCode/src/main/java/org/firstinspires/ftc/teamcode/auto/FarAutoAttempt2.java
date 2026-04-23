@@ -99,10 +99,33 @@ public class FarAutoAttempt2 extends OpMode {
         negAverage = 0;
     }
 
-    public double dist(int[] a, int[] b) {
+    private double dist(double[] a, double[] b) {
         return Math.sqrt(Math.pow((a[0]-b[0]),2) + Math.pow((a[1]-b[1]),2));
     }
+    private double tripletScore(double[] a, double[] b, double[] c) {
+        return Math.max(dist(a, b), Math.max(dist(b, c), dist(a, c)));
+    }
+    public double[][] findBestScore(ArrayList<double[]> points) {
+        double bestScore = Double.MAX_VALUE;
+        double[][] bestTriplet = null;
+        int n = points.size();
 
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    double[] p1 = points.get(i);
+                    double[] p2 = points.get(j);
+                    double[] p3 = points.get(k);
+                    double score = tripletScore(p1, p2, p3);
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestTriplet = new double[][] {p1, p2, p3};
+                    }
+                }
+            }
+        }
+        return bestTriplet;
+    }
     private void transitionTo(PathState newState) {
         resetActionTimer();
         pathState = newState;
@@ -154,6 +177,7 @@ public class FarAutoAttempt2 extends OpMode {
         for (double[] row : detections) {
             results.add(row[0]);
         }
+        double[][] optimumPts = findBestScore(detections);
 
         for (double distance : results) {
             if (distance > 0) {
