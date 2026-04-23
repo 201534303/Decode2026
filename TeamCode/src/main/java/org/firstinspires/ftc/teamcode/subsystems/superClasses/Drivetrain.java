@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Drivetrain {
+    private static final double HEADING_KP = 2.0;
+    private static final double LINE_KP = 0.15;
 
     //motors
     protected DcMotor frontLeft, frontRight, backLeft, backRight;
@@ -53,13 +55,30 @@ public class Drivetrain {
         backRight.setPower((drive + strafe - turn)/ denominator);
     }
 
-    public void driveRobotHeading(double drive, double idealHeading, double heading) {
-        double error = 2*angleDiffRad(heading, idealHeading);
-        double den = Math.abs(error) + Math.abs(drive);
-        frontLeft.setPower((drive - error)/den);
-        frontRight.setPower((drive + error)/den);
-        backLeft.setPower((drive - error)/den);
-        backRight.setPower((drive + error)/den);
+    public void driveRobotHeadingAndLine(double drive, double idealHeading, double heading, double x, double y, double xstart, double ystart) {
+        double lineX = Math.cos(idealHeading);
+        double lineY = -Math.sin(idealHeading);
+
+        double fromStartX = x - xstart;
+        double fromStartY = y - ystart;
+        double distanceAlongLine = fromStartX * lineX + fromStartY * lineY;
+
+        double closestX = xstart + distanceAlongLine * lineX;
+        double closestY = ystart + distanceAlongLine * lineY;
+
+        double correctionX = LINE_KP * (closestX - x);
+        double correctionY = LINE_KP * (closestY - y);
+
+        double cosHeading = Math.cos(heading);
+        double sinHeading = Math.sin(heading);
+        double correctionDrive = correctionX * cosHeading - correctionY * sinHeading;
+        double correctionStrafe = correctionX * sinHeading + correctionY * cosHeading;
+
+        double headingError = HEADING_KP * angleDiffRad(heading, idealHeading);
+        double drivePower = drive + correctionDrive;
+        double strafePower = correctionStrafe;
+        double turnPower = -headingError;
+        driveRobot(drivePower + 0.2, strafePower, turnPower);
     }
 
     public static double angleDiffRad(double fromRad, double toRad) {

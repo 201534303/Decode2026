@@ -19,12 +19,14 @@ public class ClosePaths extends Paths{
     public Pose ballCollectMid1 = new Pose(85, 53); // 55
     public Pose ballCollectMid12 = new Pose(94.72697795071335, 56.30350194552529); // 55
     public Pose ballCollectMid2 = new Pose(121.74319066147861, 56.48054474708172);
-    public Pose selfee = new Pose(130, 54, Math.toRadians(30));//129, 54, Math.toRadians(30)
+    public Pose selfee = new Pose(130, 53, Math.toRadians(30));//130, 54, Math.toRadians(30)
     public Pose selfeeMid = new Pose(90, 48);// 90, 55
     public Pose ballCollect2 = new Pose(123.56, 80.42, 0);
     public Pose park = makePos(85, 103);
-    public Pose ballCollect3 = makePos(125, 33, 0);
-    public Pose ballCollect3Mid = new Pose(65, 20);
+    public Pose ballCollect3 = makePos(130, 33, 0);
+    public Pose ballCollect3Mid1 = new Pose(87.20687418936447, 19.265888456549924);
+    public Pose ballCollect3Mid2 = new Pose(122.20103761348896, 37.611867704280144);
+
 
 
     public boolean bluePath(OLDChoose.Alliance alliance) {
@@ -40,7 +42,8 @@ public class ClosePaths extends Paths{
             ballCollect2 = new Pose(18, 90, Math.toRadians(180));
             park = mirror(park);
             ballCollect3 = mirror(ballCollect3);
-            ballCollect3Mid = mirror(ballCollect3Mid);
+            ballCollect3Mid1 = mirror(ballCollect3Mid1);
+            ballCollect3Mid2 = mirror(ballCollect3Mid2);
             shootPose2 = mirror(shootPose2);
 
             return true;
@@ -81,7 +84,8 @@ public class ClosePaths extends Paths{
 
     public PathChain shootTo3(){
         return bezierCurve(shootPose,
-                ballCollect3Mid,
+                ballCollect3Mid1,
+                ballCollect3Mid2,
                 ballCollect3);
     }
 
@@ -105,7 +109,7 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain _3ToShoot(){
-        return bezierLine(ballCollect3, shootPose2);
+        return bezierLine(ballCollect3, shootPose);
     }
     public PathChain shootToPark(){
         return bezierLine(shootPose, park);
