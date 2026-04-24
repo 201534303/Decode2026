@@ -6,7 +6,6 @@ import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_S
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -24,7 +23,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "FarAuto")
@@ -61,7 +59,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, CURVEPATH, CURVEPATH2,
+        DETECT, ONE_MORE_TIME, TWO_MORE_TIME, TEST,
         OUT, IN
     }
     PathState pathState = PathState.START;
@@ -86,10 +84,6 @@ public class FarAutoAttempt2 extends OpMode {
     private boolean outPathSet = false;
     private boolean inPathSet = false;
     private double x, y, heading;
-    public int curr = 0;
-    public double[][] optimumPts;
-
-    private Pose[] output;
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -112,20 +106,6 @@ public class FarAutoAttempt2 extends OpMode {
     private double tripletScore(double[] a, double[] b, double[] c) {
         return Math.max(dist(a, b), Math.max(dist(b, c), dist(a, c)));
     }
-
-    private double[] findShortest(double[][] arrayIn, double[] robotPos) {
-        double minScore = dist(arrayIn[0], robotPos);
-        int index = 0;
-        int i = 0;
-        for (double[] position : arrayIn) {
-            if (dist(position, robotPos) < minScore) {
-                minScore = dist(position, robotPos);
-                index = i;
-            }
-            i++;
-        }
-        return arrayIn[index];
-    }
     public double[][] findBestScore(ArrayList<double[]> points) {
         double bestScore = Double.MAX_VALUE;
         double[][] bestTriplet = null;
@@ -146,15 +126,6 @@ public class FarAutoAttempt2 extends OpMode {
             }
         }
         return bestTriplet;
-    }
-    private Pose[] calcTheLine(int currentIndex, Pose robotPose) {
-        double[] pos = {robotPose.getPose().getX(), robotPose.getY()};
-        double[][] hi = Arrays.copyOfRange(optimumPts, currentIndex, optimumPts.length);
-        double[] shortest_pos = findShortest(hi, pos);
-        double theta = Math.atan((pos[0] - shortest_pos[0])/(pos[1] - shortest_pos[1]));
-        Pose returnPose = new Pose(shortest_pos[0], shortest_pos[1], theta);
-        Pose[] breh = {returnPose, robotPose};
-        return breh;
     }
     private void transitionTo(PathState newState) {
         resetActionTimer();
@@ -193,21 +164,13 @@ public class FarAutoAttempt2 extends OpMode {
             return;
         }
 
-        follower.followPath(detectLine(), 1, true);
-
-        /*ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
+        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
         if (paths.shouldUseDetectionFallback(ballCollect)) {
             ballCollect = paths.ballCollect2;
             follower.followPath(paths.shootTo4(), 1, true);
         } else {
             follower.followPath(paths.to(ballCollect), 1, true);
-        }*/
-    }
-
-    private PathChain detectLine(){
-        output = calcTheLine(curr, follower.getPose());
-        curr++;
-        return paths.bezierLine(output[0], output[1]);
+        }
     }
 
     private void updateDetectionAverage(ArrayList<double[]> detections) {
@@ -215,7 +178,7 @@ public class FarAutoAttempt2 extends OpMode {
         for (double[] row : detections) {
             results.add(row[0]);
         }
-        optimumPts = findBestScore(detections);
+        double[][] optimumPts = findBestScore(detections);
 
         for (double distance : results) {
             if (distance > 0) {
@@ -325,43 +288,9 @@ public class FarAutoAttempt2 extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(1)) {//2, 2.25
-                    resetDetectionState();
-                    transitionTo(PathState.CURVEPATH);
-                }
-                break;
-
-            case CURVEPATH:
-                if (intake.haveBall()){
+                if (waitForPathEndOrTimeout(1.75)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
-                }
-
-                if(!follower.isBusy() && detectInitDone){
-                    detectPathSet = true;
-                    followDetectionPath();
-                }
-
-                if (waitForPathEndOrTimeout(1)) {//2, 2.25
-                    resetDetectionState();
-                    transitionTo(PathState.CURVEPATH2);
-                }
-                break;
-
-            case CURVEPATH2:
-                if (intake.haveBall()){
-                    resetDetectionState();
-                    transitionTo(PathState.TO_SHOOT);
-                }
-
-                if(!follower.isBusy() && detectInitDone){
-                    detectPathSet = true;
-                    followDetectionPath();
-                }
-
-                if (waitForPathEndOrTimeout(1)) {//2, 2.25
-                    resetDetectionState();
-                    transitionTo(TO_SHOOT);
                 }
                 break;
 
