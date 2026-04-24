@@ -25,7 +25,7 @@ public class RobotActions {
     private static final double TARGET_HEIGHT_INTERCEPT_IN = 51.14286;
     private static final int MAX_LEAD_ITERATIONS = 4;
     private static final double LEAD_TIME_TOLERANCE_S = 1e-3;
-    private static final double UNLOCK_ASSIST_MS = 40.0;
+    private static final double UNLOCK_ASSIST_MS = 200.0;
     private static final double FAR_ZONE_DISTANCE_IN = 130.0;
     private static final double MAX_SHOT_LEAD_SPEED_FAR_IN_PER_S = 8.0;
     private static final double MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S = 16.0;
@@ -422,7 +422,7 @@ public class RobotActions {
 
     private double lookupHood(double distance) {
         if (distance > 133.0) {
-            return 0.55;
+            return 0.00000752141*distance*distance*distance-0.00358577*distance*distance+0.568796*distance-29.52802;
         }
         if (distance > 55) {
             return -0.00470013*distance+1.25855;
@@ -640,7 +640,7 @@ public class RobotActions {
 
 
         if(dist > 133){//far zone
-            speed = 6*dist+526.46763;
+            speed = 0.0535558*dist*dist-12.40579*dist+2093.01359;
             //1186.66887
             //3.63909
             //1048.1478
