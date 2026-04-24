@@ -59,8 +59,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, ONE_MORE_TIME, TWO_MORE_TIME, TEST,
-        OUT, IN
+        DETECT, OUT, IN
     }
     PathState pathState = PathState.START;
 
