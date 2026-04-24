@@ -19,7 +19,8 @@ public class ClosePaths extends Paths{
     public Pose ballCollectMid1 = new Pose(85, 53); // 55
     public Pose ballCollectMid12 = new Pose(94.72697795071335, 56.30350194552529); // 55
     public Pose ballCollectMid2 = new Pose(121.74319066147861, 56.48054474708172);
-    public Pose selfee = new Pose(130, 53, Math.toRadians(30));//130, 54, Math.toRadians(30)
+    public Pose selfee = new Pose(129, 52, Math.toRadians(30)); // 130, 53, Math.toRadians(30)
+    public Pose selfee2 = new Pose(129, 52.1, Math.toRadians(30)); // 130, 53, Math.toRadians(30)
     public Pose selfeeMid = new Pose(90, 48);// 90, 55
     public Pose ballCollect2 = new Pose(123.56, 80.42, 0);
     public Pose park = makePos(85, 103);
@@ -34,18 +35,20 @@ public class ClosePaths extends Paths{
             startPose = mirror(startPose); // Start Pose of our robot.
             shootPose0 = mirror(shootPose0);
             shootPose = mirror(shootPose);
+            shootPose2 = mirror(shootPose2);
             ballCollect1 = mirror(ballCollect1);
             ballCollectMid1 = mirror(ballCollectMid1);
             ballCollectMid2 = mirror(ballCollectMid2);
-            selfee = new Pose(10, 61, Math.toRadians(145));
+            ballCollectMid12 = mirror(ballCollectMid12);
+            selfee = new Pose(12, 52, Math.toRadians(150));//mirror(selfee);
+            selfee2 = new Pose(12, 52, Math.toRadians(150));
+            //130, 53, Math.toRadians(30)
             selfeeMid = mirror(selfeeMid);
-            ballCollect2 = new Pose(18, 90, Math.toRadians(180));
+            ballCollect2 = mirror(ballCollect2);
             park = mirror(park);
             ballCollect3 = mirror(ballCollect3);
             ballCollect3Mid1 = mirror(ballCollect3Mid1);
             ballCollect3Mid2 = mirror(ballCollect3Mid2);
-            shootPose2 = mirror(shootPose2);
-
             return true;
         }
         return false;
@@ -67,6 +70,13 @@ public class ClosePaths extends Paths{
     }
     public PathChain selfeeToShoot(){
         return bezierCurve(selfee,
+                ballCollectMid2,
+                ballCollectMid1,
+                shootPose);
+    }
+
+    public PathChain selfeeToShoot2(){
+        return bezierCurve(selfee2,
                 ballCollectMid2,
                 ballCollectMid1,
                 shootPose);
@@ -95,6 +105,12 @@ public class ClosePaths extends Paths{
                 selfee);
     }
 
+    public PathChain shootToSelfee2(){
+        return bezierCurve(shootPose,
+                selfeeMid,
+                selfee2);
+    }
+
     public PathChain shootTo2(){
         return bezierLine(shootPose, ballCollect2);
     }
@@ -104,10 +120,6 @@ public class ClosePaths extends Paths{
     }
 
     public PathChain _2ToShoot2(){ return bezierLine(ballCollect2, shootPose2); }
-    public PathChain selfeeToShoot2(){
-        return bezierLine(selfee, shootPose2);
-    }
-
     public PathChain _3ToShoot(){
         return bezierLine(ballCollect3, shootPose);
     }
