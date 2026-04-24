@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "FarAuto")
+@Autonomous(name = "27FarAuto")
 
 public class _27FarAutoAttempt extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
