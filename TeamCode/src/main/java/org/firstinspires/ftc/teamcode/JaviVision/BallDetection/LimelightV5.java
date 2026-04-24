@@ -24,10 +24,12 @@ public class LimelightV5 {
     private static final double purpleLowerConf = 0.55;
     public ArrayList<Double> yaws = new ArrayList<>();
     public ArrayList<Double> dists = new ArrayList<>();
-    private ArrayList<Double[]> oldPurpleBalls = new ArrayList<>();
-    private ArrayList<Double[]> oldGreenBalls = new ArrayList<>();
-    public BallTracker trackerGreen;
-    public BallTracker trackerPurple;
+    private ArrayList<double[]> oldPurpleBalls = new ArrayList<>();
+    private ArrayList<double[]> oldGreenBalls = new ArrayList<>();
+    private ArrayList<double[]> newGreenBalls = new ArrayList<>();
+    private ArrayList<double[]> newPurpleBalls = new ArrayList<>();
+    private double greenVelocity;
+    private double purpleVelocity;
 
 
     public LimelightV5(HardwareMap hardwareMap, int pipeline) {
@@ -35,8 +37,6 @@ public class LimelightV5 {
         limelight.pipelineSwitch(pipeline); // update Ball pipeline
         //limelight.pipelineSwitch(4); // HSVTuner pipeline
         limelight.start();
-        trackerGreen = new BallTracker();
-        trackerPurple = new BallTracker();
     }
 
     // ------------------------------------------------------------
@@ -92,18 +92,21 @@ public class LimelightV5 {
             pose.posY = FIELD_LENGTH - pose.rawY - CONSTY;
         }
     }
-    public ArrayList<double[]> updateBall2(double timeDif) {
+    private double[] averagePos(ArrayList<double[]> input) {
+        double sum_x = 0;
+        double sum_y = 0;
+        for (double[] ball : input) {
+            sum_x += ball[0];
+            sum_y += ball[1];
+        }
+        sum_x = sum_x / input.size();
+        sum_y = sum_y / input.size();
+        double[] ret = {sum_x, sum_y};
+        return ret;
+    }
+    public ArrayList<double[]> updateBall2(double timeDif, boolean first) {
         LLResult result = limelight.getLatestResult();
-
-        /*double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
-        timeDif = (nowTime - lastTime);
-        lastTime = nowTime;*/
-
-        ArrayList<double[]> newPurpleBalls = new ArrayList<>();
-        ArrayList<double[]> newGreenBalls = new ArrayList<>();
-
         ArrayList<double[]> detections = new ArrayList<>();
-        ArrayList<double[]> output = new ArrayList<>();
 
         for (LLResultTypes.DetectorResult detection : result.getDetectorResults()) {
             double ty = detection.getTargetYDegrees();
@@ -114,48 +117,45 @@ public class LimelightV5 {
             int classId = detection.getClassId();
             String className = detection.getClassName();
             double confidence = detection.getConfidence();
-
-            double[] retForTest = {camX, camZ};
-
             if (className.equals("green")) {
                 if (confidence >= greenLowerConf) {
-                    double[] ret = {camX, camZ, (double) classId, 0, confidence, distance};
-                    //newGreenBalls.add(retForTest);
+                    double[] ret = {camX, camZ, 0, 0, (double) classId, 0};
                     detections.add(ret);
-                    //output.add(retList);
+                    if (first)  {
+                        oldGreenBalls.add(ret);
+                    }
+                    else{
+                        newGreenBalls.add(ret);
+                    }
                 }
             }
             else if (className.equals("purple")) {
                 if (confidence >= purpleLowerConf) {
-                    double[] ret = {camX, camZ, (double) classId, 1, confidence, distance};
+                    double[] ret = {camX, camZ, 0, 0, (double) classId, 1};
                     detections.add(ret);
-                    //newPurpleBalls.add(retForTest);
-                    //output.add(retList);
+                    if (first)  {
+                        oldPurpleBalls.add(ret);
+                    }
+                    else {
+                        newPurpleBalls.add(ret);
+                    }
                 }
-            }// once at init
-
-            // timeDif in seconds
-
+            }
         }
-        trackerGreen.update(newGreenBalls, timeDif);
-        trackerPurple.update(newPurpleBalls, timeDif);
-
-// temp debug — add a fake entry with timeDif info
-        ArrayList<double[]> outputG = new ArrayList<>();
-        ArrayList<double[]> outputP = new ArrayList<>();
-
-        for (TrackedBall ball : trackerGreen.getAliveBalls()) {
-            double[] r = {ball.x, ball.y, ball.vx, ball.vy, ball.id};
-            outputG.add(r);
-            // ball.x, ball.y  → position
-            // ball.vx, ball.vy → velocity in units/sec
+        if (!first) {
+            double[] velPurple = {(averagePos(oldPurpleBalls)[0] - averagePos(newPurpleBalls)[0])/timeDif, (averagePos(oldPurpleBalls)[1] - averagePos(newPurpleBalls)[1])/timeDif};
+            double[] velGreen = {(averagePos(oldGreenBalls)[0] - averagePos(newPurpleBalls)[0])/timeDif, (averagePos(oldPurpleBalls)[1] - averagePos(newPurpleBalls)[1])/timeDif};
+            for (double[] ball : detections) {
+                if (ball[5] == 0) {
+                    ball[2] = velGreen[0];
+                    ball[3] = velGreen[1];
+                }
+                else {
+                    ball[2] = velPurple[0];
+                    ball[3] = velPurple[1];
+                }
+            }
         }
-        for (TrackedBall ball : trackerPurple.getAliveBalls()) {
-            double[] r = {ball.x, ball.y, ball.vx, ball.vy, ball.id};
-            outputP.add(r);
-        }
-        output.addAll(outputG);
-        output.addAll(outputP);
         return detections;
     }
     public void updateHeading(boolean movingOrRotating) {
