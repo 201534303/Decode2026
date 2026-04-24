@@ -252,11 +252,11 @@ public class _27FarAutoAttempt extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && waitForPathEndOrTimeout(1.4)) { // 3
+                    if (spikeMark == 1 && waitForPathEndOrTimeout(1.2)) { // 3
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.OUT);
-                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(4.2)) {
+                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(4.1)) {
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
@@ -307,11 +307,11 @@ public class _27FarAutoAttempt extends OpMode {
                         resetActionTimer();
                         reset = true;
                     }
-                   if(waitSecs(0.1)){
+                   if(waitSecs(0.05)){
                         resetActionTimer();
                         shootCount = 0;
                         pathState = PathState.SHOOT;
-                    }
+                   }
                 }
                 break;
 
@@ -349,7 +349,7 @@ public class _27FarAutoAttempt extends OpMode {
                     }
                 }
 
-                if(waitForPathEndOrTimeout(0.7)){
+                if(waitForPathEndOrTimeout(0.8)){
                     inPathSet = false;
                     transitionTo(PathState.TO_SHOOT);
                 }
