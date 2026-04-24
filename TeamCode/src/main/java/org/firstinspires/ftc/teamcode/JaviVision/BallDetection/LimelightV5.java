@@ -115,13 +115,13 @@ public class LimelightV5 {
             String className = detection.getClassName();
             double confidence = detection.getConfidence();
 
-            double[] retList = {camX, camZ, 1, 0, 0};
             double[] retForTest = {camX, camZ};
 
             if (className.equals("green")) {
                 if (confidence >= greenLowerConf) {
                     double[] ret = {camX, camZ, (double) classId, 0, confidence, distance};
-                    newGreenBalls.add(retForTest);
+                    //newGreenBalls.add(retForTest);
+                    detections.add(ret);
                     //output.add(retList);
                 }
             }
@@ -129,7 +129,7 @@ public class LimelightV5 {
                 if (confidence >= purpleLowerConf) {
                     double[] ret = {camX, camZ, (double) classId, 1, confidence, distance};
                     detections.add(ret);
-                    newPurpleBalls.add(retForTest);
+                    //newPurpleBalls.add(retForTest);
                     //output.add(retList);
                 }
             }// once at init
