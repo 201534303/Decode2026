@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -274,7 +271,7 @@ public class _27FarAutoAttempt extends OpMode {
                 }
 
                 if (!detectInitDone) {
-                    ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+                    ArrayList<double[]> detections = limelight.updateBall2(0, true); // timeDif
 
                     if (detections != null && !detections.isEmpty()) {
                         updateDetectionAverage(detections);

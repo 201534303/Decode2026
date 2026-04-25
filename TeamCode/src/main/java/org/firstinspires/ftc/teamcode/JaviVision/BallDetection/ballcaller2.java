@@ -33,15 +33,16 @@ public class ballcaller2 extends OpMode {
         double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
         timeDif = (nowTime - lastTime);
         lastTime = nowTime;
-        ArrayList<double[]> detections = ll.updateBall2(timeDif);
+
+        //ArrayList<double[]> detections = ll.updateBall2(timeDif, );
 // Before the detection loop
-        telemetry.addData("Total detections", detections.size());
+        //telemetry.addData("Total detections", detections.size());
 
 // Inside the loop, differentiate by id
-        for (double[] ball : detections) {
+        /*for (double[] ball : detections) {
             telemetry.addLine("---- new Ball ----");
             telemetry.addData("x ", ball[0]);
-            telemetry.addData("y ", ball[1]);
+            telemetry.addData("y ", ball[1]);*/
             /*
                 // normal display code
             if (ball[4] > 0) { // id > 0 means it's a tracked ball
@@ -58,7 +59,6 @@ public class ballcaller2 extends OpMode {
              */
         }
 
-        telemetry.update();
-        dash.update();
+       // telemetry.update();
+        //dash.update();
     }
-}
