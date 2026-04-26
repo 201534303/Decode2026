@@ -8,9 +8,9 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 
 public class FarPaths extends Paths {
-    private static final double DETECTION_COLLECT_Y_MIN = 9.0;
+    private static final double DETECTION_COLLECT_Y_MIN = 15.0;
     private static final double DETECTION_COLLECT_Y_MAX = 35.0;
-    private static final double DETECTION_FALLBACK_Y = 12.0;
+    private static final double DETECTION_FALLBACK_Y = 8.0;
 
     public FarPaths(Follower follower) {
         this.follower = follower;
@@ -74,6 +74,15 @@ public class FarPaths extends Paths {
                 .build();
     }
 
+    public PathChain notSetTo(Pose pos) {
+        Pose currPose = follower.getPose();
+
+        return follower.pathBuilder()
+                .addPath(new BezierLine(currPose, pos))
+                .setLinearHeadingInterpolation(currPose.getHeading(), pos.getHeading())
+                .build();
+    }
+
     public PathChain fromTo(Pose pos) {
         return fromCurrentPose(pos);
     }
@@ -110,6 +119,11 @@ public class FarPaths extends Paths {
 
     public PathChain shootTo4() { //return bezierLine(shootPose2, ballCollect2);
         return bezierCurve(shootPose2, midShoot4, ballCollect2);
+    }
+
+    public PathChain notSetShootTo4() { //return bezierLine(shootPose2, ballCollect2);
+        Pose currPose = follower.getPose();
+        return bezierLine(currPose, ballCollect2);
     }
 
     public PathChain shootTo4NotSet() { //return bezierLine(shootPose2, ballCollect2);
@@ -150,8 +164,19 @@ public class FarPaths extends Paths {
         return collectPose;
     }
 
+    public Pose detectionCollectPoseNotSet(double averageOffset, OLDChoose.Alliance alliance) {
+        Pose currPose = follower.getPose();
+
+        double collectY = clamp(currPose.getY() + (averageOffset * 2), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        Pose collectPose = new Pose(135, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
+
     public boolean shouldUseDetectionFallback(Pose collectPose) {
-        return collectPose.getY() < DETECTION_FALLBACK_Y;
+        return DETECTION_COLLECT_Y_MIN >= collectPose.getY();
     }
 
     private double clamp(double value, double lower, double upper) {

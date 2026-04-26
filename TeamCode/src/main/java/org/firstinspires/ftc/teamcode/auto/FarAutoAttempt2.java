@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.DETECT;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.INTAKE;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -83,6 +85,7 @@ public class FarAutoAttempt2 extends OpMode {
     private boolean outPathSet = false;
     private boolean inPathSet = false;
     private double x, y, heading;
+    private double timeVisionHelper;
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -164,6 +167,21 @@ public class FarAutoAttempt2 extends OpMode {
         }
 
         ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
+        if (paths.shouldUseDetectionFallback(ballCollect)) {
+            ballCollect = paths.ballCollect2;
+            follower.followPath(paths.shootTo4(), 1, true);
+        } else {
+            follower.followPath(paths.to(ballCollect), 1, true);
+        }
+    }
+
+    private void followDetectionMid() {
+        if (posCount == 0 && negCount == 0) {
+            return;
+        }
+
+        ballCollect = paths.detectionCollectPoseNotSet(detectionAverageOffset(), alliance);
+
         if (paths.shouldUseDetectionFallback(ballCollect)) {
             ballCollect = paths.ballCollect2;
             follower.followPath(paths.shootTo4(), 1, true);
@@ -455,6 +473,33 @@ public class FarAutoAttempt2 extends OpMode {
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
             } // sets shooter speed
         }
+        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
+            telemetry.addData("a!", times);
+        }
+        if(pathState == DETECT){
+            telemetry.addData("b!", "BEAAAAAA");
+        }
+        if(x < 104){
+            telemetry.addData("c!", "JERRRKKKKKKK");
+        }
+
+        if(pathState == DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && x < 104){
+            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+
+            if (detections != null && !detections.isEmpty()) {
+                updateDetectionAverage(detections);
+            }
+            detectInitDone = true;
+
+            //if(!detectPathSet && detectInitDone){
+            //detectPathSet = true;
+            followDetectionMid();
+            //}
+            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
+            times ++;
+            telemetry.addData("didAgain!", "WOOOOOOOOO");
+
+        }
 
         autonomousPathUpdate();//main auto code
 
@@ -488,7 +533,7 @@ public class FarAutoAttempt2 extends OpMode {
         telemetry.update();
         dash.update();
     }
-
+    int times = 0;
     @Override
     public void stop() {
         for (int i  = 0; i < 50; i++){
@@ -497,5 +542,13 @@ public class FarAutoAttempt2 extends OpMode {
             follower.update();
         }
     }
+
+    public boolean throttleVision(double curentTime){
+        if (curentTime - timeVisionHelper > 100){
+            return true;
+        }
+        return false;
+    }
+
 
 }
