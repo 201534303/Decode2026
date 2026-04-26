@@ -142,7 +142,7 @@ public class FarPaths extends Paths {
     }
 
     public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance, double velocity) {
-        double collectY = clamp((shootPose2.getY() - averageOffset + (velocity * 1)), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        double collectY = clamp((shootPose2.getY() + averageOffset) - velocity, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
         Pose collectPose = new Pose(135, collectY, 0);
         if (alliance == OLDChoose.Alliance.BLUE) {
             collectPose = mirror(collectPose);
