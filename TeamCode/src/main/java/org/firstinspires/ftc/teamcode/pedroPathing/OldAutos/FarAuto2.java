@@ -235,7 +235,7 @@ public class FarAuto2 extends OpMode {
         x = results[1];
         y = results[0];
 
-        /*ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+        ArrayList<double[]> detections = limelight.updateBall2(timeDif);
         ArrayList<Double> results2 = new ArrayList<>();
         for(int col = 0; col < detections.get(0).length; col++)
         {
@@ -244,7 +244,7 @@ public class FarAuto2 extends OpMode {
                 double ret = (double) detections.get(row)[col];
                 results2.add(ret);
             }
-        }*/
+        }
 
         telemetry.addData("detect x", x);
         telemetry.addData("detect y", y);

@@ -59,7 +59,7 @@ public class FarAutoAttempt2 extends OpMode {
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, OUT, IN, TEST
+        DETECT, OUT, IN
     }
     PathState pathState = PathState.START;
 
@@ -77,17 +77,12 @@ public class FarAutoAttempt2 extends OpMode {
     double negAverage = 0;
     double offset = 10;
 
-    private double timeDif = 0;
+    private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
     private double lastTime;
     private boolean outPathSet = false;
     private boolean inPathSet = false;
     private double x, y, heading;
-    private double velocity;
-
-    private boolean firstDetect = true;
-    private boolean timeDifSet;
-    private boolean detectFirstDone;
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -168,7 +163,7 @@ public class FarAutoAttempt2 extends OpMode {
             return;
         }
 
-        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance, velocity);
+        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
         if (paths.shouldUseDetectionFallback(ballCollect)) {
             ballCollect = paths.ballCollect2;
             follower.followPath(paths.shootTo4(), 1, true);
@@ -182,10 +177,7 @@ public class FarAutoAttempt2 extends OpMode {
         for (double[] row : detections) {
             results.add(row[0]);
         }
-
-        if (detections.size() >= 3) {
-            double[][] optimumPts = findBestScore(detections);
-        }
+        double[][] optimumPts = findBestScore(detections);
 
         for (double distance : results) {
             if (distance > 0) {
@@ -213,64 +205,6 @@ public class FarAutoAttempt2 extends OpMode {
                 }
                 break;
 
-            case DETECT:
-                if(waitSecs(0.5)) {
-                    intake.intakeIn();
-                    intake.transferOff();
-                }
-
-                if (intake.haveBall() && waitSecs(1)){
-                    resetDetectionState();
-                    transitionTo(PathState.TO_SHOOT);
-                }
-
-                if (!detectFirstDone) {
-                    ArrayList<double[]> detections = limelight.updateBall2(0, true);
-                    detectFirstDone = true;
-                    break;
-                }
-
-                if(!detectInitDone && waitSecs(0.5)) {
-                    ArrayList<double[]> detections = limelight.updateBall2(0.5, false);
-
-                    if (detections != null && !detections.isEmpty()) {
-                        updateDetectionAverage(detections);
-
-                        velocity = 0; // default if nothing found
-                        for (double[] row : detections) {
-                            if (row[5] == 0) { // 0 = green, 1 = purple
-                                velocity = row[2];
-                                velocity = Math.max(-25, Math.min(25, velocity));
-                                break;
-                            }
-                        }
-                        if (velocity == 0) {
-                            for (double[] row : detections) {
-                                if (row[5] == 1) {
-                                    velocity = row[2];
-                                    velocity = Math.max(-25, Math.min(25, velocity));
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    detectInitDone = true;
-                }
-
-                if(waitSecs(0.5)) {
-                    if (!follower.isBusy() && !detectPathSet && detectInitDone) {
-                        detectPathSet = true;
-                        followDetectionPath();
-                    }
-                }
-
-                if (detectPathSet && waitForPathEndOrTimeout(1.75)) { // 1.75
-                    detectFirstDone = false;
-                    resetDetectionState();
-                    transitionTo(TO_SHOOT);
-                }
-                break;
-
             case SHOOT:
                 //if (!follower.isBusy() /*&& waitSecs(0.5)*/) {
                     intake.allTheWay();// go all the way to shoot
@@ -286,12 +220,11 @@ public class FarAutoAttempt2 extends OpMode {
                             transitionTo(PathState.INTAKE);
                         }
                     } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 /*|| spikeMark == 7*/) {
-                        //if (waitSecs(0.1)) { // 0.2
+                        if (waitSecs(0.5)) { // 1
                             spikeMark += 1;
                             resetDetectionState();
-                            limelight.clearBallLists(); // add this
                             transitionTo(PathState.DETECT);
-                        //}
+                        }
                     //}
                 }
                 break;
@@ -331,19 +264,17 @@ public class FarAutoAttempt2 extends OpMode {
                 //}
                 break;
 
-            /*case DETECT:
-                if(waitSecs(0.3)) {
-                    intake.intakeIn();
-                    intake.transferOff();
-                }
+            case DETECT:
+                intake.intakeIn();
+                intake.transferOff();
 
-                if (intake.haveBall() && waitSecs(1)){
+                if (intake.haveBall() && waitSecs(0.5)){
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
 
                 if (!detectInitDone) {
-                    ArrayList<double[]> detections = limelight.updateBall2(0, true); // timeDif
+                    ArrayList<double[]> detections = limelight.updateBall2(timeDif);
 
                     if (detections != null && !detections.isEmpty()) {
                         updateDetectionAverage(detections);
@@ -351,19 +282,16 @@ public class FarAutoAttempt2 extends OpMode {
                     detectInitDone = true;
                 }
 
-                if(waitSecs(0.3)) {
-                    if (!detectPathSet && detectInitDone) {
-                        detectPathSet = true;
-                        followDetectionPath();
-                    }
-
-                    if (waitForPathEndOrTimeout(1.75)) {//2, 2.25
-                        resetDetectionState();
-                        transitionTo(PathState.TO_SHOOT);
-                    }
+                if(!follower.isBusy() && !detectPathSet && detectInitDone){
+                    detectPathSet = true;
+                    followDetectionPath();
                 }
-                break;*/
 
+                if (waitForPathEndOrTimeout(1.75)) {//2, 2.25
+                    resetDetectionState();
+                    transitionTo(PathState.TO_SHOOT);
+                }
+                break;
 
             case TO_SHOOT:
                 intake.intakeIn();
@@ -505,10 +433,9 @@ public class FarAutoAttempt2 extends OpMode {
     @Override
     public void loop() {
         double nowTime = overallRuntime.time(TimeUnit.MILLISECONDS);
-
-//        timeDif = nowTime - lastTime;
-//        lastTime = nowTime;
-//        telemetry.addData("loop time", timeDif);
+        timeDif = nowTime - lastTime;
+        lastTime = nowTime;
+        telemetry.addData("loop time", timeDif);
 
         follower.update(); // updates follower
 
@@ -531,8 +458,6 @@ public class FarAutoAttempt2 extends OpMode {
 
         autonomousPathUpdate();//main auto code
 
-        telemetry.addData("detectPath", ballCollect);
-        telemetry.addData("velocity", velocity);
         telemetry.addData("average", average);
         telemetry.addData("posCount", posCount);
         telemetry.addData("negCoung", negCount);

@@ -143,21 +143,8 @@ public class LimelightV5 {
             }
         }
         if (!first) {
-            double[] velPurple = {0, 0};
-            double[] velGreen = {0, 0};
-
-            if (!newPurpleBalls.isEmpty() && !oldPurpleBalls.isEmpty()) {
-                velPurple[0] = (averagePos(newPurpleBalls)[0] - averagePos(oldPurpleBalls)[0]) / timeDif;
-                velPurple[1] = (averagePos(newPurpleBalls)[1] - averagePos(oldPurpleBalls)[1]) / timeDif;
-            }
-            if (!newGreenBalls.isEmpty() && !oldGreenBalls.isEmpty()) {
-                velGreen[0] = (averagePos(newGreenBalls)[0] - averagePos(oldGreenBalls)[0]) / timeDif;
-                velGreen[1] = (averagePos(newGreenBalls)[1] - averagePos(oldGreenBalls)[1]) / timeDif;
-            }
-
-            //double[] velPurple = {(averagePos(newPurpleBalls)[0] - averagePos(oldPurpleBalls)[0])/timeDif, (averagePos(newPurpleBalls)[1] - averagePos(oldPurpleBalls)[1])/timeDif};
-            //double[] velGreen = {(averagePos(newPurpleBalls)[0] - averagePos(oldGreenBalls)[0])/timeDif, (averagePos(newPurpleBalls)[1] - averagePos(oldPurpleBalls)[1])/timeDif};
-
+            double[] velPurple = {(averagePos(oldPurpleBalls)[0] - averagePos(newPurpleBalls)[0])/timeDif, (averagePos(oldPurpleBalls)[1] - averagePos(newPurpleBalls)[1])/timeDif};
+            double[] velGreen = {(averagePos(oldGreenBalls)[0] - averagePos(newPurpleBalls)[0])/timeDif, (averagePos(oldPurpleBalls)[1] - averagePos(newPurpleBalls)[1])/timeDif};
             for (double[] ball : detections) {
                 if (ball[5] == 0) {
                     ball[2] = velGreen[0];
@@ -170,13 +157,6 @@ public class LimelightV5 {
             }
         }
         return detections;
-    }
-
-    public void clearBallLists() {
-        oldGreenBalls.clear();
-        oldPurpleBalls.clear();
-        newGreenBalls.clear();
-        newPurpleBalls.clear();
     }
     public void updateHeading(boolean movingOrRotating) {
         double[] results = limelight.getLatestResult().getPythonOutput();

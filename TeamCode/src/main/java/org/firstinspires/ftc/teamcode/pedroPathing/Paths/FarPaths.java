@@ -8,9 +8,9 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 
 public class FarPaths extends Paths {
-    private static final double DETECTION_COLLECT_Y_MIN = 10.0;
+    private static final double DETECTION_COLLECT_Y_MIN = 9.0;
     private static final double DETECTION_COLLECT_Y_MAX = 35.0;
-    private static final double DETECTION_FALLBACK_Y = 7.0;
+    private static final double DETECTION_FALLBACK_Y = 12.0;
 
     public FarPaths(Follower follower) {
         this.follower = follower;
@@ -139,15 +139,6 @@ public class FarPaths extends Paths {
 
     public PathChain inSet() {
         return bezierLine(out, ballCollect2);
-    }
-
-    public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance, double velocity) {
-        double collectY = clamp((shootPose2.getY() + averageOffset) - velocity, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
-        Pose collectPose = new Pose(135, collectY, 0);
-        if (alliance == OLDChoose.Alliance.BLUE) {
-            collectPose = mirror(collectPose);
-        }
-        return collectPose;
     }
 
     public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance) {
