@@ -230,9 +230,9 @@ public class MainTeleOpBetter extends OpMode {
          */
 
         robot.updateIntake();
-        if(gamepad1.dpadLeftWasPressed()){
-            robot.toggleSingleDriver();
-        }
+//        if(gamepad1.dpadLeftWasPressed()){
+//            robot.toggleSingleDriver();
+//        }
         if(gamepad2.dpadDownWasPressed()){
             robot.toggleLiftMode();
         }
