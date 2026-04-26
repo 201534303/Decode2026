@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.DETECT;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
 import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
 
@@ -8,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "27FarAuto")
+@Disabled
 
 public class _27FarAutoAttempt extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
@@ -252,7 +255,7 @@ public class _27FarAutoAttempt extends OpMode {
                         }
                     }
 
-                    if (spikeMark == 1 && waitForPathEndOrTimeout(1.2)) { // 3
+                    if (spikeMark == 1 && waitForPathEndOrTimeout(1)) { // 3
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.OUT);

@@ -305,7 +305,7 @@ public class FarAutoAttempt2 extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(1.75)) {//2, 2.25
+                if (waitForPathEndOrTimeout(2)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -483,7 +483,7 @@ public class FarAutoAttempt2 extends OpMode {
             telemetry.addData("c!", "JERRRKKKKKKK");
         }
 
-        if(pathState == DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && x < 104){
+        if(pathState == DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 104 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
             ArrayList<double[]> detections = limelight.updateBall2(timeDif);
 
             if (detections != null && !detections.isEmpty()) {
