@@ -151,7 +151,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     if(alliance == OLDChoose.Alliance.RED) {
                         shooter.rotateTurret(15);
                     } else{
-                        shooter.rotateTurret(-9);
+                        shooter.rotateTurret(-15);
                     }
                     firstShootPathSet = false;
                     transitionTo(PathState.SHOOT);
@@ -281,7 +281,7 @@ public class SelfeeCloseAuto2 extends OpMode {
                     shootMove = false;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
-                } else if (spikeMark == 5 && waitForPathEndOrTimeout(2.75)) {
+                } else if (spikeMark == 5 && waitForPathEndOrTimeout(1.2)) { // 2.75
                     if(alliance == OLDChoose.Alliance.RED) {
                         shooter.rotateTurret(30);
                     } else{
