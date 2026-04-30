@@ -40,8 +40,8 @@ public class ClosePaths extends Paths{
             ballCollectMid1 = mirror(ballCollectMid1);
             ballCollectMid2 = mirror(ballCollectMid2);
             ballCollectMid12 = mirror(ballCollectMid12);
-            selfee = new Pose(12, 52, Math.toRadians(150));//mirror(selfee);
-            selfee2 = new Pose(12, 52, Math.toRadians(150));
+            selfee = new Pose(12, 53, Math.toRadians(150));
+            selfee2 = new Pose(12, 53, Math.toRadians(150));
             //130, 53, Math.toRadians(30)
             selfeeMid = mirror(selfeeMid);
             ballCollect2 = mirror(ballCollect2);
