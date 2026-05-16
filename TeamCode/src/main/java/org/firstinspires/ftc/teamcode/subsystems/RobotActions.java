@@ -149,6 +149,45 @@ public class RobotActions {
         if(total < 3){
             intake.setTransferPower(-gamepad2.left_stick_y * speedMul);
         }
+        else {
+            intake.setTransferPower(0);
+        }
+    }
+    //For one driver tele-op
+    public void updateIntakeOneDriver(){
+        intake.setIntPower(gamepad1.right_trigger + 0.1);
+        intake.intakeIn();
+        intake.intakeMachine();
+    }
+
+    public void updateTransferOneDriver(Choose.Alliance currentColor, Vector vel, double posX, double posY) {
+        double velX = vel.getXComponent();
+        double velY = vel.getYComponent();
+        double total = Math.hypot(velY, velX);
+
+        double delY = 0;
+        double delX = 0;
+
+        if(currentColor == Choose.Alliance.BLUE){
+            delX = -posX;
+            delY = 144-posY;
+        }
+
+        if(currentColor == Choose.Alliance.RED){
+            delX = 144-posX;
+            delY = 144-posY;
+        }
+
+        double dist = Math.hypot(delY, delX);
+        double speedMul = 1;
+
+        if(dist > 140){
+            speedMul = 0.8;
+        }
+
+        if(total < 3){
+            intake.setTransferPower(gamepad1.left_trigger * speedMul);
+        }
         else{
             intake.setTransferPower(0);
         }
