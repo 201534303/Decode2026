@@ -170,7 +170,7 @@ public class RobotActions {
     }
 
     public void updateIntakeForOneDriver(){
-        intake.setIntPower(-gamepad1.right_stick_y + 0.1);
+        intake.setIntPower(-gamepad1.right_trigger + 0.1);
         intake.intakeIn();
         intake.intakeMachine();
         if (intake.haveBall()){
@@ -204,8 +204,8 @@ public class RobotActions {
         }
 
 
-        if(total < 3 && Math.abs(gamepad1.left_stick_y) > 0.05){
-            intake.setTransferVelPID(-gamepad1.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
+        if(total < 3 && Math.abs(gamepad1.left_trigger) > 0.05){
+            intake.setTransferVelPID(-gamepad1.left_trigger * speedMul * 2250, intake.getTransferVel(), 0, 0);
         }
         else{
             //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
