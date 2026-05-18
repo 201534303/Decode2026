@@ -169,6 +169,50 @@ public class RobotActions {
         }
     }
 
+    public void updateIntakeForOneDriver(){
+        intake.setIntPower(-gamepad1.right_stick_y + 0.1);
+        intake.intakeIn();
+        intake.intakeMachine();
+        if (intake.haveBall()){
+            gamepad1.rumble(500);
+        }
+    }
+
+    public void updateTransferForOneDriver(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY) {
+        double velX = vel.getXComponent();
+        double velY = vel.getYComponent();
+        double total = Math.hypot(velY, velX);
+
+        double delY = 0;
+        double delX = 0;
+
+        if(currentColor == OLDChoose.Alliance.BLUE){
+            delX = -posX;
+            delY = 144-posY;
+        }
+
+        if(currentColor == OLDChoose.Alliance.RED){
+            delX = 144-posX;
+            delY = 144-posY;
+        }
+
+        double dist = Math.hypot(delY, delX);
+        double speedMul = 0.60;
+
+        if(dist > 140){
+            speedMul = 0.56;
+        }
+
+
+        if(total < 3 && Math.abs(gamepad1.left_stick_y) > 0.05){
+            intake.setTransferVelPID(-gamepad1.left_stick_y * speedMul * 2250, intake.getTransferVel(), 0, 0);
+        }
+        else{
+            //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
+            intake.setTransferPower(0.1);
+        }
+    }
+
     //UPDATE
 
     public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
