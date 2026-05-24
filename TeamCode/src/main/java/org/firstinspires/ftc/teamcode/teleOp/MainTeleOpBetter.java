@@ -229,7 +229,6 @@ public class MainTeleOpBetter extends OpMode {
         --------------------------DRIVER TWO CONTROLS--------------------------
          */
 
-        robot.updateIntake();
 //        if(gamepad1.dpadLeftWasPressed()){
 //            robot.toggleSingleDriver();
 //        }
@@ -249,6 +248,8 @@ public class MainTeleOpBetter extends OpMode {
        // dash.addData("target wheel speed", targetVel);
        // dash.addData("shooter deviation", currentVel-targetVel);
         robot.update(currentColor, turretOn, x, y, heading, vel, kf);
+        if (gamepad2.left_stick_y < 0.1 && gamepad2.left_stick_y > -0.1 )
+            robot.updateIntake();
         follower.update();
 
 

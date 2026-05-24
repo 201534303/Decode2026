@@ -241,7 +241,7 @@ public class RobotActions {
                 intake.setIntPower(gamepad2.right_stick_y + 0.1);
             }
             else{
-                intake.setIntPower(0.1);
+                intake.setIntPower(0);
             }
         }
 
@@ -278,9 +278,12 @@ public class RobotActions {
         else{
             if(Math.abs(gamepad2.left_stick_y) > 0.05 && ((-gamepad2.left_stick_y > 0 && Math.abs(turAngle) < 72 && dist >= 55 && Math.abs(gamepad1.left_stick_x) < 0.15) || gamepad2.right_trigger > 0.8)){
                 intake.setTransferPower(-gamepad2.left_stick_y);
+                intake.setIntakePower(1);
             }
             else{
                 intake.setTransferPower(0);
+                intake.setIntakePower(0);
+
             }
         }
     }
@@ -291,7 +294,7 @@ public class RobotActions {
         }
         else{
             //intake.setTransferVelPID(0, intake.getTransferVel(),0,0);
-            intake.setTransferPower(0.1);
+            intake.setTransferPower(0);
         }
     }
 

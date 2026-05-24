@@ -90,7 +90,7 @@ public class Intake {
     //Not used
     public void setIntakePower(double power){
         telemetry.addData("We are setting intake", power);
-        iSpeed = power;
+        intake.setPower(power);
         //transfer.setPower(iSpeed);
     }
 
@@ -99,12 +99,14 @@ public class Intake {
         switch (intakeState){
             case IN:
                 intake.setPower(iSpeed);
+                setTransferPower(-iSpeed);
                 break;
             case OUT:
                 intake.setPower(-iSpeed);
                 break;
             case OFF:
                 intake.setPower(0);
+                setTransferPower(0);
                 break;
         }
     }
