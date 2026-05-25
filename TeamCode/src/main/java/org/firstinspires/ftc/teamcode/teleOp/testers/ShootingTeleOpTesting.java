@@ -154,8 +154,9 @@ public class ShootingTeleOpTesting extends OpMode {
         --------------------------DRIVER TWO CONTROLS--------------------------
          */
 
-        //robot.updateIntake();
-        //robot.updateTransfer(currentColor, vel, x, y, gamepad2.right_bumper, gamepad2.right_bumper);
+        robot.updateIntake();
+        robot.updateIntake();
+        robot.updateTransfer(currentColor, vel, x, y);
 
         if(gamepad2.dpadUpWasPressed()){
             robot.DELETEBUTTHISISVEL += 5;
