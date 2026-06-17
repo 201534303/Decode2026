@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class ConfigureLaserRangefinder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+
         LaserRangefinder lrf = new LaserRangefinder(hardwareMap.get(RevColorSensorV3.class, "Laser"));
         telemetry.addData("Pin0", lrf.getPin0Mode());
         telemetry.addData("Pin1", lrf.getPin1Mode());
@@ -21,6 +22,10 @@ public class ConfigureLaserRangefinder extends LinearOpMode {
         telemetry.update();
         waitForStart();
         /* <configuration code> */
+        waitForStart();
+        lrf.setDistanceMode(LaserRangefinder.DistanceMode.SHORT);
+        lrf.setTiming(10, 0);
+
     }
 }
 
