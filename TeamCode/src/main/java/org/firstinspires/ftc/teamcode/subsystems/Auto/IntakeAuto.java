@@ -44,6 +44,7 @@ public class IntakeAuto extends Intake {
 
     public void setIntakeSpeed(double power){
         intake.setPower(power);
+        setTransferPower(-power);
     }
 
     public void transferOff(){
