@@ -14,11 +14,18 @@ public class IntakeAuto extends Intake {
     }
 
     @Override
-    public void intakeIn(){ intake.setPower(1); }
+    public void intakeIn(){
+        intake.setPower(1);
+        setTransferPower(-1);
+    }
     @Override
     public void intakeOut(){ intake.setPower(-1); }
+
     @Override
-    public void intakeOff(){ intake.setPower(0); }
+    public void intakeOff(){
+        intake.setPower(0);
+        setTransferPower(0);
+    }
 
     public void off(){
         intake.setPower(0);
