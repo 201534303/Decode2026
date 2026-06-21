@@ -77,7 +77,7 @@ public class FarAutoAttempt2 extends OpMode {
     double average = 0;
     double posAverage = 0;
     double negAverage = 0;
-    double offset = 10;
+    double offset = 0;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -419,7 +419,7 @@ public class FarAutoAttempt2 extends OpMode {
         if(alliance == OLDChoose.Alliance.BLUE){
             offset = 0;
         } else if (alliance == OLDChoose.Alliance.RED){
-            offset = 10;
+            offset = 0;
         }
         shooter.rotateTurret(turnTableAngle);
 
