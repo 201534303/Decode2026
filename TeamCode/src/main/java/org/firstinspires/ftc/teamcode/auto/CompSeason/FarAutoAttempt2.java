@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.CompSeason;
 
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.DETECT;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
+import static org.firstinspires.ftc.teamcode.auto.CompSeason.FarAutoAttempt2.PathState.DETECT;
+import static org.firstinspires.ftc.teamcode.auto.CompSeason.FarAutoAttempt2.PathState.IN;
+import static org.firstinspires.ftc.teamcode.auto.CompSeason.FarAutoAttempt2.PathState.TO_SHOOT;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
@@ -17,8 +17,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.FarPaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
@@ -26,9 +26,9 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "Preaload Leave")
+@Autonomous(name = "FarAuto")
 
-public class PreloadLeave extends OpMode {
+public class FarAutoAttempt2 extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
     private static final double AUTO_RED_LIGHT = 0.28;
 
@@ -76,7 +76,7 @@ public class PreloadLeave extends OpMode {
     double average = 0;
     double posAverage = 0;
     double negAverage = 0;
-    double offset = 10;
+    double offset = 0;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -231,22 +231,145 @@ public class PreloadLeave extends OpMode {
                             intakePathSet = false;
                             transitionTo(PathState.INTAKE);
                         }
-                    }
+                    } else if (spikeMark == 1 || spikeMark == 7) {
+                        if (waitSecs(0.5)) {//1
+                            intakePathSet = false;
+                            transitionTo(PathState.INTAKE);
+                        }
+                    } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 /*|| spikeMark == 7*/) {
+                        if (waitSecs(0.5)) { // 1
+                            spikeMark += 1;
+                            resetDetectionState();
+                            transitionTo(PathState.DETECT);
+                        }
+                    //}
+                }
                 break;
 
             case INTAKE:
                 intake.transferOff();
+                if (intake.haveBall() && waitSecs(0.5)){
+                    spikeMark ++;
+                    transitionTo(PathState.TO_SHOOT);
+                    break;
+                }
 
                 //else if (!follower.isBusy()) {
                     if (!intakePathSet) {
                         intakePathSet = true;
+                        if (spikeMark == 0) {
+                            follower.followPath(paths.shootTo1(), 1, false);
+                        } else if (spikeMark == 1) {
+                            follower.followPath(paths.shootTo2(), 1, false);
+                        } else if (spikeMark == 7) {
+                            park();
+                            follower.followPath(paths.shootToPark(), 0.6, true);
+                            pathState = PathState.PARK;
+                            break;
+                        }
+                    }
 
-                        park();
-                        follower.followPath(paths.shootToPark(), 0.6, true);
-                        pathState = PathState.PARK;
-                        break;
+                    if (spikeMark == 1 && waitForPathEndOrTimeout(1.5)) { // 3
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.OUT);
+                    } else if (spikeMark == 0 && waitForPathEndOrTimeout(4.25)) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
                     }
                 //}
+                break;
+
+            case DETECT:
+                intake.intakeIn();
+                intake.transferOff();
+
+                if (intake.haveBall() && waitSecs(0.5)){
+                    resetDetectionState();
+                    transitionTo(PathState.TO_SHOOT);
+                }
+
+                if (!detectInitDone) {
+                    ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+
+                    if (detections != null && !detections.isEmpty()) {
+                        updateDetectionAverage(detections);
+                    }
+                    detectInitDone = true;
+                }
+
+                if(!follower.isBusy() && !detectPathSet && detectInitDone){
+                    detectPathSet = true;
+                    followDetectionPath();
+                }
+
+                if (waitForPathEndOrTimeout(2)) {//2, 2.25
+                    resetDetectionState();
+                    transitionTo(PathState.TO_SHOOT);
+                }
+                break;
+
+            case TO_SHOOT:
+                intake.intakeIn();
+
+                if (shootCount == 0) {
+                    intake.intakeIn();
+                    follower.followPath(paths.collectToShootNotSet(), 1, true);
+                    shootCount += 1;
+                }
+
+                if (follower.atParametricEnd() || follower.atPose(paths.shootPose2, 1, 1)) {
+                    if(!reset) {
+                        resetActionTimer();
+                        reset = true;
+                    }
+                   if(waitSecs(0.2)){
+                        resetActionTimer();
+                        shootCount = 0;
+                        pathState = PathState.SHOOT;
+                    }
+                }
+                break;
+
+            case OUT:
+                if (intake.haveBall()){
+                    transitionTo(PathState.TO_SHOOT);
+                }
+                if (!outPathSet) {
+                    outPathSet = true;
+                    if(spikeMark == 2) {
+                        follower.followPath(paths.outSet(), 0.75, false);
+                    } else{
+                        follower.followPath(paths.outNotSet(ballCollect, alliance), 0.75, false);
+                    }
+                }
+
+                if(waitForPathEndOrTimeout(0.25)){
+                    outPathSet = false;
+                    transitionTo(IN);
+                }
+                break;
+
+            case IN:
+                if (intake.haveBall()){
+                    transitionTo(PathState.TO_SHOOT);
+                }
+                intake.intakeIn();
+                if (!inPathSet) {
+                    inPathSet = true;
+                    if(spikeMark == 2) {
+                        follower.followPath(paths.inSet(), 0.75, false);
+                    } else{
+                        follower.followPath(paths.inNotSet(ballCollect), 0.75, false);
+
+                    }
+                }
+
+                if(waitForPathEndOrTimeout(0.9)){
+                    inPathSet = false;
+                    transitionTo(TO_SHOOT);
+                }
                 break;
 
             case PARK:
@@ -295,7 +418,7 @@ public class PreloadLeave extends OpMode {
         if(alliance == OLDChoose.Alliance.BLUE){
             offset = 0;
         } else if (alliance == OLDChoose.Alliance.RED){
-            offset = 10;
+            offset = 0;
         }
         shooter.rotateTurret(turnTableAngle);
 
@@ -348,6 +471,33 @@ public class PreloadLeave extends OpMode {
 //                }
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
             } // sets shooter speed
+        }
+        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
+            telemetry.addData("a!", times);
+        }
+        if(pathState == DETECT){
+            telemetry.addData("b!", "BEAAAAAA");
+        }
+        if(x < 104){
+            telemetry.addData("c!", "JERRRKKKKKKK");
+        }
+
+        if(pathState == DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 104 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
+            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+
+            if (detections != null && !detections.isEmpty()) {
+                updateDetectionAverage(detections);
+            }
+            detectInitDone = true;
+
+            //if(!detectPathSet && detectInitDone){
+            //detectPathSet = true;
+            followDetectionMid();
+            //}
+            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
+            times ++;
+            telemetry.addData("didAgain!", "WOOOOOOOOO");
+
         }
 
         autonomousPathUpdate();//main auto code

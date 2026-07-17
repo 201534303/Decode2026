@@ -1,8 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
-
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.DETECT;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.IN;
-import static org.firstinspires.ftc.teamcode.auto.FarAutoAttempt2.PathState.TO_SHOOT;
+package org.firstinspires.ftc.teamcode.auto.CompSeason;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode.auto.CompSeason;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;

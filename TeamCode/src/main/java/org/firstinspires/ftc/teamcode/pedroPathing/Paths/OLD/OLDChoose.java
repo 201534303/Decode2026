@@ -8,15 +8,10 @@ public class OLDChoose {
     public enum Alliance { RED, BLUE, NONE }
     public Alliance selectedAlliance = Alliance.RED;
     private boolean allianceConfirmed = false;
-    public enum Auto { FAR, CLOSE, NONE }
 
     public enum Choices {
-        RED, BLUE, NONE,
-        FAR, CLOSE
+        RED, BLUE
     }
-
-    private Auto selectedAuto = Auto.NONE;
-    private boolean autoConfirmed = false;
 
     private int mark = 5;
     private boolean numConfirmed = false;

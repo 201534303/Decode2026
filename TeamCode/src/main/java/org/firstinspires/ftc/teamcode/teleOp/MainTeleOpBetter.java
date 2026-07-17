@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Feedback;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.superClasses.Kicker;
 import org.firstinspires.ftc.teamcode.subsystems.superClasses.Shooter;
 
 import java.util.concurrent.TimeUnit;
@@ -39,6 +40,7 @@ public class MainTeleOpBetter extends OpMode {
 
     //subsystems
     private Drivetrain drivetrain;
+    private Kicker kicker;
     private Intake intake;
     private Shooter shooter;
     private Feedback feedback;
@@ -64,6 +66,7 @@ public class MainTeleOpBetter extends OpMode {
     public static double kf = 0.59;
     private double timeDif = 1.0;
     private double oldHeading = 0;
+    private boolean kickerDown;
 
 //89.7,5.6
     @Override
@@ -84,6 +87,7 @@ public class MainTeleOpBetter extends OpMode {
         intake = new Intake(hardwareMap, telemetry, overallRuntime);
         shooter = new Shooter(hardwareMap, telemetry, overallRuntime);
         feedback = new Feedback(hardwareMap, overallRuntime, telemetry, gamepad1, gamepad2);
+        kicker = new Kicker(hardwareMap, telemetry, overallRuntime);
 
         //telemetry
         telemetry.addData("Status", "Initialized");
@@ -222,7 +226,9 @@ public class MainTeleOpBetter extends OpMode {
         }
 
         //drive
-        robot.fieldCentricDrive(currentColor, heading, vel);
+        if(!kickerDown) {
+            robot.fieldCentricDrive(currentColor, heading, vel);
+        }
 
 
         /*
@@ -235,6 +241,19 @@ public class MainTeleOpBetter extends OpMode {
         if(gamepad2.dpadDownWasPressed()){
             robot.toggleLiftMode();
         }
+
+        if(gamepad2.yWasPressed() && gamepad2.right_trigger_pressed){
+            kicker.kickDown();
+            kickerDown = true;
+        } else if(gamepad2.aWasPressed()){
+            kicker.kickUp();
+            kickerDown = false;
+        }
+
+        if(kickerDown){
+            drivetrain.setMotorPowers(0,0,0,0);
+        }
+
 
         /*
         --------------------------UPDATE--------------------------
