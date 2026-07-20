@@ -6,7 +6,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-abstract class Paths {
+public abstract class Paths {
     public Follower follower;
 
     public static Pose makePos(double x, double y, double degrees){
