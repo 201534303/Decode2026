@@ -196,7 +196,7 @@ public class FarAuto extends OpMode {
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 8) {
+                } else if (spikeMark == 7) {
                     if (waitSecs(0.5)) {//1
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
@@ -222,7 +222,7 @@ public class FarAuto extends OpMode {
                     intakePathSet = true;
                     if (spikeMark == 0) {
                         follower.followPath(paths.shootTo2(), 1, false);
-                    } else if (spikeMark == 8) {
+                    } else if (spikeMark == 7) {
                         park();
                         follower.followPath(paths.shootToPark(), 0.6, true);
                         pathState = PathState.PARK;
@@ -230,7 +230,7 @@ public class FarAuto extends OpMode {
                     }
                 }
 
-                if (spikeMark == 0 && waitForPathEndOrTimeout(3)) {
+                if (spikeMark == 0 && waitForPathEndOrTimeout(4)) {
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
@@ -241,7 +241,7 @@ public class FarAuto extends OpMode {
                 intake.intakeIn();
                 intake.transferOff();
 
-                if (intake.haveBall() && waitSecs(0.5)){
+                if (intake.haveBall() && waitSecs(2)){
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -260,7 +260,7 @@ public class FarAuto extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(1.5)) {//2, 2.25
+                if (waitForPathEndOrTimeout(4)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }

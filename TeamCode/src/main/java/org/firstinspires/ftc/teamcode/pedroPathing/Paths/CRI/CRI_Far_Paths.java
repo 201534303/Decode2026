@@ -17,13 +17,13 @@ public class CRI_Far_Paths extends Paths {
     }
 
     public Pose startPose = makePos(111, 7); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(183, 40); // 130
-    public Pose ballCollect12 = makePos(183, 40);
-    public Pose ballCollect1Out = makePos(173, 40);
+    public Pose ballCollect1 = makePos(176, 40); // 130
+    public Pose ballCollect12 = makePos(176, 40);
+    public Pose ballCollect1Out = makePos(166, 40);
     public Pose ballCollect1Mid = new Pose(131, 37);
     public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(185, 7);
-    public Pose out = makePos(175, 7);
+    public Pose ballCollect2 = makePos(178, 7);
+    public Pose out = makePos(168, 7);
 
     public Pose park = makePos(132, 9, 0);
     private Pose outForDeteciton = new Pose();

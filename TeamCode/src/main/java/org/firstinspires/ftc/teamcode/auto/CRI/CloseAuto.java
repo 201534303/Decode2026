@@ -117,7 +117,7 @@ public class CloseAuto extends OpMode {
                     follower.followPath(paths.firstToShoot(), 1, false);
                 }
 
-                if(waitSecs(1.25)){
+                if(waitSecs(1.20)){ // 1.25
                     intake.allTheWay();
                 }
 
@@ -148,10 +148,6 @@ public class CloseAuto extends OpMode {
                     follower.followPath(selectToShootPath(), 1, false);
                 }
                 if (toShootPathSet) {
-//                    if ((spikeMark == 1 || (spikeMark == 6 && fill)) && follower.atPose(paths.shootPose, 2, 2, 1)) {
-//                        toShootPathSet = false;
-//                        transitionTo(PathState.SHOOT);
-//                    }
                     if(spikeMark == 6){
                         if(follower.atPose(paths.shootPose2, 20, 20)) {
                             toShootPathSet = false;
@@ -226,7 +222,7 @@ public class CloseAuto extends OpMode {
                     }
                 }
 
-                if(spikeMark == 0 && waitSecs(1.5)){
+                if(spikeMark == 0 && waitSecs(1.4)){
                     doneOne = false;
 
                     if(alliance == OLDChoose.Alliance.RED) {
@@ -269,7 +265,7 @@ public class CloseAuto extends OpMode {
                                 drivetrain1.driveRobotHeadingAndLine(.3, Math.toRadians(150), heading, x, y, 11.5, 53);
                             }
 
-                            if (waitSecs(3)) {
+                            if (waitSecs(2.9)) {
                                 spikeMark += 1;
                                 intakePathSet = false;
                                 transitionTo(PathState.TO_SHOOT);
@@ -345,7 +341,7 @@ public class CloseAuto extends OpMode {
 
         if (isMirror) {
             turnTableAngleFirst = -11;
-            allianceOffset = 0;
+            allianceOffset = 10; // 0
         } else {
             turnTableAngleFirst = 14;
             allianceOffset = 10;
@@ -365,7 +361,7 @@ public class CloseAuto extends OpMode {
 
         if(isMirror) {
             turnTableAngleFirst = -11;
-            allianceOffset = 0;
+            allianceOffset = 10; // 0
         }//if it's mirrored turn the turntable
 
         shooter.rotateTurret(turnTableAngleFirst);

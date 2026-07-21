@@ -19,8 +19,8 @@ public class ClosePaths extends Paths{
     public Pose ballCollectMid1 = new Pose(85, 53); // 55
     public Pose ballCollectMid12 = new Pose(94.72697795071335, 56.30350194552529); // 55
     public Pose ballCollectMid2 = new Pose(121.74319066147861, 56.48054474708172);
-    public Pose selfee = new Pose(129, 52, Math.toRadians(30)); // 130, 53, Math.toRadians(30)
-    public Pose selfeeMid = new Pose(90, 48);// 90, 55
+    public Pose selfee = new Pose(131, 48, Math.toRadians(30)); // 130, 53, Math.toRadians(30)
+    public Pose selfeeMid = new Pose(90, 46);// 90, 55
     public Pose ballCollect2 = new Pose(123.56, 80.42, 0);
     public Pose park = makePos(85, 103);
     public Pose ballCollect3 = makePos(130, 33, 0);

@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -26,8 +27,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "FarAuto")
-
+@Disabled
 public class FarAutoAttempt2 extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
     private static final double AUTO_RED_LIGHT = 0.28;
