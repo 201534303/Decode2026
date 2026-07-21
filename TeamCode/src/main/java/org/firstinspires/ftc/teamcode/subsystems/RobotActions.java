@@ -238,7 +238,7 @@ public class RobotActions {
         }
         else{
             if(gamepad2.right_stick_y > 0 || gamepad2.right_trigger > 0.8){
-                intake.setIntPower(gamepad2.right_stick_y + 0.1);
+                intake.setIntPower(gamepad2.right_stick_y);
             }
             else{
                 intake.setIntPower(0);

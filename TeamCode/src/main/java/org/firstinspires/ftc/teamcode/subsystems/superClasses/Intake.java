@@ -25,7 +25,7 @@ public class Intake {
     protected double direction = 1;
 
     protected DcMotorEx intake;
-    protected MotorEx transfer;
+    protected DcMotorEx transfer;
     DigitalChannel right,left, front1, front2, distFront;
     protected double iSpeed = 0;
     protected double tSpeed = 0;
@@ -38,7 +38,7 @@ public class Intake {
 
         timer = e;
         intake = hardwareMap.get(DcMotorEx.class, "intake");
-        transfer = new MotorEx(hardwareMap, "transfer");
+        transfer = hardwareMap.get(DcMotorEx.class, "transfer");
         right = hardwareMap.get(DigitalChannel.class, "distRight");
         left = hardwareMap.get(DigitalChannel.class, "distLeft");
         front1 = hardwareMap.get(DigitalChannel.class, "colorRight");
@@ -46,7 +46,7 @@ public class Intake {
         distFront = hardwareMap.get(DigitalChannel.class, "distFront");
 
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
-        transfer.setInverted(true);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
         //transfer.setRunMode(MotorEx.RunMode.VelocityControl);
 
         telemetry = t;
@@ -74,13 +74,12 @@ public class Intake {
         return transfer.getVelocity();
     }
     public void setTransferPower(double power){
-        transfer.setRunMode(MotorEx.RunMode.RawPower);
-        transfer.set(power);
+        transfer.setPower(power);
     }
 
     public void setTransferVelPID(double vel, double currentVelo, double stickInput, double tuner){
         telemetry.addData("We are settin transfer vel", vel);
-        transfer.setRunMode(MotorEx.RunMode.VelocityControl);
+        //transfer.setRunMode(MotorEx.RunMode.VelocityControl);
         double speed = PIDF(vel-currentVelo, vel, 0.15,0,0,1.08);
         //1.15
         transfer.setVelocity(speed);
