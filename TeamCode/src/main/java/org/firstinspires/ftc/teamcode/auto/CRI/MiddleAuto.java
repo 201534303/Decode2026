@@ -28,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 public class MiddleAuto extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
     private static final double AUTO_RED_LIGHT = 0.28;
+    private double timeVisionHelper;
+
 
     // Robot Subsystems
     private IntakeAuto intake;
@@ -426,6 +428,7 @@ public class MiddleAuto extends OpMode {
         dash.update();
     }
 
+    int times = 0;
     @Override
     public void stop() {
         for (int i  = 0; i < 50; i++){
@@ -433,6 +436,13 @@ public class MiddleAuto extends OpMode {
             PoseSaver.save(p.getX(), p.getY(), p.getHeading());
             follower.update();
         }
+    }
+
+    public boolean throttleVision(double curentTime){
+        if (curentTime - timeVisionHelper > 100){
+            return true;
+        }
+        return false;
     }
 
 }

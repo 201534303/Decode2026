@@ -128,4 +128,15 @@ public class CRI_Far_Paths extends Paths {
     private double clamp(double value, double lower, double upper) {
         return Math.max(lower, Math.min(upper, value));
     }
+
+    public Pose detectionCollectPoseNotSet(double averageOffset, OLDChoose.Alliance alliance) {
+        Pose currPose = follower.getPose();
+
+        double collectY = clamp(currPose.getY() + (averageOffset * 2), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        Pose collectPose = new Pose(176, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
 }
