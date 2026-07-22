@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.CRI.CRI_Far_Paths;
+import org.firstinspires.ftc.teamcode.pedroPathing.Paths.CRI.MiddlePaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
@@ -47,16 +48,18 @@ public class MiddleAuto extends OpMode {
 
     // Folower
     private Follower follower;
-    private CRI_Far_Paths paths;
+    private MiddlePaths paths;
     private Telemetry dash;
     private boolean detectInitDone = false;
     private boolean detectPathSet = false;
     private boolean intakePathSet = false;
+    private boolean firstShootPathSet = false;
+    private boolean shootMove;
 
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, OUT, IN
+        DETECT, FIRST_SHOOT
     }
     PathState pathState = PathState.START;
 
@@ -138,18 +141,18 @@ public class MiddleAuto extends OpMode {
     private void followDetectionPath() {
         if (posCount == 0 && negCount == 0) {
             if(spikeMark == 3) {
-                ballCollect = paths.ballCollect12;
-            } else {
                 ballCollect = paths.ballCollect2;
+            } else {
+                ballCollect = paths.ballCollect1;
             }
-            follower.followPath(spikeMark == 3 ? paths.shootTo3() : paths.shootTo4(), 1, true);
+            follower.followPath(spikeMark == 3 ? paths.shootTo2() : paths.shootTo1(), 1, true);
             return;
         }
 
         ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
         if (paths.shouldUseDetectionFallback(ballCollect)) {
             ballCollect = paths.ballCollect2;
-            follower.followPath(paths.shootTo4(), 1, true);
+            follower.followPath(paths.shootTo1(), 1, true);
         } else {
             follower.followPath(paths.to(ballCollect), 1, true);
         }
@@ -188,20 +191,40 @@ public class MiddleAuto extends OpMode {
                 }
                 break;
 
+            case FIRST_SHOOT:
+                if(waitSecs(0.3) && !firstShootPathSet){//0.3
+                    firstShootPathSet = true;
+                    shootMove = false;
+                    follower.followPath(paths.startToShoot(), 1, false);
+                }
+
+                if(waitSecs(1.20)){ // 1.25
+                    intake.allTheWay();
+                }
+
+                if (follower.atPose(paths.shootFirstPose, 5, 5)) {
+                    if(alliance == OLDChoose.Alliance.RED) {
+                        shooter.rotateTurret(15);
+                    } else{
+                        shooter.rotateTurret(-15);
+                    }
+                    firstShootPathSet = false;
+                    transitionTo(PathState.SHOOT);
+                }
+                break;
+
             case SHOOT:
                 intake.allTheWay();// go all the way to shoot
 
-                if (spikeMark == 0) {
-                    if (waitSecs(0.5)) {//0.6
-                        intakePathSet = false;
-                        transitionTo(PathState.INTAKE);
-                    }
-                } else if (spikeMark == 8) {
+                if(spikeMark == 0){
+                    intakePathSet = false;
+                    transitionTo(PathState.INTAKE);
+                } else if (spikeMark == 7) {
                     if (waitSecs(0.5)) {//1
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 || spikeMark == 1) {
+                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1) {
                     if (waitSecs(0.5)) { // 1
                         spikeMark += 1;
                         resetDetectionState();
@@ -221,7 +244,7 @@ public class MiddleAuto extends OpMode {
                 if (!intakePathSet) {
                     intakePathSet = true;
                     if (spikeMark == 0) {
-                        follower.followPath(paths.shootTo2(), 1, false);
+                        follower.followPath(paths.shootTo1(), 1, false);
                     } else if (spikeMark == 8) {
                         park();
                         follower.followPath(paths.shootToPark(), 0.6, true);
@@ -288,46 +311,6 @@ public class MiddleAuto extends OpMode {
                 }
                 break;
 
-            case OUT:
-                if (intake.haveBall()){
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                if (!outPathSet) {
-                    outPathSet = true;
-                    if(spikeMark == 2) {
-                        follower.followPath(paths.outSet(), 1, false);
-                    } else{
-                        follower.followPath(paths.outNotSet(ballCollect, alliance), 1, false);
-                    }
-                }
-
-                if(waitForPathEndOrTimeout(0.2)){
-                    outPathSet = false;
-                    transitionTo(PathState.IN);
-                }
-                break;
-
-            case IN:
-                if (intake.haveBall()){
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                intake.intakeIn();
-                if (!inPathSet) {
-                    inPathSet = true;
-                    if(spikeMark == 2) {
-                        follower.followPath(paths.inSet(), 1, false);
-                    } else{
-                        follower.followPath(paths.inNotSet(ballCollect), 1, false);
-
-                    }
-                }
-
-                if(waitForPathEndOrTimeout(0.8)){
-                    inPathSet = false;
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                break;
-
             case PARK:
                 if (!follower.isBusy()) {
                     park();
@@ -384,7 +367,7 @@ public class MiddleAuto extends OpMode {
     public void start() { // on start
         // path setting
         follower = Constants.createFollower(hardwareMap);
-        paths = new CRI_Far_Paths(follower);
+        paths = new MiddlePaths(follower);
         robotActions = new RobotActions(shooter, follower, telemetry);
 
         // type auto setting

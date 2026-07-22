@@ -9,35 +9,32 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Paths;
 
 public class MiddlePaths extends Paths {
-    private static final double DETECTION_COLLECT_Y_MIN = 15.0;
-    private static final double DETECTION_COLLECT_Y_MAX = 35.0;
+    private static final double DETECTION_COLLECT_Y_MIN = 62;
+    private static final double DETECTION_COLLECT_Y_MAX = 78;
 
     public MiddlePaths(Follower follower) {
         this.follower = follower;
     }
 
-    public Pose startPose = makePos(111, 7); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(183, 40); // 130
-    public Pose ballCollect12 = makePos(183, 40);
-    public Pose ballCollect1Out = makePos(173, 40);
-    public Pose ballCollect1Mid = new Pose(131, 37);
-    public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(185, 7);
-    public Pose out = makePos(175, 7);
+    public Pose startPose = makePos(126, 181, 270); // Start Pose of our robot
+    public Pose ballCollect1 = makePos(186.5, 58, 0); // 130
+    public Pose ballCollect2 = makePos(180, 81, 0); // 130
+    public Pose ballCollect1_2 = makePos(126.55285343709471, 32.89591439688718);
+    public Pose ballCollect1_3 = makePos(162.30966277561612, 65.5129701686122);
+    public Pose shootPose = new Pose(120, 58, 0); // 93, 12, 0
+    public Pose shootFirstPose = new Pose(128, 131, 0); // 93, 12, 0
 
-    public Pose park = makePos(132, 9, 0);
-    private Pose outForDeteciton = new Pose();
+    public Pose park = makePos(130, 58, 0);
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
             startPose = mirror(startPose);
             ballCollect1 = mirror(ballCollect1);
-            ballCollect12 = mirror(ballCollect12);
-            ballCollect1Out = mirror(ballCollect1Out);
-            ballCollect1Mid = mirror(ballCollect1Mid);
-            shootPose = mirror(shootPose);
             ballCollect2 = mirror(ballCollect2);
-            out = mirror(out);
+            ballCollect1_2 = mirror(ballCollect1_2);
+            ballCollect1_3 = mirror(ballCollect1_3);
+            shootFirstPose = mirror(shootFirstPose);
+            shootPose = mirror(shootPose);
             park = mirror(park);
             return true;
         }
@@ -51,8 +48,19 @@ public class MiddlePaths extends Paths {
                 .build();
     }
 
-    public PathChain collectToShootNotSet() {
-        return fromCurrentPose(shootPose);
+    public PathChain startToShoot(){
+        return bezierLine(startPose, shootFirstPose);
+    }
+
+    public PathChain shootTo1(){
+        return bezierLine(shootPose, ballCollect1);
+    }
+    public PathChain shootTo2(){
+        return bezierLine(shootPose, ballCollect2);
+    }
+
+    public PathChain shootToPark() {
+        return bezierLine(shootPose, park);
     }
 
     public PathChain to(Pose pos) {
@@ -67,49 +75,6 @@ public class MiddlePaths extends Paths {
                 .addPath(new BezierLine(pos1, pos2))
                 .setLinearHeadingInterpolation(pos1.getHeading(), pos2.getHeading())
                 .build();
-    }
-
-    public PathChain shootTo1() {
-        return bezierCurve(startPose,
-                ballCollect1Mid,
-                ballCollect1);
-    }
-
-    public PathChain shootTo2() {
-        return bezierLine(shootPose, ballCollect2);
-    }
-
-    public PathChain shootTo3() {
-        return bezierLine(shootPose, ballCollect12);
-    }
-
-    public PathChain shootTo4() {
-        return bezierLine(shootPose, ballCollect2);
-    }
-
-    public PathChain shootToPark() {
-        return bezierLine(shootPose, park);
-    }
-
-    public PathChain outSet() {
-        return bezierLine(ballCollect2, out);
-    }
-
-    public PathChain outNotSet(Pose ballCollect, OLDChoose.Alliance alliance) {
-        if(alliance == OLDChoose.Alliance.BLUE) {
-            outForDeteciton = new Pose(ballCollect.getX() + 10, ballCollect.getY(), ballCollect.getHeading());
-        } else {
-            outForDeteciton = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
-        }
-        return bezierLine(ballCollect, outForDeteciton);
-    }
-
-    public PathChain inNotSet(Pose ballCollect) {
-        return bezierLine(outForDeteciton, ballCollect);
-    }
-
-    public PathChain inSet() {
-        return bezierLine(out, ballCollect2);
     }
 
     public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance) {
@@ -127,5 +92,9 @@ public class MiddlePaths extends Paths {
 
     private double clamp(double value, double lower, double upper) {
         return Math.max(lower, Math.min(upper, value));
+    }
+
+    public PathChain collectToShootNotSet() {
+        return fromCurrentPose(shootPose);
     }
 }
