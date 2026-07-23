@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto.CRI;
 
+import static org.firstinspires.ftc.teamcode.auto.CompSeason.FarAutoAttempt2.PathState.DETECT;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
@@ -27,6 +29,8 @@ import java.util.concurrent.TimeUnit;
 public class FarAuto extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
     private static final double AUTO_RED_LIGHT = 0.28;
+    private double timeVisionHelper;
+
 
     // Robot Subsystems
     private IntakeAuto intake;
@@ -73,6 +77,8 @@ public class FarAuto extends OpMode {
     double posAverage = 0;
     double negAverage = 0;
     double offset = 10;
+    boolean readyAlliance = false;
+    boolean thirdSpike = false;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -123,6 +129,21 @@ public class FarAuto extends OpMode {
         }
         return bestTriplet;
     }
+
+    private void followDetectionMid() {
+        if (posCount == 0 && negCount == 0) {
+            return;
+        }
+
+        ballCollect = paths.detectionCollectPoseNotSet(detectionAverageOffset(), alliance);
+
+        if (paths.shouldUseDetectionFallback(ballCollect)) {
+            ballCollect = paths.ballCollect2;
+            follower.followPath(paths.shootTo4(), 1, true);
+        } else {
+            follower.followPath(paths.to(ballCollect), 1, true);
+        }
+    }
     private void transitionTo(PathState newState) {
         resetActionTimer();
         pathState = newState;
@@ -137,12 +158,12 @@ public class FarAuto extends OpMode {
 
     private void followDetectionPath() {
         if (posCount == 0 && negCount == 0) {
-            if(spikeMark == 3) {
+            if(spikeMark == 3 || spikeMark == 5) {
                 ballCollect = paths.ballCollect12;
             } else {
                 ballCollect = paths.ballCollect2;
             }
-            follower.followPath(spikeMark == 3 ? paths.shootTo3() : paths.shootTo4(), 1, true);
+            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3() : paths.shootTo4(), 1, true);
             return;
         }
 
@@ -183,25 +204,28 @@ public class FarAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                if (waitSecs(1.35)) { //1.25
+                if (waitSecs(4)) { //1.35
                     transitionTo(PathState.SHOOT);
                 }
                 break;
 
             case SHOOT:
                 intake.allTheWay();// go all the way to shoot
+                if(spikeMark != 0){
+                    shooter.setHood(0.45);
+                }
 
-                if (spikeMark == 0) {
+                if (spikeMark == 0 || (spikeMark == 1 && thirdSpike)) {
                     if (waitSecs(0.5)) {//0.6
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 7) {
+                } else if (spikeMark == 6) {
                     if (waitSecs(0.5)) {//1
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6 || spikeMark == 1) {
+                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1 ) {
                     if (waitSecs(0.5)) { // 1
                         spikeMark += 1;
                         resetDetectionState();
@@ -220,9 +244,11 @@ public class FarAuto extends OpMode {
 
                 if (!intakePathSet) {
                     intakePathSet = true;
-                    if (spikeMark == 0) {
+                    if ((spikeMark == 0 && !thirdSpike) || (spikeMark == 1 && thirdSpike)) {
                         follower.followPath(paths.shootTo2(), 1, false);
-                    } else if (spikeMark == 7) {
+                    } else if (thirdSpike && spikeMark == 0){
+                        follower.followPath(paths.shootToSpike3(), 1, false);
+                    } else if (spikeMark == 6) {
                         park();
                         follower.followPath(paths.shootToPark(), 0.6, true);
                         pathState = PathState.PARK;
@@ -230,10 +256,17 @@ public class FarAuto extends OpMode {
                     }
                 }
 
-                if (spikeMark == 0 && waitForPathEndOrTimeout(4)) {
-                    spikeMark += 1;
-                    intakePathSet = false;
-                    transitionTo(PathState.TO_SHOOT);
+
+                if (spikeMark == 0) {
+                    if(!thirdSpike & waitForPathEndOrTimeout(4)) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    } else if(waitForPathEndOrTimeout(6)){
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    }
                 }
                 break;
 
@@ -260,7 +293,7 @@ public class FarAuto extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(4)) {//2, 2.25
+                if (waitForPathEndOrTimeout(4.25)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -280,7 +313,7 @@ public class FarAuto extends OpMode {
                         resetActionTimer();
                         reset = true;
                     }
-                    if(waitSecs(0.05)){
+                    if(waitSecs(0.2)){
                         resetActionTimer();
                         shootCount = 0;
                         pathState = PathState.SHOOT;
@@ -295,13 +328,13 @@ public class FarAuto extends OpMode {
                 if (!outPathSet) {
                     outPathSet = true;
                     if(spikeMark == 2) {
-                        follower.followPath(paths.outSet(), 1, false);
+                        follower.followPath(paths.outSet(), 0.75, false);
                     } else{
                         follower.followPath(paths.outNotSet(ballCollect, alliance), 1, false);
                     }
                 }
 
-                if(waitForPathEndOrTimeout(0.2)){
+                if(waitForPathEndOrTimeout(0.25)){
                     outPathSet = false;
                     transitionTo(PathState.IN);
                 }
@@ -315,9 +348,9 @@ public class FarAuto extends OpMode {
                 if (!inPathSet) {
                     inPathSet = true;
                     if(spikeMark == 2) {
-                        follower.followPath(paths.inSet(), 1, false);
+                        follower.followPath(paths.inSet(), 0.75, false);
                     } else{
-                        follower.followPath(paths.inNotSet(ballCollect), 1, false);
+                        follower.followPath(paths.inNotSet(ballCollect), 0.75, false);
 
                     }
                 }
@@ -359,20 +392,25 @@ public class FarAuto extends OpMode {
         dash = dashboard.getTelemetry();
         overallRuntime = new ElapsedTime();
 
-        shooter.setHood(.55);
+        shooter.setHood(0.34);
     }
 
     public void init_loop(){
-        choose.allianceInit(); // gets alliance
-        alliance = choose.getSelectedAlliance(); // sets alliance
+        if(!readyAlliance) {
+            alliance = choose.getSelectedAlliance();
+            readyAlliance = choose.allianceInit();
+        } else {
+            thirdSpike = choose.getSpike();
+            choose.spikeInit();
+        }
 
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -71 : 72;
+        turnTableAngle = isMirror ? -68 : 70;
 
         if(alliance == OLDChoose.Alliance.BLUE){
-            offset = 0;
+            offset = 30;
         } else if (alliance == OLDChoose.Alliance.RED){
             offset = 10;
         }
@@ -419,8 +457,36 @@ public class FarAuto extends OpMode {
                 shooter.farFaster();
             } else {
                 shooter.far();
+//                if(alliance == OLDChoose.Alliance.RED){
+//                    x += 100;
+//                }
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
+            } // sets shooter speed
+        }
+        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
+            telemetry.addData("a!", times);
+        }
+        if(pathState == PathState.DETECT){
+            telemetry.addData("b!", "BEAAAAAA");
+        }
+        if(x < 153){
+            telemetry.addData("c!", "JERRRKKKKKKK");
+        }
+
+        if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
+            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+
+            if (detections != null && !detections.isEmpty()) {
+                updateDetectionAverage(detections);
             }
+            detectInitDone = true;
+
+            followDetectionMid();
+            //}
+            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
+            times ++;
+            telemetry.addData("didAgain!", "WOOOOOOOOO");
+
         }
 
         autonomousPathUpdate();//main auto code
@@ -431,7 +497,6 @@ public class FarAuto extends OpMode {
         telemetry.addData("posAverage", posAverage);
         telemetry.addData("negAverage", negAverage);
 
-        // auto init prints
         telemetry.addData("mirror", isMirror);
         telemetry.addData("alliance", alliance);
 
@@ -443,6 +508,7 @@ public class FarAuto extends OpMode {
         dash.update();
     }
 
+    int times = 0;
     @Override
     public void stop() {
         for (int i  = 0; i < 50; i++){
@@ -452,4 +518,10 @@ public class FarAuto extends OpMode {
         }
     }
 
+    public boolean throttleVision(double curentTime){
+        if (curentTime - timeVisionHelper > 100){
+            return true;
+        }
+        return false;
+    }
 }

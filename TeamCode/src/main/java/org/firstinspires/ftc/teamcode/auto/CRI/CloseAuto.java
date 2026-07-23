@@ -333,7 +333,7 @@ public class CloseAuto extends OpMode {
             readyAlliance = choose.allianceInit();
         } else {
             fill = choose.getFill();
-             choose.fillInit();
+            choose.fillInit();
         }
 
         isMirror = alliance == OLDChoose.Alliance.BLUE;
@@ -344,7 +344,7 @@ public class CloseAuto extends OpMode {
             allianceOffset = 10; // 0
         } else {
             turnTableAngleFirst = 14;
-            allianceOffset = 10;
+            allianceOffset = -10; // red
         }
 
         shooter.rotateTurret(turnTableAngleFirst);

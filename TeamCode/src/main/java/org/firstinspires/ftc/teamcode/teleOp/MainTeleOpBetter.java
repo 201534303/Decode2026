@@ -97,6 +97,7 @@ public class MainTeleOpBetter extends OpMode {
         robot = new RobotActions(gamepad1, gamepad2, drivetrain, intake, shooter, follower, overallRuntime, telemetry, feedback);
         FtcDashboard dashboard = FtcDashboard.getInstance();
         dash = dashboard.getTelemetry();
+        kicker.kickUp();
     }
 
     @Override

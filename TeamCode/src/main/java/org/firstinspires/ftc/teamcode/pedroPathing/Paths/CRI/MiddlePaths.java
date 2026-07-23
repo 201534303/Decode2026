@@ -9,35 +9,37 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Paths;
 
 public class MiddlePaths extends Paths {
-    private static final double DETECTION_COLLECT_Y_MIN = 15.0;
-    private static final double DETECTION_COLLECT_Y_MAX = 35.0;
+    private static final double DETECTION_COLLECT_Y_MIN = 50;
+    private static final double DETECTION_COLLECT_Y_MAX = 81;
 
     public MiddlePaths(Follower follower) {
         this.follower = follower;
     }
 
-    public Pose startPose = makePos(111, 7); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(183, 40); // 130
-    public Pose ballCollect12 = makePos(183, 40);
-    public Pose ballCollect1Out = makePos(173, 40);
-    public Pose ballCollect1Mid = new Pose(131, 37);
-    public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(185, 7);
-    public Pose out = makePos(175, 7);
+    public Pose startPose = makePos(77, 168, 216); // Start Pose of our robot
+    public Pose ballCollect1 = makePos(4.5, 59, 180); // 130
+    public Pose pathToCollect1 = makePos(55, 59, 180);
+    public Pose pathToCollect1_1 = makePos(71.58333333333334, 98.6721789883268, 180);
+    public Pose pathToCollect1_2 = makePos(60, 57.03267012798878, 180);
+    public Pose toNotHitGate = makePos(70, 150, 260);
+    public Pose detectionCollectLow = makePos(3, 81, 180);
+    public Pose detectionCollectHigh = makePos(3, 50, 180);
 
-    public Pose park = makePos(132, 9, 0);
-    private Pose outForDeteciton = new Pose();
+    public Pose shootPose = new Pose(82, 59, 180); // 93, 12, 0
 
-    public boolean bluePath(OLDChoose.Alliance getAlliance) {
-        if (getAlliance == OLDChoose.Alliance.BLUE) {
+    public Pose park = makePos(64, 59, 180);
+
+    public boolean redPath(OLDChoose.Alliance getAlliance) {
+        if (getAlliance == OLDChoose.Alliance.RED) {
             startPose = mirror(startPose);
             ballCollect1 = mirror(ballCollect1);
-            ballCollect12 = mirror(ballCollect12);
-            ballCollect1Out = mirror(ballCollect1Out);
-            ballCollect1Mid = mirror(ballCollect1Mid);
+            pathToCollect1 = mirror(pathToCollect1);
+            pathToCollect1_1 = mirror(pathToCollect1_1);
+            pathToCollect1_2 = mirror(pathToCollect1_2);
+            toNotHitGate = mirror(toNotHitGate);
+            detectionCollectLow = mirror(detectionCollectLow);
+            detectionCollectHigh = mirror(detectionCollectHigh);
             shootPose = mirror(shootPose);
-            ballCollect2 = mirror(ballCollect2);
-            out = mirror(out);
             park = mirror(park);
             return true;
         }
@@ -51,8 +53,31 @@ public class MiddlePaths extends Paths {
                 .build();
     }
 
-    public PathChain collectToShootNotSet() {
-        return fromCurrentPose(shootPose);
+    public PathChain notHit(){
+        return bezierLine(startPose, toNotHitGate);
+    }
+    public PathChain firstTo1(){
+        return bezierCurve(
+                toNotHitGate,
+                pathToCollect1_1,
+                pathToCollect1_2,
+                pathToCollect1
+        );
+    }
+    public PathChain collect1(){
+        return bezierLine(pathToCollect1, ballCollect1);
+    }
+
+    public PathChain toHighDetect(){
+        return bezierLine(shootPose, detectionCollectHigh);
+    }
+
+    public PathChain toLowDetect(){
+        return bezierLine(shootPose, detectionCollectLow);
+    }
+
+    public PathChain shootToPark() {
+        return bezierLine(shootPose, park);
     }
 
     public PathChain to(Pose pos) {
@@ -69,63 +94,34 @@ public class MiddlePaths extends Paths {
                 .build();
     }
 
-    public PathChain shootTo1() {
-        return bezierCurve(startPose,
-                ballCollect1Mid,
-                ballCollect1);
-    }
-
-    public PathChain shootTo2() {
-        return bezierLine(shootPose, ballCollect2);
-    }
-
-    public PathChain shootTo3() {
-        return bezierLine(shootPose, ballCollect12);
-    }
-
-    public PathChain shootTo4() {
-        return bezierLine(shootPose, ballCollect2);
-    }
-
-    public PathChain shootToPark() {
-        return bezierLine(shootPose, park);
-    }
-
-    public PathChain outSet() {
-        return bezierLine(ballCollect2, out);
-    }
-
-    public PathChain outNotSet(Pose ballCollect, OLDChoose.Alliance alliance) {
-        if(alliance == OLDChoose.Alliance.BLUE) {
-            outForDeteciton = new Pose(ballCollect.getX() + 10, ballCollect.getY(), ballCollect.getHeading());
-        } else {
-            outForDeteciton = new Pose(ballCollect.getX() - 10, ballCollect.getY(), ballCollect.getHeading());
-        }
-        return bezierLine(ballCollect, outForDeteciton);
-    }
-
-    public PathChain inNotSet(Pose ballCollect) {
-        return bezierLine(outForDeteciton, ballCollect);
-    }
-
-    public PathChain inSet() {
-        return bezierLine(out, ballCollect2);
-    }
-
     public Pose detectionCollectPose(double averageOffset, OLDChoose.Alliance alliance) {
         double collectY = clamp(shootPose.getY() + averageOffset, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
-        Pose collectPose = new Pose(185, collectY, 0);
+        Pose collectPose = new Pose(180, collectY, 0);
         if (alliance == OLDChoose.Alliance.BLUE) {
             collectPose = mirror(collectPose);
         }
         return collectPose;
     }
 
+    public Pose detectionCollectPoseNotSet(double averageOffset, OLDChoose.Alliance alliance) {
+        Pose currPose = follower.getPose();
+
+        double collectY = clamp(currPose.getY() + (averageOffset * 2), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        Pose collectPose = new Pose(180, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
     public boolean shouldUseDetectionFallback(Pose collectPose) {
         return DETECTION_COLLECT_Y_MIN >= collectPose.getY();
     }
 
     private double clamp(double value, double lower, double upper) {
         return Math.max(lower, Math.min(upper, value));
+    }
+
+    public PathChain collectToShootNotSet() {
+        return fromCurrentPose(shootPose);
     }
 }

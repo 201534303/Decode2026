@@ -11,22 +11,30 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.Paths;
 public class CRI_Far_Paths extends Paths {
     private static final double DETECTION_COLLECT_Y_MIN = 15.0;
     private static final double DETECTION_COLLECT_Y_MAX = 35.0;
+    private static final double DETECTION_COLLECT_Y_MAX_Other = 60;
 
     public CRI_Far_Paths(Follower follower) {
         this.follower = follower;
     }
 
     public Pose startPose = makePos(111, 7); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(176, 40); // 130
-    public Pose ballCollect12 = makePos(176, 40);
+    public Pose ballCollect1 = makePos(180, 40); // 130
+    public Pose ballCollect12 = makePos(180, 40);
     public Pose ballCollect1Out = makePos(166, 40);
     public Pose ballCollect1Mid = new Pose(131, 37);
     public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(178, 7);
+    public Pose ballCollect2 = makePos(176, 7);
+
+    public Pose spike3 = makePos(180, 60);
+    public Pose spike3mid = makePos(107.67607003891051, 63.99546044098574);
+
     public Pose out = makePos(168, 7);
 
     public Pose park = makePos(132, 9, 0);
+
+    public Pose park2 = makePos(132, 34, 0);
     private Pose outForDeteciton = new Pose();
+    public Pose middleShoot = makePos(120, 34);
 
     public boolean bluePath(OLDChoose.Alliance getAlliance) {
         if (getAlliance == OLDChoose.Alliance.BLUE) {
@@ -37,8 +45,11 @@ public class CRI_Far_Paths extends Paths {
             ballCollect1Mid = mirror(ballCollect1Mid);
             shootPose = mirror(shootPose);
             ballCollect2 = mirror(ballCollect2);
+            spike3mid = mirror(spike3mid);
+            spike3 = mirror(spike3);
             out = mirror(out);
             park = mirror(park);
+            middleShoot = mirror(middleShoot);
             return true;
         }
         return false;
@@ -55,10 +66,21 @@ public class CRI_Far_Paths extends Paths {
         return fromCurrentPose(shootPose);
     }
 
+    public PathChain collectToShootNotSetMid() {
+        return fromCurrentPose(middleShoot);
+    }
+
     public PathChain to(Pose pos) {
         return follower.pathBuilder()
                 .addPath(new BezierLine(shootPose, pos))
                 .setLinearHeadingInterpolation(shootPose.getHeading(), pos.getHeading())
+                .build();
+    }
+
+    public PathChain toOther(Pose pos) {
+        return follower.pathBuilder()
+                .addPath(new BezierLine(middleShoot, pos))
+                .setLinearHeadingInterpolation(middleShoot.getHeading(), pos.getHeading())
                 .build();
     }
 
@@ -75,12 +97,29 @@ public class CRI_Far_Paths extends Paths {
                 ballCollect1);
     }
 
+    public PathChain shootToSpike3() {
+        return bezierCurve(shootPose,
+                spike3mid,
+                spike3);
+    }
+
     public PathChain shootTo2() {
         return bezierLine(shootPose, ballCollect2);
+    }
+    public PathChain shootTo2Other() {
+        return bezierLine(middleShoot, ballCollect2);
     }
 
     public PathChain shootTo3() {
         return bezierLine(shootPose, ballCollect12);
+    }
+
+    public PathChain shootTo3Other() {
+        return bezierLine(middleShoot, spike3);
+    }
+
+    public PathChain shootTo4Other() {
+        return bezierLine(middleShoot, ballCollect2);
     }
 
     public PathChain shootTo4() {
@@ -89,6 +128,10 @@ public class CRI_Far_Paths extends Paths {
 
     public PathChain shootToPark() {
         return bezierLine(shootPose, park);
+    }
+
+    public PathChain shootToPark2() {
+        return bezierLine(middleShoot, park2);
     }
 
     public PathChain outSet() {
@@ -121,11 +164,46 @@ public class CRI_Far_Paths extends Paths {
         return collectPose;
     }
 
+    public Pose detectionCollectPoseOther(double averageOffset, OLDChoose.Alliance alliance) {
+        double collectY = clamp(shootPose.getY() + averageOffset, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX_Other);
+        Pose collectPose = new Pose(185, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
+
     public boolean shouldUseDetectionFallback(Pose collectPose) {
+        return DETECTION_COLLECT_Y_MIN >= collectPose.getY();
+    }
+
+    public boolean shouldUseDetectionFallbackOther(Pose collectPose) {
         return DETECTION_COLLECT_Y_MIN >= collectPose.getY();
     }
 
     private double clamp(double value, double lower, double upper) {
         return Math.max(lower, Math.min(upper, value));
+    }
+
+    public Pose detectionCollectPoseNotSet(double averageOffset, OLDChoose.Alliance alliance) {
+        Pose currPose = follower.getPose();
+
+        double collectY = clamp(currPose.getY() + (averageOffset * 2), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX);
+        Pose collectPose = new Pose(176, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
+    }
+
+    public Pose detectionCollectPoseNotSetOther(double averageOffset, OLDChoose.Alliance alliance) {
+        Pose currPose = follower.getPose();
+
+        double collectY = clamp(currPose.getY() + (averageOffset * 2), DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX_Other);
+        Pose collectPose = new Pose(176, collectY, 0);
+        if (alliance == OLDChoose.Alliance.BLUE) {
+            collectPose = mirror(collectPose);
+        }
+        return collectPose;
     }
 }

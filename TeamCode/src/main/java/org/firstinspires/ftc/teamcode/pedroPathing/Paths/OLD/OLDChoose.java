@@ -24,6 +24,9 @@ public class OLDChoose {
     private boolean fill = false;
     private boolean fillConfirmed = false;
 
+    private boolean thirdSpike = false;
+    private boolean spikeConfirmed = false;
+
     public OLDChoose(Gamepad g1, Telemetry t) {
         telemetry = t;
         gamepad1 = g1;
@@ -62,6 +65,17 @@ public class OLDChoose {
         }
     }
 
+    public boolean spikeInit(){
+        if (!spikeConfirmed) {
+            handleUpDownSelection();
+            displaySpikeSelectionMenu();
+            return false;
+        } else {
+            displayReadyCloseScreen4();
+            return true;
+        }
+    }
+
     public boolean wolfpackInit(){
         if (!wolfpackConfirmed) {
             handleWolfpackSelection();
@@ -72,7 +86,6 @@ public class OLDChoose {
             return true;
         }
     }
-
     private void handleWolfpackSelection() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
             wolfpack = true;
@@ -95,7 +108,6 @@ public class OLDChoose {
             aPressed = false;
         }
     }
-
     private void handleAutoNum() {
         if (gamepad1.dpad_down && !dpadDownPressed) {
             if (mark > 0) {
@@ -122,7 +134,6 @@ public class OLDChoose {
             aPressed = false;
         }
     }
-
     private void handleAllianceSelection() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
             selectedAlliance = Alliance.RED;
@@ -145,8 +156,6 @@ public class OLDChoose {
             aPressed = false;
         }
     }
-
-
     private void handleFillSelection() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
             fill = true;
@@ -169,7 +178,28 @@ public class OLDChoose {
             aPressed = false;
         }
     }
+    private void handleUpDownSelection() {
+        if (gamepad1.dpad_up && !dpadUpPressed) {
+            thirdSpike = true;
+            dpadUpPressed = true;
+        } else if (!gamepad1.dpad_up) {
+            dpadUpPressed = false;
+        }
 
+        if (gamepad1.dpad_down && !dpadDownPressed) {
+            thirdSpike = false;
+            dpadDownPressed = true;
+        } else if (!gamepad1.dpad_down) {
+            dpadDownPressed = false;
+        }
+
+        if (gamepad1.a && !aPressed) {
+            spikeConfirmed = true;
+            aPressed = true;
+        } else if (!gamepad1.a) {
+            aPressed = false;
+        }
+    }
     private void displayNumSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("NUMBER OF TRIPS");
@@ -188,7 +218,6 @@ public class OLDChoose {
             telemetry.addLine("Press X to confirm");
         }
     }
-
     private void displayWolfpackSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("WOLFPACK AUTO");
@@ -207,7 +236,6 @@ public class OLDChoose {
             telemetry.addLine("Press X to confirm");
         }
     }
-
     private void displayAllianceSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("SELECT ALLIANCE");
@@ -226,7 +254,6 @@ public class OLDChoose {
             telemetry.addLine("Press X to confirm selection");
         }
     }
-
     private void displayFillSelectionMenu() {
         telemetry.addLine("=================================");
         telemetry.addLine("FILL CLASSIFIER");
@@ -241,6 +268,25 @@ public class OLDChoose {
         telemetry.addLine("---------------------------------");
 
         if (!fillConfirmed) {
+            telemetry.addLine("");
+            telemetry.addLine("Press X to confirm selection");
+        }
+    }
+
+    private void displaySpikeSelectionMenu() {
+        telemetry.addLine("=================================");
+        telemetry.addLine("THIRD SPIKE");
+        telemetry.addLine("=================================");
+        telemetry.addLine("");
+        telemetry.addLine("Use D-Pad Up/Down to adjust");
+        telemetry.addData("Third Spike:", thirdSpike);
+        telemetry.addLine("");
+        telemetry.addLine("---------------------------------");
+        telemetry.addData("Current Selection", thirdSpike);
+        telemetry.addData("Confirmed", spikeConfirmed ? "YES" : "NO");
+        telemetry.addLine("---------------------------------");
+
+        if (!spikeConfirmed) {
             telemetry.addLine("");
             telemetry.addLine("Press X to confirm selection");
         }
@@ -292,9 +338,19 @@ public class OLDChoose {
         telemetry.addLine("");
     }
 
+    public void displayReadyCloseScreen4() {
+        telemetry.addLine("CONFIGURATION COMPLETE");
+        telemetry.addLine("");
+        telemetry.addData("Alliance", selectedAlliance);
+        telemetry.addData("3rd Spike", fill);
+        telemetry.addLine("");
+    }
+
     public Alliance getSelectedAlliance() { return selectedAlliance; }
     public Boolean getSelectedWolfpack() { return wolfpack; }
     public Boolean getFill() { return fill; }
+    public Boolean getSpike() { return thirdSpike; }
+
     public int getMark() {
         return mark;
     }

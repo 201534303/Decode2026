@@ -435,9 +435,6 @@ public class FarAutoAttempt2 extends OpMode {
         isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
 
-        // setting shooter stuff
-
-
         // resets timers
         runtime.reset();
         overallRuntime.reset();
