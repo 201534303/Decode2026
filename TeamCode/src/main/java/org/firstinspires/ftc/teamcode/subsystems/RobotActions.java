@@ -300,7 +300,7 @@ public class RobotActions {
 
     //UPDATE
 
-    public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel) {
+    public void update(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, boolean middleGoal) {
         double dist = distanceToTarget(currentColor, x, y);
         double usedVelX = vel != null ? vel.getXComponent() : 0.0;
         double usedVelY = vel != null ? vel.getYComponent() : 0.0;
@@ -328,7 +328,8 @@ public class RobotActions {
         telemetry.addData("leadVelocityMagnitude", usedRobotSpeed);
 
         updateTransfer(currentColor, vel, virtualX, virtualY, false);
-        updateTurret(currentColor, virtualX, virtualY, heading);
+        //updateTurret(currentColor, virtualX, virtualY, heading);
+        updateTurretCRI(currentColor, virtualX, virtualY, heading, middleGoal);
         updateShooter(currentColor, virtualX, virtualY, usedRobotSpeed);
     }
 
@@ -547,6 +548,56 @@ public class RobotActions {
             double delY2 = 144 - posY;
             double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
             turretAngle = averageAngle(turretAngle1, turretAngle2);
+        }
+
+
+        double filteredTurretAngle = rollingAverage4(turretAngle);
+        shooter.rotateTurret(filteredTurretAngle);
+        turAngle = filteredTurretAngle;
+    }
+
+    public void updateTurretCRI(OLDChoose.Alliance currentColor, double posX, double posY, double h, boolean middleGoal){
+        this.posX = posX;
+        this.posY = posY;
+
+        double heading = Math.toDegrees(h);
+        double flankPosition = FLANKPOSOTION + flankPositionOffset;
+        lastAppliedFlankPosition = flankPosition;
+
+        double turretAngle = 0;
+
+        if(currentColor == OLDChoose.Alliance.BLUE){
+            //targets (0, 124), (20, 144)
+            double delX1 = 0 - posX;
+            double delY1 = 144 - flankPosition - posY;
+            double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
+            double delX2 = flankPosition - posX;
+            double delY2 = 144 - posY;
+            double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
+            turretAngle = averageAngle(turretAngle1, turretAngle2);
+        }
+
+        if(currentColor == OLDChoose.Alliance.RED){
+            //normal targets (144, 124), (124, 144)
+            //middle goal (48, 124) (68,144), CORNER (48, 144)
+            if (!middleGoal) {
+                double delX1 = 144 - posX;
+                double delY1 = 144 - flankPosition - posY;
+                double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
+                double delX2 = 144 - flankPosition - posX;
+                double delY2 = 144 - posY;
+                double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
+                turretAngle = averageAngle(turretAngle1, turretAngle2);
+            }
+            if ( middleGoal){
+                double delX1 = 48 - posX;
+                double delY1 = 48 - flankPosition - posY;
+                double turretAngle1 = Math.toDegrees(Math.atan2(delY1, delX1)) - (heading);
+                double delX2 = 144 - flankPosition - posX;
+                double delY2 = 144 - posY;
+                double turretAngle2 = Math.toDegrees(Math.atan2(delY2, delX2)) - (heading);
+                turretAngle = averageAngle(turretAngle1, turretAngle2);
+            }
         }
 
 

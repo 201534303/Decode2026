@@ -67,6 +67,7 @@ public class MainTeleOpBetter extends OpMode {
     private double timeDif = 1.0;
     private double oldHeading = 0;
     private boolean kickerDown;
+    private boolean middleGoal;
 
 //89.7,5.6
     @Override
@@ -258,6 +259,13 @@ public class MainTeleOpBetter extends OpMode {
         /*
         --------------------------UPDATE--------------------------
          */
+        if (gamepad1.aWasPressed()){
+            if (middleGoal){
+                middleGoal = false;
+            } else {
+                middleGoal = true;
+            }
+        }
         //double currentVel = shooter.getMotorVel();
         //double targetVel = shooter.getTargetVelocity();
         telemetry.addData("alliance Color", currentColor);
@@ -266,7 +274,7 @@ public class MainTeleOpBetter extends OpMode {
         //dash.addData("current wheel speed", currentVel);
        // dash.addData("target wheel speed", targetVel);
        // dash.addData("shooter deviation", currentVel-targetVel);
-        robot.update(currentColor, turretOn, x, y, heading, vel, kf);
+        robot.update(currentColor, turretOn, x, y, heading, vel, kf, middleGoal);
         if (gamepad2.left_stick_y < 0.1 && gamepad2.left_stick_y > -0.1 )
             robot.updateIntake();
         follower.update();
