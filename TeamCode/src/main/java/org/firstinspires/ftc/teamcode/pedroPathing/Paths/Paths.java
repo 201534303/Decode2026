@@ -24,6 +24,21 @@ public abstract class Paths {
                 .build();
     }
 
+    public PathChain bezierCurveTan(Pose pos1, Pose pos2, Pose pos3) {
+        return follower.pathBuilder()
+                .addPath(new BezierCurve(pos1, pos2, pos3))
+                //.setTangentHeadingInterpolation()
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
+    public PathChain bezierCurveTan(Pose pos1, Pose pos2, Pose pos3, Pose pos4) {
+        return follower.pathBuilder()
+                .addPath(new BezierCurve(pos1, pos2, pos3, pos4))
+                .setTangentHeadingInterpolation()
+                .build();
+    }
+
 //    public PathChain bezierCurve(Pose pos1, Pose pos2, Pose pos3) {
 //        return follower.pathBuilder()
 //                .addPath(new BezierCurve(pos1, pos2, pos3))
@@ -41,6 +56,13 @@ public abstract class Paths {
         return follower.pathBuilder()
                 .addPath(new BezierLine(pos1, pos2))
                 .setLinearHeadingInterpolation(pos1.getHeading(), pos2.getHeading())
+                .build();
+    }
+
+    public PathChain bezierLineTan(Pose pos1, Pose pos2){
+        return follower.pathBuilder()
+                .addPath(new BezierLine(pos1, pos2))
+                .setTangentHeadingInterpolation()
                 .build();
     }
 

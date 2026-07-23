@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.JaviVision.BallDetection.LimelightV5;
 import org.firstinspires.ftc.teamcode.auto.util.PoseSaver;
 import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.CRI.CRI_Far_Paths;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.CRI.MiddlePaths;
 import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
@@ -25,9 +24,9 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotActions;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name = "MiddleAuto")
+@Autonomous(name = "_MIDDLE_FarAuto")
 
-public class MiddleAuto extends OpMode {
+public class MiddleFarAuto extends OpMode {
     private static final double AUTO_BLUE_LIGHT = 0.63;
     private static final double AUTO_RED_LIGHT = 0.28;
     private double timeVisionHelper;
@@ -52,18 +51,16 @@ public class MiddleAuto extends OpMode {
 
     // Folower
     private Follower follower;
-    private MiddlePaths paths;
+    private CRI_Far_Paths paths;
     private Telemetry dash;
     private boolean detectInitDone = false;
     private boolean detectPathSet = false;
     private boolean intakePathSet = false;
-    private boolean firstShootPathSet = false;
-    private boolean shootMove;
 
     // Actions
     public enum PathState {
         START, TO_SHOOT, SHOOT, INTAKE, PARK,
-        DETECT, INTAKE_PT2
+        DETECT, OUT, IN
     }
     PathState pathState = PathState.START;
 
@@ -80,6 +77,8 @@ public class MiddleAuto extends OpMode {
     double posAverage = 0;
     double negAverage = 0;
     double offset = 10;
+    boolean readyAlliance = false;
+    boolean thirdSpike = false;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -130,6 +129,21 @@ public class MiddleAuto extends OpMode {
         }
         return bestTriplet;
     }
+
+    private void followDetectionMid() {
+        if (posCount == 0 && negCount == 0) {
+            return;
+        }
+
+        ballCollect = paths.detectionCollectPoseNotSetOther(detectionAverageOffset(), alliance);
+
+        if (paths.shouldUseDetectionFallback(ballCollect)) {
+            ballCollect = paths.ballCollect2;
+            follower.followPath(paths.shootTo4Other(), 1, true);
+        } else {
+            follower.followPath(paths.toOther(ballCollect), 1, true);
+        }
+    }
     private void transitionTo(PathState newState) {
         resetActionTimer();
         pathState = newState;
@@ -142,37 +156,23 @@ public class MiddleAuto extends OpMode {
         return alliance == OLDChoose.Alliance.BLUE ? -average : average;
     }
 
-    private void followDetectionMid() {
-        if (posCount == 0 && negCount == 0) {
-            return;
-        }
-
-        ballCollect = paths.detectionCollectPoseNotSet(detectionAverageOffset(), alliance);
-
-        if (paths.shouldUseDetectionFallback(ballCollect)) {
-            ballCollect = paths.detectionCollectHigh;
-            follower.followPath(paths.toHighDetect(), 1, true);
-        } else {
-            follower.followPath(paths.to(ballCollect), 1, true);
-        }
-    }
     private void followDetectionPath() {
         if (posCount == 0 && negCount == 0) {
             if(spikeMark == 3 || spikeMark == 5) {
-                ballCollect = paths.detectionCollectLow;
+                ballCollect = paths.spike3;
             } else {
-                ballCollect = paths.detectionCollectHigh;
+                ballCollect = paths.ballCollect2;
             }
-            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.toHighDetect() : paths.toLowDetect(), 1, true);
+            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3Other() : paths.shootTo4Other(), 1, true);
             return;
         }
 
-        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
-        if (paths.shouldUseDetectionFallback(ballCollect)) {
-            ballCollect = paths.detectionCollectHigh;
-            follower.followPath(paths.toHighDetect(), 1, true);
+        ballCollect = paths.detectionCollectPoseOther(detectionAverageOffset(), alliance);
+        if (paths.shouldUseDetectionFallbackOther(ballCollect)) {
+            ballCollect = paths.ballCollect2;
+            follower.followPath(paths.shootTo4Other(), 1, true);
         } else {
-            follower.followPath(paths.to(ballCollect), 1, true);
+            follower.followPath(paths.toOther(ballCollect), 1, true);
         }
     }
 
@@ -204,25 +204,28 @@ public class MiddleAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                if (waitSecs(1.35)) { //1.25
+                if (waitSecs(3.5)) { //1.35
                     transitionTo(PathState.SHOOT);
                 }
                 break;
 
             case SHOOT:
                 intake.allTheWay();// go all the way to shoot
+                if(spikeMark != 0){
+                    shooter.setHood(0.51);
+                }
 
-                if(spikeMark == 0){
-                    if(waitSecs(0.5)) {
+                if (spikeMark == 0 || (spikeMark == 1 && thirdSpike)) {
+                    if (waitSecs(0.5)) {//0.6
                         intakePathSet = false;
-                        transitionTo(PathState.INTAKE_PT2);
+                        transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 7) {
+                } else if (spikeMark == 6) {
                     if (waitSecs(0.5)) {//1
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6) {
+                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1 ) {
                     if (waitSecs(0.5)) { // 1
                         spikeMark += 1;
                         resetDetectionState();
@@ -231,20 +234,9 @@ public class MiddleAuto extends OpMode {
                 }
                 break;
 
-            case INTAKE_PT2:
-                if (!intakePathSet) {
-                    intakePathSet = true;
-                    follower.followPath(paths.notHit(), 1, false);
-                }
-                if(waitForPathEndOrTimeout(0.75)){
-                    resetDetectionState();
-                    transitionTo(PathState.INTAKE);
-                }
-                break;
-
             case INTAKE:
                 intake.transferOff();
-                if (intake.haveBall() && waitSecs(1)){
+                if (intake.haveBall() && waitSecs(3)){
                     spikeMark ++;
                     transitionTo(PathState.TO_SHOOT);
                     break;
@@ -252,34 +244,41 @@ public class MiddleAuto extends OpMode {
 
                 if (!intakePathSet) {
                     intakePathSet = true;
-                    if (spikeMark == 0) {
-                        follower.followPath(paths.firstTo1(), 1, false);
-                    } else if (spikeMark == 1){
-                        follower.followPath(paths.collect1(), 1, false);
-                    } else if (spikeMark == 8) {
+                    if ((spikeMark == 0 && !thirdSpike)) {
+                        follower.followPath(paths.shootTo2(), 1, false);
+                    } else if(spikeMark == 1 && thirdSpike){
+                        follower.followPath(paths.shootTo2Other(), 1, false);
+                    } else if (thirdSpike && spikeMark == 0){
+                        follower.followPath(paths.shootToSpike3(), 1, false);
+                    } else if (spikeMark == 6) {
                         park();
-                        follower.followPath(paths.shootToPark(), 0.6, true);
+                        follower.followPath(paths.shootToPark2(), 0.6, true);
                         pathState = PathState.PARK;
                         break;
                     }
                 }
 
-                if (spikeMark == 0 && waitForPathEndOrTimeout(5)) {
-                    spikeMark += 1;
-                    intakePathSet = false;
-                    transitionTo(PathState.INTAKE);
-                } if (spikeMark == 1 && waitForPathEndOrTimeout(3)) {
+
+                if (spikeMark == 0 && thirdSpike) {
+                    if(waitForPathEndOrTimeout(2.5)) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    }
+                } else if ((spikeMark == 1 && thirdSpike) || (spikeMark == 0 && !thirdSpike )) {
+                    if(waitForPathEndOrTimeout(3.25)) {
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
                 }
+            }
                 break;
 
             case DETECT:
                 intake.intakeIn();
                 intake.transferOff();
 
-                if (intake.haveBall() && waitSecs(0.5)){
+                if (intake.haveBall() && waitSecs(2)){
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -298,7 +297,7 @@ public class MiddleAuto extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(4)) {//2, 2.25
+                if (waitForPathEndOrTimeout(3)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -309,16 +308,16 @@ public class MiddleAuto extends OpMode {
 
                 if (shootCount == 0) {
                     intake.intakeIn();
-                    follower.followPath(paths.collectToShootNotSet(), 1, true);
+                    follower.followPath(paths.collectToShootNotSetMid(), 1, true);
                     shootCount += 1;
                 }
 
-                if (follower.atParametricEnd() || follower.atPose(paths.shootPose, 1, 1)) {
+                if (follower.atParametricEnd() || follower.atPose(paths.middleShoot, 1, 1)) {
                     if(!reset) {
                         resetActionTimer();
                         reset = true;
                     }
-                    if(waitSecs(0.05)){
+                    if(waitSecs(0.2)){
                         resetActionTimer();
                         shootCount = 0;
                         pathState = PathState.SHOOT;
@@ -357,20 +356,25 @@ public class MiddleAuto extends OpMode {
         dash = dashboard.getTelemetry();
         overallRuntime = new ElapsedTime();
 
-        shooter.setHood(.55);
+        shooter.setHood(0.34);
     }
 
     public void init_loop(){
-        choose.allianceInit(); // gets alliance
-        alliance = choose.getSelectedAlliance(); // sets alliance
+        if(!readyAlliance) {
+            alliance = choose.getSelectedAlliance();
+            readyAlliance = choose.allianceInit();
+        } else {
+            thirdSpike = choose.getSpike();
+            choose.spikeInit();
+        }
 
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -50 : 20;
+        turnTableAngle = isMirror ? -68 : 70;
 
         if(alliance == OLDChoose.Alliance.BLUE){
-            offset = 0;
+            offset = 30;
         } else if (alliance == OLDChoose.Alliance.RED){
             offset = 10;
         }
@@ -382,11 +386,11 @@ public class MiddleAuto extends OpMode {
     public void start() { // on start
         // path setting
         follower = Constants.createFollower(hardwareMap);
-        paths = new MiddlePaths(follower);
+        paths = new CRI_Far_Paths(follower);
         robotActions = new RobotActions(shooter, follower, telemetry);
 
         // type auto setting
-        isMirror = paths.redPath(alliance);
+        isMirror = paths.bluePath(alliance);
         follower.setStartingPose(paths.startPose);
 
         // resets timers
@@ -414,13 +418,15 @@ public class MiddleAuto extends OpMode {
 
         if(!done) {
             if (spikeMark == 0) {
-                shooter.set(1250);
+                shooter.farFaster();
             } else {
-                shooter.farNormal();
+                shooter.farSlower();
+//                if(alliance == OLDChoose.Alliance.RED){
+//                    x += 100;
+//                }
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
-            }
+            } // sets shooter speed
         }
-
         if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
             telemetry.addData("a!", times);
         }
@@ -439,8 +445,6 @@ public class MiddleAuto extends OpMode {
             }
             detectInitDone = true;
 
-            //if(!detectPathSet && detectInitDone){
-            //detectPathSet = true;
             followDetectionMid();
             //}
             timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
@@ -457,7 +461,6 @@ public class MiddleAuto extends OpMode {
         telemetry.addData("posAverage", posAverage);
         telemetry.addData("negAverage", negAverage);
 
-        // auto init prints
         telemetry.addData("mirror", isMirror);
         telemetry.addData("alliance", alliance);
 
@@ -485,5 +488,4 @@ public class MiddleAuto extends OpMode {
         }
         return false;
     }
-
 }
