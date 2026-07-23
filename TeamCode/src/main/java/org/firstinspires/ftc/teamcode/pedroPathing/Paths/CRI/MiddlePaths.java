@@ -21,7 +21,7 @@ public class MiddlePaths extends Paths {
     public Pose pathToCollect1 = makePos(55, 59, 180);
     public Pose pathToCollect1_1 = makePos(71.58333333333334, 98.6721789883268, 180);
     public Pose pathToCollect1_2 = makePos(60, 57.03267012798878, 180);
-    public Pose toNotHitGate = makePos(70, 150, 260);
+    public Pose toNotHitGate = makePos(78, 154, 180);
     public Pose detectionCollectLow = makePos(3, 81, 180);
     public Pose detectionCollectHigh = makePos(3, 50, 180);
 
@@ -64,10 +64,6 @@ public class MiddlePaths extends Paths {
                 pathToCollect1
         );
     }
-    public PathChain collect1(){
-        return bezierLine(pathToCollect1, ballCollect1);
-    }
-
     public PathChain toHighDetect(){
         return bezierLine(shootPose, detectionCollectHigh);
     }
@@ -121,7 +117,4 @@ public class MiddlePaths extends Paths {
         return Math.max(lower, Math.min(upper, value));
     }
 
-    public PathChain collectToShootNotSet() {
-        return fromCurrentPose(shootPose);
-    }
 }

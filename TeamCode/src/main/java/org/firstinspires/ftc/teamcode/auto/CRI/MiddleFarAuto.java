@@ -163,14 +163,14 @@ public class MiddleFarAuto extends OpMode {
             } else {
                 ballCollect = paths.ballCollect2;
             }
-            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3Other() : paths.shootTo4Other(), 1, true);
+            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3Other() : paths.shootTo4OtherOther(), 1, true);
             return;
         }
 
         ballCollect = paths.detectionCollectPoseOther(detectionAverageOffset(), alliance);
         if (paths.shouldUseDetectionFallbackOther(ballCollect)) {
             ballCollect = paths.ballCollect2;
-            follower.followPath(paths.shootTo4Other(), 1, true);
+            follower.followPath(paths.shootTo4OtherOther(), 1, true);
         } else {
             follower.followPath(paths.toOther(ballCollect), 1, true);
         }
@@ -204,7 +204,7 @@ public class MiddleFarAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                if (waitSecs(3.5)) { //1.35
+                if (waitSecs(2.5)) { //1.35
                     transitionTo(PathState.SHOOT);
                 }
                 break;
@@ -212,21 +212,21 @@ public class MiddleFarAuto extends OpMode {
             case SHOOT:
                 intake.allTheWay();// go all the way to shoot
                 if(spikeMark != 0){
-                    shooter.setHood(0.51);
+                    shooter.setHood(0.45);
                 }
 
                 if (spikeMark == 0 || (spikeMark == 1 && thirdSpike)) {
-                    if (waitSecs(0.5)) {//0.6
+                    if (waitSecs(0.475)) {//0.6
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
                 } else if (spikeMark == 6) {
-                    if (waitSecs(0.5)) {//1
+                    if (waitSecs(0.475)) {//1
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
                 } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1 ) {
-                    if (waitSecs(0.5)) { // 1
+                    if (waitSecs(0.475)) { // 1
                         spikeMark += 1;
                         resetDetectionState();
                         transitionTo(PathState.DETECT);
@@ -236,7 +236,7 @@ public class MiddleFarAuto extends OpMode {
 
             case INTAKE:
                 intake.transferOff();
-                if (intake.haveBall() && waitSecs(3)){
+                if (intake.haveBall() && waitSecs(1)){
                     spikeMark ++;
                     transitionTo(PathState.TO_SHOOT);
                     break;
@@ -247,7 +247,7 @@ public class MiddleFarAuto extends OpMode {
                     if ((spikeMark == 0 && !thirdSpike)) {
                         follower.followPath(paths.shootTo2(), 1, false);
                     } else if(spikeMark == 1 && thirdSpike){
-                        follower.followPath(paths.shootTo2Other(), 1, false);
+                        follower.followPath(paths.shootTo4OtherOther(), 1, false);
                     } else if (thirdSpike && spikeMark == 0){
                         follower.followPath(paths.shootToSpike3(), 1, false);
                     } else if (spikeMark == 6) {
@@ -265,8 +265,8 @@ public class MiddleFarAuto extends OpMode {
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
                     }
-                } else if ((spikeMark == 1 && thirdSpike) || (spikeMark == 0 && !thirdSpike )) {
-                    if(waitForPathEndOrTimeout(3.25)) {
+                } else if ((spikeMark == 1 && thirdSpike) || (spikeMark == 0)) {
+                    if(waitForPathEndOrTimeout(2.25)) {
                     spikeMark += 1;
                     intakePathSet = false;
                     transitionTo(PathState.TO_SHOOT);
@@ -278,7 +278,7 @@ public class MiddleFarAuto extends OpMode {
                 intake.intakeIn();
                 intake.transferOff();
 
-                if (intake.haveBall() && waitSecs(2)){
+                if (intake.haveBall() && waitSecs(1)){
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -297,7 +297,7 @@ public class MiddleFarAuto extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(3)) {//2, 2.25
+                if (waitForPathEndOrTimeout(2.5)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -371,12 +371,12 @@ public class MiddleFarAuto extends OpMode {
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -68 : 70;
+        turnTableAngle = isMirror ? -68 : 67;
 
         if(alliance == OLDChoose.Alliance.BLUE){
             offset = 30;
         } else if (alliance == OLDChoose.Alliance.RED){
-            offset = 10;
+            offset = -25;
         }
         shooter.rotateTurret(turnTableAngle);
 

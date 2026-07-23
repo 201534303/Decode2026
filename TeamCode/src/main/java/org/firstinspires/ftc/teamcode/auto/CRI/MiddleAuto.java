@@ -103,101 +103,12 @@ public class MiddleAuto extends OpMode {
         negAverage = 0;
     }
 
-    private double dist(double[] a, double[] b) {
-        return Math.sqrt(Math.pow((a[0]-b[0]),2) + Math.pow((a[1]-b[1]),2));
-    }
-    private double tripletScore(double[] a, double[] b, double[] c) {
-        return Math.max(dist(a, b), Math.max(dist(b, c), dist(a, c)));
-    }
-    public double[][] findBestScore(ArrayList<double[]> points) {
-        double bestScore = Double.MAX_VALUE;
-        double[][] bestTriplet = null;
-        int n = points.size();
-
-        for (int i = 0; i < n - 2; i++) {
-            for (int j = i + 1; j < n - 1; j++) {
-                for (int k = j + 1; k < n; k++) {
-                    double[] p1 = points.get(i);
-                    double[] p2 = points.get(j);
-                    double[] p3 = points.get(k);
-                    double score = tripletScore(p1, p2, p3);
-                    if (score < bestScore) {
-                        bestScore = score;
-                        bestTriplet = new double[][] {p1, p2, p3};
-                    }
-                }
-            }
-        }
-        return bestTriplet;
-    }
     private void transitionTo(PathState newState) {
         resetActionTimer();
         pathState = newState;
     }
     private boolean waitForPathEndOrTimeout(double timeoutSecs) {
         return (follower.atParametricEnd() || waitSecs(timeoutSecs));
-    }
-
-    private double detectionAverageOffset() {
-        return alliance == OLDChoose.Alliance.BLUE ? -average : average;
-    }
-
-    private void followDetectionMid() {
-        if (posCount == 0 && negCount == 0) {
-            return;
-        }
-
-        ballCollect = paths.detectionCollectPoseNotSet(detectionAverageOffset(), alliance);
-
-        if (paths.shouldUseDetectionFallback(ballCollect)) {
-            ballCollect = paths.detectionCollectHigh;
-            follower.followPath(paths.toHighDetect(), 1, true);
-        } else {
-            follower.followPath(paths.to(ballCollect), 1, true);
-        }
-    }
-    private void followDetectionPath() {
-        if (posCount == 0 && negCount == 0) {
-            if(spikeMark == 3 || spikeMark == 5) {
-                ballCollect = paths.detectionCollectLow;
-            } else {
-                ballCollect = paths.detectionCollectHigh;
-            }
-            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.toHighDetect() : paths.toLowDetect(), 1, true);
-            return;
-        }
-
-        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
-        if (paths.shouldUseDetectionFallback(ballCollect)) {
-            ballCollect = paths.detectionCollectHigh;
-            follower.followPath(paths.toHighDetect(), 1, true);
-        } else {
-            follower.followPath(paths.to(ballCollect), 1, true);
-        }
-    }
-
-    private void updateDetectionAverage(ArrayList<double[]> detections) {
-        ArrayList<Double> results = new ArrayList<>();
-        for (double[] row : detections) {
-            results.add(row[0]);
-        }
-        double[][] optimumPts = findBestScore(detections);
-
-        for (double distance : results) {
-            if (distance > 0) {
-                posCount++;
-                posAverage += distance;
-            } else {
-                negCount++;
-                negAverage += distance;
-            }
-        }
-
-        if (negCount > posCount) {
-            average = (negCount > 0) ? negAverage / negCount : 0;
-        } else {
-            average = (posCount > 0) ? posAverage / posCount : 0;
-        }
     }
 
     // Main Auto Code
@@ -213,20 +124,9 @@ public class MiddleAuto extends OpMode {
                 intake.allTheWay();// go all the way to shoot
 
                 if(spikeMark == 0){
-                    if(waitSecs(0.5)) {
+                    if(waitSecs(1.5)) {
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE_PT2);
-                    }
-                } else if (spikeMark == 7) {
-                    if (waitSecs(0.5)) {//1
-                        intakePathSet = false;
-                        transitionTo(PathState.INTAKE);
-                    }
-                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 6) {
-                    if (waitSecs(0.5)) { // 1
-                        spikeMark += 1;
-                        resetDetectionState();
-                        transitionTo(PathState.DETECT);
                     }
                 }
                 break;
@@ -236,93 +136,9 @@ public class MiddleAuto extends OpMode {
                     intakePathSet = true;
                     follower.followPath(paths.notHit(), 1, false);
                 }
-                if(waitForPathEndOrTimeout(0.75)){
+                if(waitForPathEndOrTimeout(2)){
                     resetDetectionState();
-                    transitionTo(PathState.INTAKE);
-                }
-                break;
-
-            case INTAKE:
-                intake.transferOff();
-                if (intake.haveBall() && waitSecs(1)){
-                    spikeMark ++;
-                    transitionTo(PathState.TO_SHOOT);
-                    break;
-                }
-
-                if (!intakePathSet) {
-                    intakePathSet = true;
-                    if (spikeMark == 0) {
-                        follower.followPath(paths.firstTo1(), 1, false);
-                    } else if (spikeMark == 1){
-                        follower.followPath(paths.collect1(), 1, false);
-                    } else if (spikeMark == 8) {
-                        park();
-                        follower.followPath(paths.shootToPark(), 0.6, true);
-                        pathState = PathState.PARK;
-                        break;
-                    }
-                }
-
-                if (spikeMark == 0 && waitForPathEndOrTimeout(5)) {
-                    spikeMark += 1;
-                    intakePathSet = false;
-                    transitionTo(PathState.INTAKE);
-                } if (spikeMark == 1 && waitForPathEndOrTimeout(3)) {
-                    spikeMark += 1;
-                    intakePathSet = false;
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                break;
-
-            case DETECT:
-                intake.intakeIn();
-                intake.transferOff();
-
-                if (intake.haveBall() && waitSecs(0.5)){
-                    resetDetectionState();
-                    transitionTo(PathState.TO_SHOOT);
-                }
-
-                if (!detectInitDone) {
-                    ArrayList<double[]> detections = limelight.updateBall2(timeDif);
-
-                    if (detections != null && !detections.isEmpty()) {
-                        updateDetectionAverage(detections);
-                    }
-                    detectInitDone = true;
-                }
-
-                if(!follower.isBusy() && !detectPathSet && detectInitDone){
-                    detectPathSet = true;
-                    followDetectionPath();
-                }
-
-                if (waitForPathEndOrTimeout(4)) {//2, 2.25
-                    resetDetectionState();
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                break;
-
-            case TO_SHOOT:
-                intake.intakeIn();
-
-                if (shootCount == 0) {
-                    intake.intakeIn();
-                    follower.followPath(paths.collectToShootNotSet(), 1, true);
-                    shootCount += 1;
-                }
-
-                if (follower.atParametricEnd() || follower.atPose(paths.shootPose, 1, 1)) {
-                    if(!reset) {
-                        resetActionTimer();
-                        reset = true;
-                    }
-                    if(waitSecs(0.05)){
-                        resetActionTimer();
-                        shootCount = 0;
-                        pathState = PathState.SHOOT;
-                    }
+                    transitionTo(PathState.PARK);
                 }
                 break;
 
@@ -367,7 +183,7 @@ public class MiddleAuto extends OpMode {
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -50 : 20;
+        turnTableAngle = isMirror ? -45 : 50;
 
         if(alliance == OLDChoose.Alliance.BLUE){
             offset = 0;
@@ -414,39 +230,8 @@ public class MiddleAuto extends OpMode {
 
         if(!done) {
             if (spikeMark == 0) {
-                shooter.set(1250);
-            } else {
-                shooter.farNormal();
-                robotActions.updateTurret(alliance, (x + offset), y, heading);
+                shooter.set(1200);
             }
-        }
-
-        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
-            telemetry.addData("a!", times);
-        }
-        if(pathState == PathState.DETECT){
-            telemetry.addData("b!", "BEAAAAAA");
-        }
-        if(x < 153){
-            telemetry.addData("c!", "JERRRKKKKKKK");
-        }
-
-        if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
-            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
-
-            if (detections != null && !detections.isEmpty()) {
-                updateDetectionAverage(detections);
-            }
-            detectInitDone = true;
-
-            //if(!detectPathSet && detectInitDone){
-            //detectPathSet = true;
-            followDetectionMid();
-            //}
-            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
-            times ++;
-            telemetry.addData("didAgain!", "WOOOOOOOOO");
-
         }
 
         autonomousPathUpdate();//main auto code
@@ -478,12 +263,4 @@ public class MiddleAuto extends OpMode {
             follower.update();
         }
     }
-
-    public boolean throttleVision(double curentTime){
-        if (curentTime - timeVisionHelper > 100){
-            return true;
-        }
-        return false;
-    }
-
 }

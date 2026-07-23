@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
-@Autonomous(name = "OldCloseAuto")
 @Disabled
 public class OLDCloseAuto extends OpMode {
     private Follower follower;

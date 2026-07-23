@@ -204,7 +204,7 @@ public class FarAuto extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case START:
-                if (waitSecs(4)) { //1.35
+                if (waitSecs(2.5)) { //1.35
                     transitionTo(PathState.SHOOT);
                 }
                 break;
@@ -236,7 +236,7 @@ public class FarAuto extends OpMode {
 
             case INTAKE:
                 intake.transferOff();
-                if (intake.haveBall() && waitSecs(0.5)){
+                if (intake.haveBall() && waitSecs(1)){
                     spikeMark ++;
                     transitionTo(PathState.TO_SHOOT);
                     break;
@@ -258,11 +258,11 @@ public class FarAuto extends OpMode {
 
 
                 if (spikeMark == 0) {
-                    if(!thirdSpike & waitForPathEndOrTimeout(4)) {
+                    if(!thirdSpike & waitForPathEndOrTimeout(2.75)) {
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
-                    } else if(waitForPathEndOrTimeout(6)){
+                    } else if(waitForPathEndOrTimeout(2.75)){
                         spikeMark += 1;
                         intakePathSet = false;
                         transitionTo(PathState.TO_SHOOT);
@@ -274,7 +274,7 @@ public class FarAuto extends OpMode {
                 intake.intakeIn();
                 intake.transferOff();
 
-                if (intake.haveBall() && waitSecs(2)){
+                if (intake.haveBall() && waitSecs(1)){
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -293,7 +293,7 @@ public class FarAuto extends OpMode {
                     followDetectionPath();
                 }
 
-                if (waitForPathEndOrTimeout(4.25)) {//2, 2.25
+                if (waitForPathEndOrTimeout(2.5)) {//2, 2.25
                     resetDetectionState();
                     transitionTo(PathState.TO_SHOOT);
                 }
@@ -308,7 +308,7 @@ public class FarAuto extends OpMode {
                     shootCount += 1;
                 }
 
-                if (follower.atParametricEnd() || follower.atPose(paths.shootPose, 1, 1)) {
+                if (follower.atParametricEnd() || follower.atPose(paths.shootPose, 1.5, 1.5)) {
                     if(!reset) {
                         resetActionTimer();
                         reset = true;
@@ -318,46 +318,6 @@ public class FarAuto extends OpMode {
                         shootCount = 0;
                         pathState = PathState.SHOOT;
                     }
-                }
-                break;
-
-            case OUT:
-                if (intake.haveBall()){
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                if (!outPathSet) {
-                    outPathSet = true;
-                    if(spikeMark == 2) {
-                        follower.followPath(paths.outSet(), 0.75, false);
-                    } else{
-                        follower.followPath(paths.outNotSet(ballCollect, alliance), 1, false);
-                    }
-                }
-
-                if(waitForPathEndOrTimeout(0.25)){
-                    outPathSet = false;
-                    transitionTo(PathState.IN);
-                }
-                break;
-
-            case IN:
-                if (intake.haveBall()){
-                    transitionTo(PathState.TO_SHOOT);
-                }
-                intake.intakeIn();
-                if (!inPathSet) {
-                    inPathSet = true;
-                    if(spikeMark == 2) {
-                        follower.followPath(paths.inSet(), 0.75, false);
-                    } else{
-                        follower.followPath(paths.inNotSet(ballCollect), 0.75, false);
-
-                    }
-                }
-
-                if(waitForPathEndOrTimeout(0.8)){
-                    inPathSet = false;
-                    transitionTo(PathState.TO_SHOOT);
                 }
                 break;
 
@@ -407,12 +367,12 @@ public class FarAuto extends OpMode {
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
 
-        turnTableAngle = isMirror ? -68 : 70;
+        turnTableAngle = isMirror ? -68 : 68;
 
         if(alliance == OLDChoose.Alliance.BLUE){
             offset = 30;
         } else if (alliance == OLDChoose.Alliance.RED){
-            offset = 10;
+            offset = -25;
         }
         shooter.rotateTurret(turnTableAngle);
 
