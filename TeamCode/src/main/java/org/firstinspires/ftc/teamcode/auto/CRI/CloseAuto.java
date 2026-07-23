@@ -333,7 +333,7 @@ public class CloseAuto extends OpMode {
             readyAlliance = choose.allianceInit();
         } else {
             fill = choose.getFill();
-             choose.fillInit();
+            choose.fillInit();
         }
 
         isMirror = alliance == OLDChoose.Alliance.BLUE;

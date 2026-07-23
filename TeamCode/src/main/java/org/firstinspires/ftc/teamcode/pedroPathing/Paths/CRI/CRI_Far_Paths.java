@@ -23,6 +23,10 @@ public class CRI_Far_Paths extends Paths {
     public Pose ballCollect1Mid = new Pose(131, 37);
     public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
     public Pose ballCollect2 = makePos(178, 7);
+
+    public Pose spike3 = makePos(186.5, 60);
+    public Pose spike3mid = makePos(107.67607003891051, 63.99546044098574);
+
     public Pose out = makePos(168, 7);
 
     public Pose park = makePos(132, 9, 0);
@@ -37,6 +41,8 @@ public class CRI_Far_Paths extends Paths {
             ballCollect1Mid = mirror(ballCollect1Mid);
             shootPose = mirror(shootPose);
             ballCollect2 = mirror(ballCollect2);
+            spike3mid = mirror(spike3mid);
+            spike3 = mirror(spike3);
             out = mirror(out);
             park = mirror(park);
             return true;
@@ -73,6 +79,12 @@ public class CRI_Far_Paths extends Paths {
         return bezierCurve(startPose,
                 ballCollect1Mid,
                 ballCollect1);
+    }
+
+    public PathChain shootToSpike3() {
+        return bezierCurve(shootPose,
+                spike3mid,
+                spike3);
     }
 
     public PathChain shootTo2() {

@@ -77,6 +77,8 @@ public class FarAuto extends OpMode {
     double posAverage = 0;
     double negAverage = 0;
     double offset = 10;
+    boolean readyAlliance = false;
+    boolean thirdSpike = false;
 
     private double timeDif = 1.0;
     private ElapsedTime overallRuntime;
@@ -213,7 +215,7 @@ public class FarAuto extends OpMode {
                     shooter.setHood(0.45);
                 }
 
-                if (spikeMark == 0) {
+                if (spikeMark == 0 || (spikeMark == 1 && thirdSpike)) {
                     if (waitSecs(0.5)) {//0.6
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
@@ -223,7 +225,7 @@ public class FarAuto extends OpMode {
                         intakePathSet = false;
                         transitionTo(PathState.INTAKE);
                     }
-                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1) {
+                } else if (spikeMark == 2 || spikeMark == 3 || spikeMark == 4 || spikeMark == 5 || spikeMark == 1 ) {
                     if (waitSecs(0.5)) { // 1
                         spikeMark += 1;
                         resetDetectionState();
@@ -242,8 +244,10 @@ public class FarAuto extends OpMode {
 
                 if (!intakePathSet) {
                     intakePathSet = true;
-                    if (spikeMark == 0) {
+                    if ((spikeMark == 0 && !thirdSpike) || (spikeMark == 1 && thirdSpike)) {
                         follower.followPath(paths.shootTo2(), 1, false);
+                    } else if (thirdSpike && spikeMark == 0){
+                        follower.followPath(paths.shootToSpike3(), 1, false);
                     } else if (spikeMark == 6) {
                         park();
                         follower.followPath(paths.shootToPark(), 0.6, true);
@@ -252,10 +256,17 @@ public class FarAuto extends OpMode {
                     }
                 }
 
-                if (spikeMark == 0 && waitForPathEndOrTimeout(4)) {
-                    spikeMark += 1;
-                    intakePathSet = false;
-                    transitionTo(PathState.TO_SHOOT);
+
+                if (spikeMark == 0) {
+                    if(!thirdSpike & waitForPathEndOrTimeout(4)) {
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    } else if(waitForPathEndOrTimeout(6)){
+                        spikeMark += 1;
+                        intakePathSet = false;
+                        transitionTo(PathState.TO_SHOOT);
+                    }
                 }
                 break;
 
@@ -385,8 +396,13 @@ public class FarAuto extends OpMode {
     }
 
     public void init_loop(){
-        choose.allianceInit(); // gets alliance
-        alliance = choose.getSelectedAlliance(); // sets alliance
+        if(!readyAlliance) {
+            alliance = choose.getSelectedAlliance();
+            readyAlliance = choose.allianceInit();
+        } else {
+            thirdSpike = choose.getSpike();
+            choose.spikeInit();
+        }
 
         isMirror = (alliance == OLDChoose.Alliance.BLUE);
         indicatorLight.setPosition(isMirror ? AUTO_BLUE_LIGHT : AUTO_RED_LIGHT);
