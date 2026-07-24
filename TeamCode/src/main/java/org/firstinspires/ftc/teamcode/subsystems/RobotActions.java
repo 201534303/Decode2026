@@ -88,6 +88,8 @@ public class RobotActions {
     private boolean liftMode = false;
 
     private double dist;
+
+    private double farThresh = 191;
     public RobotActions (Gamepad g1, Gamepad g2, Drivetrain dt, Intake in, Shooter sh, Follower fo, ElapsedTime ru, Telemetry te, Feedback fe){
         gamepad1 = g1;
         gamepad2 = g2;
@@ -289,6 +291,50 @@ public class RobotActions {
             }
         }
     }
+
+    public void updateTransferCRI(OLDChoose.Alliance currentColor, Vector vel, double posX, double posY, boolean rotating, boolean middleGoal) {
+
+        double delY = 0;
+        double delX = 0;
+
+        if(currentColor == OLDChoose.Alliance.BLUE){
+            delX = -posX;
+            delY = 144-posY;
+        }
+
+        if(currentColor == OLDChoose.Alliance.RED){
+            delX = 144-posX;
+            delY = 144-posY;
+        }
+
+        double dist = Math.hypot(delY, delX);
+
+        if(singleDriver){
+            if(gamepad1.left_bumper){
+                intake.setTransferPower(1);
+
+            }
+            else{
+                intake.setTransferPower(0);
+            }
+        }
+        else{
+            if(Math.abs(gamepad2.left_stick_y) > 0.05 && ((-gamepad2.left_stick_y > 0 && Math.abs(turAngle) < 72 && dist >= 55 && Math.abs(gamepad1.left_stick_x) < 0.15) || gamepad2.right_trigger > 0.8)){
+                if (middleGoal) {
+                    intake.setTransferPower(-gamepad2.left_stick_y * 0.4);
+                } else {
+                    intake.setTransferPower(-gamepad2.left_stick_y);
+                }
+                intake.setIntakePower(1);
+            }
+            else{
+                intake.setTransferPower(0);
+                intake.setIntakePower(0);
+
+            }
+        }
+    }
+
     public void updateTransfer() {
 
         if(Math.abs(gamepad2.left_stick_y) > 0.05){
@@ -331,11 +377,11 @@ public class RobotActions {
 
         updateTransfer(currentColor, vel, virtualX, virtualY, false);
         //updateTurret(currentColor, virtualX, virtualY, heading);
-        updateTurretCRI(currentColor, virtualX, virtualY, heading, middleGoal, false);
-        updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, false);
+        updateTurret(currentColor, virtualX, virtualY, heading);
+        updateShooter(currentColor, virtualX, virtualY, usedRobotSpeed);
     }
 
-    public void updateCRI(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, boolean middleGoal, boolean poopMode) {
+    public void updateCRI(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, boolean middleGoal, boolean poopMode, boolean extrapolate) {
         double dist = distanceToTarget(currentColor, x, y);
         double usedVelX = vel != null ? vel.getXComponent() : 0.0;
         double usedVelY = vel != null ? vel.getYComponent() : 0.0;
@@ -362,10 +408,10 @@ public class RobotActions {
         telemetry.addData("virtualYchange", time * usedVelY);
         telemetry.addData("leadVelocityMagnitude", usedRobotSpeed);
 
-        updateTransfer(currentColor, vel, virtualX, virtualY, false);
+        updateTransferCRI(currentColor, vel, virtualX, virtualY, false, middleGoal);
         //updateTurret(currentColor, virtualX, virtualY, heading);
         updateTurretCRI(currentColor, virtualX, virtualY, heading, middleGoal, poopMode);
-        updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode);
+        updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode, extrapolate);
     }
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
         double time = calculateIterativeLeadTime(currentColor, x, y, vel) * 2.0;
@@ -459,10 +505,14 @@ public class RobotActions {
     }
 
     private double lookupHood(double distance) {
+        //155
+        if (distance > 190){
+            return 0.65;
+        }
         if (distance > 133.0) {
             return 0.00000752141*distance*distance*distance-0.00358577*distance*distance+0.568796*distance-29.52802;
         }
-        if (distance > 55) {
+        if (distance > 55 ) {
             return -0.00470013*distance+1.25855;
         }
         return 1.0;
@@ -798,7 +848,7 @@ public class RobotActions {
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
     }
 
-    public void updateShooterCRI(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel, boolean middleGoal, boolean poopMode) {
+    public void updateShooterCRI(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel, boolean middleGoal, boolean poopMode, boolean extrapolate) {
 
         if (middleGoal) {
             dist = distanceToTargetCRI(currentColor, posX, posY, middleGoal);
@@ -806,23 +856,36 @@ public class RobotActions {
             dist = distanceToTargetCRI(currentColor, posX, posY, middleGoal);
         }
 
+        if (extrapolate){
+            farThresh = 9000000;
+        } else {
+            farThresh = 190;
+        }
+
 
         double speed = 0;
         double hood = lookupHood(dist);
 
 
-        if(dist > 133){//far zone
+
+        if(dist > 133 && dist < farThresh){//far zone
             speed = 0.0535558*dist*dist-12.40579*dist+2093.01359;
             //1186.66887
             //3.63909
             //1048.1478
         }
-        else if(dist > 55){
+        if(dist > 55 && dist < 133){
             speed = 0.0813636*dist*dist-11.36087*dist+1487.29396;
         }
-        else{
+        if (dist > farThresh){
+            speed = 0.0103943*dist*dist*dist-6.05298*dist*dist+1178.16889*dist-74998.1198;
+        }
+        if (dist < 55){
             speed = 1108.571;
         }
+
+
+
 
         if(speed < 0){
             speed = 0;

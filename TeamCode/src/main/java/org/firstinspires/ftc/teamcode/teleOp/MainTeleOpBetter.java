@@ -69,6 +69,7 @@ public class MainTeleOpBetter extends OpMode {
     private boolean kickerDown;
     private boolean middleGoal;
     private boolean poopMode;
+    private boolean extrapolate = false;
 
 //89.7,5.6
     @Override
@@ -268,6 +269,13 @@ public class MainTeleOpBetter extends OpMode {
                 middleGoal = true;
             }
         }
+        if (gamepad1.bWasPressed()){
+            if (extrapolate){
+                extrapolate = false;
+            } else {
+                extrapolate = true;
+            }
+        }
         if (gamepad2.left_trigger > 0.1){
             poopMode = true;
         } else {
@@ -281,7 +289,7 @@ public class MainTeleOpBetter extends OpMode {
         //dash.addData("current wheel speed", currentVel);
        // dash.addData("target wheel speed", targetVel);
        // dash.addData("shooter deviation", currentVel-targetVel);
-        robot.updateCRI(currentColor, turretOn, x, y, heading, vel, kf, middleGoal, poopMode);
+        robot.updateCRI(currentColor, turretOn, x, y, heading, vel, kf, middleGoal, poopMode, extrapolate);
         if (gamepad2.left_stick_y < 0.1 && gamepad2.left_stick_y > -0.1 )
             robot.updateIntake();
         follower.update();
