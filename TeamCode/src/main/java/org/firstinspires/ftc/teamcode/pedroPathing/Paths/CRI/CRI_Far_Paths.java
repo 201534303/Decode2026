@@ -18,11 +18,11 @@ public class CRI_Far_Paths extends Paths {
     }
 
     public Pose startPose = makePos(111, 7); // Start Pose of our robot
-    public Pose ballCollect1 = makePos(180, 40); // 130
-    public Pose ballCollect12 = makePos(180, 40);
+    public Pose ballCollect1 = makePos(190, 40); // 130
+    public Pose ballCollect12 = makePos(190, 40);
     public Pose ballCollect1Mid = new Pose(131, 37);
     public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(180, 8);
+    public Pose ballCollect2 = makePos(190, 8);
     public Pose ballCollect2Middle = makePos(130.99027237354085, 3.0492866407263293);
 
     public Pose spike3 = makePos(180, 55);
@@ -146,7 +146,7 @@ public class CRI_Far_Paths extends Paths {
 
     public Pose detectionCollectPoseOther(double averageOffset, OLDChoose.Alliance alliance) {
         double collectY = clamp(shootPose.getY() + averageOffset, DETECTION_COLLECT_Y_MIN, DETECTION_COLLECT_Y_MAX_Other);
-        Pose collectPose = new Pose(185, collectY, 0);
+        Pose collectPose = new Pose(190, collectY, 0);
         if (alliance == OLDChoose.Alliance.BLUE) {
             collectPose = mirror(collectPose);
         }
