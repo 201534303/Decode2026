@@ -86,6 +86,7 @@ public class MiddleFarAuto extends OpMode {
     private boolean outPathSet = false;
     private boolean inPathSet = false;
     private double x, y, heading;
+    private boolean vision = false;
 
     // Timer Control
     public void resetActionTimer(){ actionTimer.resetTimer(); }
@@ -157,22 +158,24 @@ public class MiddleFarAuto extends OpMode {
     }
 
     private void followDetectionPath() {
-        if (posCount == 0 && negCount == 0) {
-            if(spikeMark == 3 || spikeMark == 5) {
-                ballCollect = paths.spike3;
-            } else {
-                ballCollect = paths.ballCollect2;
+        if(vision){
+            if (posCount == 0 && negCount == 0) {
+                if(spikeMark == 3 || spikeMark == 5) {
+                    ballCollect = paths.spike3;
+                } else {
+                    ballCollect = paths.ballCollect2;
+                }
+                follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3Other() : paths.shootTo4OtherOther(), 1, true);
+                return;
             }
-            follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3Other() : paths.shootTo4OtherOther(), 1, true);
-            return;
-        }
 
-        ballCollect = paths.detectionCollectPoseOther(detectionAverageOffset(), alliance);
-        if (paths.shouldUseDetectionFallbackOther(ballCollect)) {
-            ballCollect = paths.ballCollect2;
-            follower.followPath(paths.shootTo4OtherOther(), 1, true);
-        } else {
-            follower.followPath(paths.toOther(ballCollect), 1, true);
+            ballCollect = paths.detectionCollectPoseOther(detectionAverageOffset(), alliance);
+            if (paths.shouldUseDetectionFallbackOther(ballCollect)) {
+                ballCollect = paths.ballCollect2;
+                follower.followPath(paths.shootTo4OtherOther(), 1, true);
+            } else {
+                follower.followPath(paths.toOther(ballCollect), 1, true);
+            }
         }
     }
 
@@ -427,30 +430,33 @@ public class MiddleFarAuto extends OpMode {
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
             } // sets shooter speed
         }
-        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
-            telemetry.addData("a!", times);
-        }
-        if(pathState == PathState.DETECT){
-            telemetry.addData("b!", "BEAAAAAA");
-        }
-        if(x < 153){
-            telemetry.addData("c!", "JERRRKKKKKKK");
-        }
 
-        if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
-            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
-
-            if (detections != null && !detections.isEmpty()) {
-                updateDetectionAverage(detections);
+        if(vision) {
+            if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
+                telemetry.addData("a!", times);
             }
-            detectInitDone = true;
+            if(pathState == PathState.DETECT){
+                telemetry.addData("b!", "BEAAAAAA");
+            }
+            if(x < 153){
+                telemetry.addData("c!", "JERRRKKKKKKK");
+            }
 
-            followDetectionMid();
-            //}
-            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
-            times ++;
-            telemetry.addData("didAgain!", "WOOOOOOOOO");
+            if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
+                ArrayList<double[]> detections = limelight.updateBall2(timeDif);
 
+                if (detections != null && !detections.isEmpty()) {
+                    updateDetectionAverage(detections);
+                }
+                detectInitDone = true;
+
+                followDetectionMid();
+                //}
+                timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
+                times ++;
+                telemetry.addData("didAgain!", "WOOOOOOOOO");
+
+            }
         }
 
         autonomousPathUpdate();//main auto code

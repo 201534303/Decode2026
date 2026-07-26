@@ -157,7 +157,7 @@ public class FarAuto extends OpMode {
     }
 
     private void followDetectionPath() {
-        if (posCount == 0 && negCount == 0) {
+       //if (posCount == 0 && negCount == 0) {
             if(spikeMark == 3 || spikeMark == 5) {
                 ballCollect = paths.ballCollect12;
             } else {
@@ -165,15 +165,15 @@ public class FarAuto extends OpMode {
             }
             follower.followPath((spikeMark == 3 || spikeMark == 5) ? paths.shootTo3() : paths.shootTo4(), 1, true);
             return;
-        }
+        //}
 
-        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
-        if (paths.shouldUseDetectionFallback(ballCollect)) {
-            ballCollect = paths.ballCollect2;
-            follower.followPath(paths.shootTo4(), 1, true);
-        } else {
-            follower.followPath(paths.to(ballCollect), 1, true);
-        }
+//        ballCollect = paths.detectionCollectPose(detectionAverageOffset(), alliance);
+//        if (paths.shouldUseDetectionFallback(ballCollect)) {
+//            ballCollect = paths.ballCollect2;
+//            follower.followPath(paths.shootTo4(), 1, true);
+//        } else {
+//            follower.followPath(paths.to(ballCollect), 1, true);
+//        }
     }
 
     private void updateDetectionAverage(ArrayList<double[]> detections) {
@@ -423,31 +423,32 @@ public class FarAuto extends OpMode {
                 robotActions.updateTurret(alliance, (x + offset), y, heading);
             } // sets shooter speed
         }
-        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
-            telemetry.addData("a!", times);
-        }
-        if(pathState == PathState.DETECT){
-            telemetry.addData("b!", "BEAAAAAA");
-        }
-        if(x < 153){
-            telemetry.addData("c!", "JERRRKKKKKKK");
-        }
 
-        if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
-            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
-
-            if (detections != null && !detections.isEmpty()) {
-                updateDetectionAverage(detections);
-            }
-            detectInitDone = true;
-
-            followDetectionMid();
-            //}
-            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
-            times ++;
-            telemetry.addData("didAgain!", "WOOOOOOOOO");
-
-        }
+//        if(throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) == true){
+//            telemetry.addData("a!", times);
+//        }
+//        if(pathState == PathState.DETECT){
+//            telemetry.addData("b!", "BEAAAAAA");
+//        }
+//        if(x < 153){
+//            telemetry.addData("c!", "JERRRKKKKKKK");
+//        }
+//
+//        if(pathState == PathState.DETECT && throttleVision(overallRuntime.time(TimeUnit.MILLISECONDS)) && ((x < 153 && alliance == OLDChoose.Alliance.RED) || (x > 37.5 && alliance == OLDChoose.Alliance.BLUE))){
+//            ArrayList<double[]> detections = limelight.updateBall2(timeDif);
+//
+//            if (detections != null && !detections.isEmpty()) {
+//                updateDetectionAverage(detections);
+//            }
+//            detectInitDone = true;
+//
+//            followDetectionMid();
+//            //}
+//            timeVisionHelper = overallRuntime.time(TimeUnit.MILLISECONDS);
+//            times ++;
+//            telemetry.addData("didAgain!", "WOOOOOOOOO");
+//
+//        }
 
         autonomousPathUpdate();//main auto code
 
@@ -478,10 +479,10 @@ public class FarAuto extends OpMode {
         }
     }
 
-    public boolean throttleVision(double curentTime){
-        if (curentTime - timeVisionHelper > 100){
-            return true;
-        }
-        return false;
-    }
+//    public boolean throttleVision(double curentTime){
+//        if (curentTime - timeVisionHelper > 100){
+//            return true;
+//        }
+//        return false;
+//    }
 }

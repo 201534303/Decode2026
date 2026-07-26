@@ -22,10 +22,10 @@ public class CRI_Far_Paths extends Paths {
     public Pose ballCollect12 = makePos(190, 40);
     public Pose ballCollect1Mid = new Pose(131, 37);
     public Pose shootPose = new Pose(120, 17, 0); // 93, 12, 0
-    public Pose ballCollect2 = makePos(190, 8);
+    public Pose ballCollect2 = makePos(190, 9);
     public Pose ballCollect2Middle = makePos(130.99027237354085, 3.0492866407263293);
 
-    public Pose spike3 = makePos(180, 55);
+    public Pose spike3 = makePos(190, 55);
     public Pose spike3mid = makePos(122.17736705577174, 62.41958495460444);
     private Pose spike3mid2 = makePos(140.09727626459144, 52.250972762645915);
 

@@ -256,6 +256,7 @@ public class MainTeleOpBetter extends OpMode {
 
         if(kickerDown){
             drivetrain.setMotorPowers(0,0,0,0);
+            shooter.setVel(0);
         }
 
 
@@ -289,7 +290,7 @@ public class MainTeleOpBetter extends OpMode {
         //dash.addData("current wheel speed", currentVel);
        // dash.addData("target wheel speed", targetVel);
        // dash.addData("shooter deviation", currentVel-targetVel);
-        robot.updateCRI(currentColor, turretOn, x, y, heading, vel, kf, middleGoal, poopMode, extrapolate);
+        robot.updateCRI(currentColor, turretOn, x, y, heading, vel, kf, middleGoal, poopMode, extrapolate, kickerDown);
         if (gamepad2.left_stick_y < 0.1 && gamepad2.left_stick_y > -0.1 )
             robot.updateIntake();
         follower.update();

@@ -381,7 +381,7 @@ public class RobotActions {
         updateShooter(currentColor, virtualX, virtualY, usedRobotSpeed);
     }
 
-    public void updateCRI(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, boolean middleGoal, boolean poopMode, boolean extrapolate) {
+    public void updateCRI(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, boolean middleGoal, boolean poopMode, boolean extrapolate, boolean kicker) {
         double dist = distanceToTarget(currentColor, x, y);
         double usedVelX = vel != null ? vel.getXComponent() : 0.0;
         double usedVelY = vel != null ? vel.getYComponent() : 0.0;
@@ -411,7 +411,7 @@ public class RobotActions {
         updateTransferCRI(currentColor, vel, virtualX, virtualY, false, middleGoal);
         //updateTurret(currentColor, virtualX, virtualY, heading);
         updateTurretCRI(currentColor, virtualX, virtualY, heading, middleGoal, poopMode);
-        updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode, extrapolate);
+        updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode, extrapolate, kicker);
     }
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
         double time = calculateIterativeLeadTime(currentColor, x, y, vel) * 2.0;
@@ -848,7 +848,7 @@ public class RobotActions {
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
     }
 
-    public void updateShooterCRI(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel, boolean middleGoal, boolean poopMode, boolean extrapolate) {
+    public void updateShooterCRI(OLDChoose.Alliance currentColor, double posX, double posY, double robotVel, boolean middleGoal, boolean poopMode, boolean extrapolate, boolean kicker) {
 
         if (middleGoal) {
             dist = distanceToTargetCRI(currentColor, posX, posY, middleGoal);
@@ -907,9 +907,14 @@ public class RobotActions {
         shooter.setHood(hood);
         if (poopMode) {
             shooter.flywheelSpinDynamic(400, shooter.getMotorVel(), robotVel);
-        } else {
+        }
+        else if (kicker){
+            shooter.flywheelSpinDynamic(0, shooter.getMotorVel(), robotVel);
+        }
+        else if (!poopMode){
             shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
         }
+
     }
 
     private double clamp(double value, double min, double max) {
