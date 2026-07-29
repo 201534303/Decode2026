@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.OldAutos;
+package org.firstinspires.ftc.teamcode.auto.pedroPathing.OldAutos;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierLine;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Config.Constants;
 
 @Autonomous
 @Disabled

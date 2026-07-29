@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD;
+package org.firstinspires.ftc.teamcode.auto.pedroPathing.Paths;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class OLDChoose {
+public class Choose {
     protected Gamepad gamepad1;
     protected Telemetry telemetry;
     public enum Alliance { RED, BLUE, NONE }
@@ -27,20 +28,9 @@ public class OLDChoose {
     private boolean thirdSpike = false;
     private boolean spikeConfirmed = false;
 
-    public OLDChoose(Gamepad g1, Telemetry t) {
+    public Choose(Gamepad g1, Telemetry t) {
         telemetry = t;
         gamepad1 = g1;
-    }
-
-    public boolean tripsInit(){
-         if (!numConfirmed) {
-            handleAutoNum();
-            displayNumSelectionMenu();
-            return false;
-        } else {
-             displayReadyTripsScreen();
-             return true;
-         }
     }
 
     public boolean allianceInit(){
@@ -54,64 +44,16 @@ public class OLDChoose {
         }
     }
 
-    public boolean fillInit(){
-        if (!fillConfirmed) {
-            handleFillSelection();
-            displayFillSelectionMenu();
-            return false;
-        } else {
-            displayReadyCloseScreen3();
-            return true;
-        }
-    }
+    int returnNum = 0;
 
-    public boolean spikeInit(){
-        if (!spikeConfirmed) {
-            handleUpDownSelection();
-            displaySpikeSelectionMenu();
-            return false;
-        } else {
-            displayReadyCloseScreen4();
-            return true;
-        }
-    }
-
-    public boolean wolfpackInit(){
-        if (!wolfpackConfirmed) {
-            handleWolfpackSelection();
-            displayWolfpackSelectionMenu();
-            return false;
-        } else {
-            displayReadyCloseScreen();
-            return true;
-        }
-    }
-    private void handleWolfpackSelection() {
-        if (gamepad1.dpad_up && !dpadUpPressed) {
-            wolfpack = true;
-            dpadUpPressed = true;
-        } else if (!gamepad1.dpad_up) {
-            dpadUpPressed = false;
+    private int handleAutoNum(int lowerLimit, int upperLimit) {
+        if(returnNum < lowerLimit){
+            returnNum = lowerLimit;
         }
 
         if (gamepad1.dpad_down && !dpadDownPressed) {
-            wolfpack = false;
-            dpadDownPressed = true;
-        } else if (!gamepad1.dpad_down) {
-            dpadDownPressed = false;
-        }
-
-        if (gamepad1.a && !aPressed) {
-            wolfpackConfirmed = true;
-            aPressed = true;
-        } else if (!gamepad1.a) {
-            aPressed = false;
-        }
-    }
-    private void handleAutoNum() {
-        if (gamepad1.dpad_down && !dpadDownPressed) {
-            if (mark > 0) {
-                mark -= 1;
+            if (returnNum > lowerLimit) {
+                returnNum -= 1;
             }
             dpadDownPressed = true;
         } else if (!gamepad1.dpad_down) {
@@ -119,8 +61,8 @@ public class OLDChoose {
         }
 
         if (gamepad1.dpad_up && !dpadUpPressed) {
-            if (mark < 4) {
-                mark += 1;
+            if (returnNum < upperLimit) {
+                returnNum += 1;
             }
             dpadUpPressed = true;
         } else if (!gamepad1.dpad_up) {
@@ -133,6 +75,8 @@ public class OLDChoose {
         } else if (!gamepad1.a) {
             aPressed = false;
         }
+
+        return returnNum;
     }
     private void handleAllianceSelection() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
@@ -156,57 +100,38 @@ public class OLDChoose {
             aPressed = false;
         }
     }
-    private void handleFillSelection() {
+
+    boolean trueFalse = false;
+    private boolean dPadUpDown() {
         if (gamepad1.dpad_up && !dpadUpPressed) {
-            fill = true;
+            trueFalse = true;
             dpadUpPressed = true;
         } else if (!gamepad1.dpad_up) {
             dpadUpPressed = false;
         }
 
         if (gamepad1.dpad_down && !dpadDownPressed) {
-            fill = false;
+            trueFalse = false;
             dpadDownPressed = true;
         } else if (!gamepad1.dpad_down) {
             dpadDownPressed = false;
         }
 
-        if (gamepad1.a && !aPressed) {
-            fillConfirmed = true;
+        if (gamepad1.a && !aPressed && selectedAlliance != Alliance.NONE) {
+            allianceConfirmed = true;
             aPressed = true;
         } else if (!gamepad1.a) {
             aPressed = false;
         }
+        return trueFalse;
     }
-    private void handleUpDownSelection() {
-        if (gamepad1.dpad_up && !dpadUpPressed) {
-            thirdSpike = true;
-            dpadUpPressed = true;
-        } else if (!gamepad1.dpad_up) {
-            dpadUpPressed = false;
-        }
-
-        if (gamepad1.dpad_down && !dpadDownPressed) {
-            thirdSpike = false;
-            dpadDownPressed = true;
-        } else if (!gamepad1.dpad_down) {
-            dpadDownPressed = false;
-        }
-
-        if (gamepad1.a && !aPressed) {
-            spikeConfirmed = true;
-            aPressed = true;
-        } else if (!gamepad1.a) {
-            aPressed = false;
-        }
-    }
-    private void displayNumSelectionMenu() {
+    private void displayUpDownMenu(String title, String title2) {
         telemetry.addLine("=================================");
-        telemetry.addLine("NUMBER OF TRIPS");
+        telemetry.addLine(title);
         telemetry.addLine("=================================");
         telemetry.addLine("");
         telemetry.addLine("Use D-Pad Up/Down to adjust");
-        telemetry.addData("Trips:", mark);
+        telemetry.addData(title2 + " :", mark);
         telemetry.addLine("");
         telemetry.addLine("---------------------------------");
         telemetry.addData("Current Selection", mark);

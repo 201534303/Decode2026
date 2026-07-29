@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Config;
+package org.firstinspires.ftc.teamcode.auto.pedroPathing.Config;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PredictiveBrakingCoefficients;

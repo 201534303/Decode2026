@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.Paths;
+package org.firstinspires.ftc.teamcode.auto.pedroPathing.Paths;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Paths.OLD.OLDChoose;
 
 public class ClosePaths extends Paths{
     public ClosePaths(Follower follower) {

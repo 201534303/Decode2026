@@ -3,14 +3,13 @@ package org.firstinspires.ftc.teamcode.auto.CompSeason;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.Config.Constants;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDChoose;
-import org.firstinspires.ftc.teamcode.pedroPathing.Paths.OLD.OLDClosePaths;
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Config.Constants;
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Paths.OLD.OLDChoose;
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Paths.OLD.OLDClosePaths;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.IntakeAuto;
 import org.firstinspires.ftc.teamcode.subsystems.Auto.ShooterAuto;
 
