@@ -66,6 +66,8 @@ public class BioBuzzTele extends OpMode {
     private double oldHeading = 0;
     private boolean kickerDown;
 
+    private double shooterSpeed = 1360;
+
     //89.7,5.6
     @Override
     public void init() {
@@ -125,6 +127,14 @@ public class BioBuzzTele extends OpMode {
             robot.fieldCentricDrive(currentColor, heading, vel);
         }
 
+        if(gamepad1.dpadUpWasPressed()){
+            shooterSpeed += 10;
+        }
+
+        if(gamepad1.dpadDownWasPressed()){
+            shooterSpeed -= 10;
+        }
+
         /*
         --------------------------DRIVER TWO CONTROLS--------------------------
          */
@@ -147,10 +157,11 @@ public class BioBuzzTele extends OpMode {
         }
 
         telemetry.addData("alliance Color", currentColor);
+        telemetry.addData("shooter speed", shooterSpeed);
         telemetry.addData("position", "(" + Math.round(x*100)/100.0 + "," + Math.round(y*100)/100.0 + ") Heading: " + Math.round(heading*10000)/10000.0);
         telemetry.addData("dist", Math.round(100.0*Math.hypot(144-x, 144-y))/100.0);
 
-        robot.updateBioBuzz(currentColor, x, y, vel);
+        robot.updateBioBuzz(currentColor, x, y, vel, shooterSpeed);
         if (gamepad2.left_stick_y < 0.1 && gamepad2.left_stick_y > -0.1 )
             robot.updateIntake();
         follower.update();

@@ -425,7 +425,7 @@ public class RobotActions {
         updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode, extrapolate, kicker);
     }
 
-    public void updateBioBuzz(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
+    public void updateBioBuzz(OLDChoose.Alliance currentColor, double x, double y, Vector vel, double shooterBioBuzzSpeed) {
         double dist = distanceToTarget(currentColor, x, y);
         double usedRobotSpeed = vel != null ? vel.getMagnitude() : 0.0;
         double maxLeadSpeed = dist > FAR_ZONE_DISTANCE_IN
@@ -439,7 +439,7 @@ public class RobotActions {
 
         updateTransferBioBuzz();
         updateTurretBioBuzz();
-        updateShooterBioBuzz(usedRobotSpeed);
+        updateShooterBioBuzz(usedRobotSpeed, shooterBioBuzzSpeed);
     }
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
         double time = calculateIterativeLeadTime(currentColor, x, y, vel) * 2.0;
@@ -880,8 +880,8 @@ public class RobotActions {
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
     }
 
-    public void updateShooterBioBuzz(double robotVel) {
-        double speed = 1330;
+    public void updateShooterBioBuzz(double robotVel, double shooterSpeed) {
+        double speed = shooterSpeed;
         double hood = 1;
 
         shooter.setHood(hood);
