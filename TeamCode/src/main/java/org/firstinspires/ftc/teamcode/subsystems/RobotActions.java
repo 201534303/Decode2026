@@ -335,6 +335,17 @@ public class RobotActions {
         }
     }
 
+    public void updateTransferBioBuzz() {
+        if(Math.abs(gamepad2.left_stick_y) > 0.05 && ((-gamepad2.left_stick_y > 0 && Math.abs(gamepad1.left_stick_x) < 0.15) || gamepad2.right_trigger > 0.8)){
+            intake.setTransferPower(-gamepad2.left_stick_y);
+            intake.setIntakePower(1);
+        }
+        else{
+            intake.setTransferPower(0);
+            intake.setIntakePower(0);
+        }
+    }
+
     public void updateTransfer() {
 
         if(Math.abs(gamepad2.left_stick_y) > 0.05){
@@ -412,6 +423,23 @@ public class RobotActions {
         //updateTurret(currentColor, virtualX, virtualY, heading);
         updateTurretCRI(currentColor, virtualX, virtualY, heading, middleGoal, poopMode);
         updateShooterCRI(currentColor, virtualX, virtualY, usedRobotSpeed, middleGoal, poopMode, extrapolate, kicker);
+    }
+
+    public void updateBioBuzz(OLDChoose.Alliance currentColor, double x, double y, Vector vel) {
+        double dist = distanceToTarget(currentColor, x, y);
+        double usedRobotSpeed = vel != null ? vel.getMagnitude() : 0.0;
+        double maxLeadSpeed = dist > FAR_ZONE_DISTANCE_IN
+                ? MAX_SHOT_LEAD_SPEED_FAR_IN_PER_S
+                : MAX_SHOT_LEAD_SPEED_CLOSE_IN_PER_S;
+
+        if (usedRobotSpeed > maxLeadSpeed && usedRobotSpeed > 1e-6) {
+            double scale = maxLeadSpeed / usedRobotSpeed;
+            usedRobotSpeed = maxLeadSpeed;
+        }
+
+        updateTransferBioBuzz();
+        updateTurretBioBuzz();
+        updateShooterBioBuzz(usedRobotSpeed);
     }
     public void updateConversion(OLDChoose.Alliance currentColor, boolean turretOn, double x, double y, double heading, Vector vel, double rVel, double mul) {
         double time = calculateIterativeLeadTime(currentColor, x, y, vel) * 2.0;
@@ -727,6 +755,10 @@ public class RobotActions {
         turAngle = filteredTurretAngle;
     }
 
+    public void updateTurretBioBuzz(){
+        shooter.rotateTurret(0);
+    }
+
     private double rollingAverage4(double current) {
         double sum = current;
         int n = 1;
@@ -843,6 +875,14 @@ public class RobotActions {
 
         lastAppliedShooterVelocity = speed;
         lastAppliedHood = hood;
+
+        shooter.setHood(hood);
+        shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
+    }
+
+    public void updateShooterBioBuzz(double robotVel) {
+        double speed = 1330;
+        double hood = 1;
 
         shooter.setHood(hood);
         shooter.flywheelSpinDynamic(speed, shooter.getMotorVel(), robotVel);
