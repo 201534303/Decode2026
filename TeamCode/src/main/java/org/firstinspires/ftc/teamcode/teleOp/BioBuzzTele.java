@@ -113,6 +113,11 @@ public class BioBuzzTele extends OpMode {
         lastTime = nowTime;
         telemetry.addData("loop time", timeDif);
 
+        Pose robotPos = follower.getPose();
+        x = robotPos.getX();
+        y = robotPos.getY();
+        heading = robotPos.getHeading();
+
         /*
         --------------------------DRIVER ONE CONTROLS--------------------------
          */
